@@ -29,6 +29,18 @@
             color: #8898aa;
         }
 
+        .btn-write-entry {
+            padding: 16px 36px;
+            font-size: 1.05em;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(94, 114, 228, 0.2);
+        }
+
+        .btn-write-entry:hover {
+            box-shadow: 0 4px 8px rgba(94, 114, 228, 0.3);
+            transform: translateY(-1px);
+        }
+
         .trend-item {
             display: flex;
             justify-content: space-between;
@@ -73,21 +85,43 @@
             border-radius: 3px;
         }
 
-        .trend-range {
+        .graph-container {
+            margin-top: 40px;
+        }
+
+        .graph-title {
+            font-size: 1em;
+            font-weight: 500;
+            color: #32325d;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .graph-wrapper {
+            position: relative;
+            padding: 40px 50px 50px 80px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+
+        .graph-y-axis {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%) rotate(-90deg);
+            transform-origin: center;
             font-size: 0.85em;
             color: #8898aa;
+            white-space: nowrap;
         }
 
         .graph {
-            margin-top: 30px;
-            padding: 30px;
-            background: #f8f9fa;
-            border-radius: 6px;
             height: 200px;
             display: flex;
             align-items: flex-end;
             justify-content: space-around;
             gap: 8px;
+            position: relative;
         }
 
         .graph-bar {
@@ -100,6 +134,19 @@
 
         .graph-bar:hover {
             opacity: 1;
+        }
+
+        .graph-x-axis {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 10px;
+            font-size: 0.85em;
+            color: #8898aa;
+        }
+
+        .graph-x-label {
+            flex: 1;
+            text-align: center;
         }
 
         .entry-card {
@@ -148,7 +195,7 @@
                     <div class="streak">Current streak: 5 days logged</div>
                     <div class="last-entry">Last entry: Yesterday <span class="score-badge">Score: 7</span></div>
                 </div>
-                <a href="new-entry.html" class="btn-primary">Write Today's Entry</a>
+                <a href="new-entry.html" class="btn-primary btn-write-entry">Write Today's Entry</a>
             </div>
         </div>
 
@@ -162,7 +209,6 @@
                     <div class="trend-bar">
                         <div class="trend-bar-fill" style="width: 64%;"></div>
                     </div>
-                    <div class="trend-range">Range: 4-8</div>
                 </div>
             </div>
 
@@ -173,7 +219,6 @@
                     <div class="trend-bar">
                         <div class="trend-bar-fill" style="width: 58%;"></div>
                     </div>
-                    <div class="trend-range">Range: 3-9</div>
                 </div>
             </div>
 
@@ -184,18 +229,32 @@
                     <div class="trend-bar">
                         <div class="trend-bar-fill" style="width: 61%;"></div>
                     </div>
-                    <div class="trend-range">Range: 2-9</div>
                 </div>
             </div>
 
-            <div class="graph">
-                <div class="graph-bar" style="height: 50%;"></div>
-                <div class="graph-bar" style="height: 70%;"></div>
-                <div class="graph-bar" style="height: 40%;"></div>
-                <div class="graph-bar" style="height: 60%;"></div>
-                <div class="graph-bar" style="height: 80%;"></div>
-                <div class="graph-bar" style="height: 65%;"></div>
-                <div class="graph-bar" style="height: 70%;"></div>
+            <div class="graph-container">
+                <div class="graph-title">Last 7 Days</div>
+                <div class="graph-wrapper">
+                    <div class="graph-y-axis">Wellbeing Score</div>
+                    <div class="graph">
+                        <div class="graph-bar" style="height: 50%;"></div>
+                        <div class="graph-bar" style="height: 70%;"></div>
+                        <div class="graph-bar" style="height: 40%;"></div>
+                        <div class="graph-bar" style="height: 60%;"></div>
+                        <div class="graph-bar" style="height: 80%;"></div>
+                        <div class="graph-bar" style="height: 65%;"></div>
+                        <div class="graph-bar" style="height: 70%;"></div>
+                    </div>
+                    <div class="graph-x-axis">
+                        <div class="graph-x-label">Jan 24</div>
+                        <div class="graph-x-label">Jan 25</div>
+                        <div class="graph-x-label">Jan 26</div>
+                        <div class="graph-x-label">Jan 27</div>
+                        <div class="graph-x-label">Jan 28</div>
+                        <div class="graph-x-label">Jan 29</div>
+                        <div class="graph-x-label">Jan 30</div>
+                    </div>
+                </div>
             </div>
         </div>
 
