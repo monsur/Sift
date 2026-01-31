@@ -5,12 +5,18 @@
     box-sizing: border-box;
 }
 
+/* Typography - Import Inter font for UI */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-size: 16px;
     line-height: 1.6;
     color: #2c3e50;
     background: #f8f9fa;
     min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 /* Header */
@@ -30,16 +36,18 @@ body {
 }
 
 .logo {
-    font-size: 1.5em;
-    font-weight: 300;
+    font-size: 1.5rem;
+    font-weight: 600;
     color: #5e72e4;
-    letter-spacing: -0.5px;
+    letter-spacing: -0.03em;
 }
 
 .nav a {
-    color: #8898aa;
+    color: #718096;
     text-decoration: none;
-    font-size: 0.95em;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
     transition: color 0.2s;
 }
 
@@ -54,19 +62,62 @@ body {
     padding: 40px 30px;
 }
 
-/* Typography */
+/* Typography System */
+/* Type Scale: 1.25 ratio (Major Third) */
+
 h1 {
-    font-size: 1.8em;
-    font-weight: 300;
-    color: #32325d;
-    margin-bottom: 30px;
+    font-size: 2rem;
+    font-weight: 600;
+    color: #1a202c;
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
 }
 
 h2 {
-    font-size: 1.3em;
-    font-weight: 400;
-    color: #32325d;
-    margin-bottom: 25px;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 1.25rem;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+}
+
+h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+}
+
+h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 0.75rem;
+    line-height: 1.5;
+}
+
+p {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+/* Body text sizes */
+.text-lg {
+    font-size: 1.125rem;
+    line-height: 1.7;
+}
+
+.text-sm {
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+.text-xs {
+    font-size: 0.75rem;
+    line-height: 1.4;
 }
 
 /* Sections */
@@ -80,14 +131,15 @@ h2 {
 
 /* Buttons */
 .btn {
-    padding: 14px 32px;
+    padding: 0.875rem 2rem;
     border-radius: 6px;
-    font-size: 1em;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
     cursor: pointer;
     text-decoration: none;
     display: inline-block;
     transition: all 0.2s;
-    font-weight: 400;
     border: none;
 }
 
@@ -111,9 +163,11 @@ h2 {
 
 /* Date and Labels */
 .date-label {
-    color: #8898aa;
-    font-size: 0.9em;
-    margin-bottom: 25px;
+    color: #718096;
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    margin-bottom: 1.5rem;
 }
 
 /* Score Badge */
@@ -121,18 +175,21 @@ h2 {
     display: inline-block;
     background: #5e72e4;
     color: white;
-    padding: 2px 10px;
+    padding: 0.125rem 0.625rem;
     border-radius: 12px;
-    font-size: 0.85em;
-    margin-left: 8px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    margin-left: 0.5rem;
 }
 
 /* Helper Text */
 .helper-text {
-    color: #8898aa;
-    font-size: 0.9em;
-    margin-top: 15px;
-    line-height: 1.5;
+    color: #718096;
+    font-size: 0.875rem;
+    margin-top: 1rem;
+    line-height: 1.6;
+    font-weight: 400;
 }
 
 /* Info/Note Boxes */
@@ -145,16 +202,17 @@ h2 {
 }
 
 .info-box h3 {
-    font-size: 1em;
-    font-weight: 500;
-    color: #32325d;
-    margin-bottom: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 0.625rem;
+    letter-spacing: -0.01em;
 }
 
 .info-box p {
-    color: #8898aa;
-    font-size: 0.95em;
-    line-height: 1.6;
+    color: #4a5568;
+    font-size: 0.9375rem;
+    line-height: 1.7;
 }
 
 /* TLDR Section */
@@ -167,62 +225,66 @@ h2 {
 }
 
 .tldr-label {
-    font-size: 0.85em;
-    font-weight: 500;
-    color: #8898aa;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #718096;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 8px;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.5rem;
 }
 
 .tldr-text {
-    color: #32325d;
-    font-size: 1.05em;
-    line-height: 1.6;
+    color: #2d3748;
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    font-weight: 500;
 }
 
-/* Narrative */
+/* Narrative - Serif font for reflection content */
 .narrative {
-    color: #32325d;
+    font-family: Georgia, 'Times New Roman', serif;
+    color: #1a202c;
     line-height: 1.8;
-    font-size: 1.05em;
-    margin-bottom: 30px;
+    font-size: 1.125rem;
+    margin-bottom: 2rem;
+    font-weight: 400;
 }
 
 /* Key Moments */
 .key-moments {
     list-style: none;
-    margin-bottom: 30px;
+    margin-bottom: 2rem;
 }
 
 .key-moments li {
-    padding: 12px 0;
-    padding-left: 30px;
+    padding: 0.75rem 0;
+    padding-left: 1.875rem;
     position: relative;
-    color: #32325d;
-    line-height: 1.6;
+    color: #2d3748;
+    line-height: 1.7;
+    font-size: 1rem;
 }
 
 .key-moments li:before {
     content: "•";
     position: absolute;
-    left: 10px;
+    left: 0.625rem;
     color: #5e72e4;
-    font-weight: bold;
-    font-size: 1.2em;
+    font-weight: 700;
+    font-size: 1.25rem;
 }
 
 /* Form Elements */
 .entry-textarea {
     width: 100%;
     min-height: 300px;
-    padding: 20px;
-    border: 1px solid #e9ecef;
+    padding: 1.25rem;
+    border: 1px solid #e2e8f0;
     border-radius: 6px;
-    font-size: 1.05em;
-    font-family: inherit;
-    line-height: 1.7;
-    color: #32325d;
+    font-size: 1rem;
+    font-family: Georgia, 'Times New Roman', serif;
+    line-height: 1.75;
+    color: #1a202c;
     resize: vertical;
     transition: border-color 0.2s;
 }
@@ -233,7 +295,8 @@ h2 {
 }
 
 .entry-textarea::placeholder {
-    color: #adb5bd;
+    color: #a0aec0;
+    font-style: italic;
 }
 
 /* Actions */
@@ -248,8 +311,9 @@ h2 {
 .read-more {
     color: #5e72e4;
     text-decoration: none;
-    font-size: 0.9em;
-    font-weight: 500;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
 }
 
 .read-more:hover {
@@ -259,14 +323,15 @@ h2 {
 /* View All Links */
 .view-all {
     text-align: center;
-    margin-top: 20px;
+    margin-top: 1.25rem;
 }
 
 .view-all a {
     color: #5e72e4;
     text-decoration: none;
-    font-size: 0.95em;
-    font-weight: 500;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
 }
 
 .view-all a:hover {
