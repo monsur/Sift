@@ -1774,6 +1774,574 @@ Remember: You're helping them see their day clearly, with balance and perspectiv
 
 ---
 
+## 12. Implementation Plan
+
+This section breaks down the MVP development into logical phases with clear milestones and success criteria. Phases are designed to deliver working functionality incrementally, allowing for testing and iteration along the way.
+
+### 12.1 Development Phases Overview
+
+| Phase | Focus | Key Deliverable | Dependencies |
+|-------|-------|----------------|--------------|
+| **0** | Project Setup | Working monorepo with tooling | None |
+| **1** | Auth & Database | User can sign up/login | Phase 0 |
+| **2** | Basic Entries | User can create text entries | Phase 1 |
+| **3** | AI Integration | Full refinement flow works | Phase 2 |
+| **4** | Dashboard | User can view history & insights | Phase 2 |
+| **5** | Polish & Launch | Voice input, analytics, export | Phases 3 & 4 |
+
+---
+
+### 12.2 Phase 0: Project Setup & Foundation
+
+**Goal:** Establish development environment and project structure
+
+**Key Deliverables:**
+- ✅ Monorepo initialized with all three packages
+- ✅ Development workflow functional (run frontend + backend together)
+- ✅ Basic CI/CD pipeline (linting, type checking)
+- ✅ Database connected and migrated
+
+**Tasks:**
+
+**0.1 Initialize Monorepo**
+- Create root `package.json` with workspace scripts
+- Set up `pnpm-workspace.yaml`
+- Configure root ESLint and Prettier
+- Create `.gitignore`
+
+**0.2 Set Up Frontend Package**
+- Initialize Vite + React + TypeScript project
+- Install dependencies: React Router, TanStack Query, Zustand, Axios
+- Install Tailwind CSS and configure
+- Set up shadcn/ui (copy base components)
+- Create basic folder structure (src/components, src/pages, etc.)
+- Configure `vite.config.ts` with proper aliases
+
+**0.3 Set Up Backend Package**
+- Initialize Node.js + TypeScript project
+- Install dependencies: Fastify, Supabase client, Anthropic SDK, Zod
+- Create folder structure (src/routes, src/services, etc.)
+- Configure `tsconfig.json` with strict settings
+- Set up `app.ts` and `server.ts` entry points
+- Configure environment variables with `.env.example`
+
+**0.4 Set Up Shared Package**
+- Initialize TypeScript package
+- Create folder structure (src/types, src/schemas, src/constants)
+- Set up barrel exports in `index.ts`
+- Configure `tsconfig.json` for library compilation
+
+**0.5 Database Setup**
+- Create Supabase project (free tier)
+- Run initial migration (user_profiles, entries, analytics tables)
+- Set up Row Level Security (RLS) policies
+- Create seed data for development
+- Test database connection from backend
+
+**0.6 Development Workflow**
+- Configure root `dev` script to run frontend + backend concurrently
+- Set up hot reload for both frontend and backend
+- Test type sharing between packages
+- Verify imports work correctly (shared → frontend/backend)
+
+**Success Criteria:**
+- ✅ `pnpm dev` starts both frontend and backend
+- ✅ Frontend accessible at `http://localhost:5173`
+- ✅ Backend accessible at `http://localhost:3000`
+- ✅ Types from shared package import correctly
+- ✅ Database connection successful
+- ✅ Linting and type-checking pass
+
+---
+
+### 12.3 Phase 1: Authentication & User Profile
+
+**Goal:** Users can sign up, log in, and access protected routes
+
+**Key Deliverables:**
+- ✅ User registration and login working
+- ✅ JWT authentication implemented
+- ✅ Protected routes on frontend
+- ✅ User profile created on signup
+
+**Tasks:**
+
+**1.1 Backend: Auth Endpoints**
+- Implement `POST /api/auth/signup` (uses Supabase Auth)
+- Implement `POST /api/auth/login`
+- Implement `POST /api/auth/logout`
+- Implement `POST /api/auth/refresh`
+- Create auth middleware for JWT validation
+- Add error handling for auth failures
+
+**1.2 Backend: Profile Endpoints**
+- Implement `GET /api/profile`
+- Implement `PATCH /api/profile`
+- Create user profile on signup (trigger or service)
+- Initialize default settings (theme, default_refine_enabled)
+
+**1.3 Shared: Auth Types & Schemas**
+- Define `User`, `UserProfile`, `UserSettings` types
+- Create Zod schemas for signup/login requests
+- Define auth response types (tokens, user data)
+
+**1.4 Frontend: Auth Pages**
+- Create `LoginPage.tsx` with form
+- Create `SignupPage.tsx` with form
+- Add form validation (client-side with Zod)
+- Style with Tailwind + shadcn/ui components
+
+**1.5 Frontend: Auth State Management**
+- Create `authStore.ts` (Zustand) for tokens and user
+- Create `useAuth.ts` hook for login/signup/logout
+- Implement token persistence (localStorage)
+- Implement automatic token refresh
+- Create axios interceptor for adding auth headers
+
+**1.6 Frontend: Protected Routes**
+- Create `ProtectedRoute.tsx` component
+- Wrap authenticated routes with protection
+- Redirect to login if not authenticated
+- Create basic `Layout.tsx` with header
+
+**Success Criteria:**
+- ✅ User can sign up with email/password
+- ✅ User can log in and receive JWT token
+- ✅ Token stored and sent with API requests
+- ✅ Protected routes redirect to login when not authenticated
+- ✅ User profile created in database on signup
+- ✅ Token refresh works automatically
+
+---
+
+### 12.4 Phase 2: Basic Entry Creation (Text Only)
+
+**Goal:** Users can create and save simple text entries without AI refinement
+
+**Key Deliverables:**
+- ✅ Entry creation flow (text input only)
+- ✅ "Save" button stores entry immediately
+- ✅ Entry appears in list after creation
+- ✅ Manual score selection (1-10 slider)
+
+**Tasks:**
+
+**2.1 Shared: Entry Types & Schemas**
+- Define `Entry`, `EntryCreate`, `EntryUpdate` types
+- Create Zod schemas for entry validation
+- Define entry list response types (with pagination)
+
+**2.2 Backend: Entry Endpoints**
+- Implement `POST /api/entries` (create entry)
+- Implement `GET /api/entries` (list with pagination)
+- Implement `GET /api/entries/:id` (get single entry)
+- Implement `PATCH /api/entries/:id` (update score)
+- Implement `DELETE /api/entries/:id`
+- Create entry repository with database operations
+- Create entry service with business logic
+
+**2.3 Frontend: Entry Creation UI**
+- Create `NewEntryPage.tsx`
+- Create `EntryForm.tsx` component (textarea for entry)
+- Create `ScoreSlider.tsx` component (1-10 slider with labels)
+- Add "Save" button (no "Refine" yet)
+- Show loading state during save
+- Redirect to entry detail or list after save
+
+**2.4 Frontend: Entry State Management**
+- Create `useEntries.ts` hook with TanStack Query
+- Implement mutations for create/update/delete
+- Implement queries for list and single entry
+- Configure cache invalidation on mutations
+
+**2.5 Frontend: Entry List & Detail**
+- Create `HistoryPage.tsx` with entry list
+- Create `EntryCard.tsx` component (shows TLDR, score, date)
+- Create `EntryDetailPage.tsx` (shows full entry)
+- Add pagination controls to list
+- Add delete confirmation dialog
+
+**2.6 Entry Date Handling**
+- Default entry_date to today
+- Allow user to change date (date picker)
+- Handle "entry already exists for date" in UI (soft check)
+- Show warning if user tries to create duplicate
+
+**Success Criteria:**
+- ✅ User can write text entry and save it
+- ✅ Entry stored in database with all required fields
+- ✅ Entry appears in list immediately after creation
+- ✅ User can view full entry details
+- ✅ User can update score on existing entry
+- ✅ User can delete entry
+- ✅ Pagination works for entry list
+
+---
+
+### 12.5 Phase 3: AI Integration (Conversation & Summary)
+
+**Goal:** Complete AI refinement flow - conversation, summary generation, scoring
+
+**Key Deliverables:**
+- ✅ "Refine" button starts AI conversation
+- ✅ Multi-turn conversation works
+- ✅ AI generates summary with score
+- ✅ User can accept or adjust score
+
+**Tasks:**
+
+**3.1 Backend: AI Service Setup**
+- Install and configure Anthropic SDK
+- Create `ai.service.ts` base class
+- Implement error handling for AI API failures
+- Add retry logic for transient failures
+- Configure API key from environment variables
+
+**3.2 Backend: Conversation AI**
+- Create `conversationAI.ts` service
+- Implement conversation prompt from PRD (section 6.2)
+- Implement `POST /api/conversation/start` endpoint
+- Implement `POST /api/conversation/message` endpoint
+- Load historical context (last 7-14 days) for AI
+- Detect "DONE_ASKING_QUESTIONS" signal
+- Store conversation transcript in entry
+
+**3.3 Backend: Summary AI**
+- Create `summaryAI.ts` service
+- Implement summary prompt from PRD (section 6.3)
+- Implement `POST /api/summary/generate` endpoint
+- Parse AI response into structured format (narrative, key_moments, tldr, score)
+- Calculate token usage and cost
+- Implement `POST /api/summary/finalize` endpoint
+
+**3.4 Shared: Conversation & Summary Types**
+- Define `ConversationMessage` type
+- Define `ConversationResponse` type
+- Define `SummaryResponse` type
+- Create validation schemas for AI responses
+
+**3.5 Frontend: Chat Interface**
+- Create `ChatInterface.tsx` component
+- Create `ChatMessage.tsx` component (user vs AI styling)
+- Create `ChatInput.tsx` component
+- Add "Refine" button to entry form
+- Show/hide chat based on user choice
+
+**3.6 Frontend: Conversation State**
+- Create `useConversation.ts` hook
+- Create `conversationStore.ts` for in-progress state
+- Handle conversation flow (start → messages → complete)
+- Store messages locally as user types
+- Handle "Save" mid-conversation (generate quick summary)
+
+**3.7 Frontend: Summary Display**
+- Display AI-generated summary (narrative, key moments, TLDR)
+- Show AI suggested score with explanation
+- Allow user to edit summary before finalizing
+- Allow user to adjust score with optional justification
+- Show final summary in entry detail view
+
+**3.8 Context Service**
+- Implement `context.service.ts` to retrieve recent entries
+- Load last 7-14 days of entries
+- Format for AI context (only relevant fields)
+- Cache context briefly to reduce database queries
+
+**3.9 Crisis Detection**
+- Implement basic keyword detection in conversation
+- Show crisis resources banner when triggered
+- Allow user to continue or exit
+- Log crisis detection events
+
+**Success Criteria:**
+- ✅ User can click "Refine" and start conversation
+- ✅ AI asks relevant questions based on entry
+- ✅ User can respond and have multi-turn conversation
+- ✅ AI recognizes when conversation is complete
+- ✅ AI generates summary with narrative, key moments, TLDR
+- ✅ AI suggests score with explanation
+- ✅ User can adjust score and add justification
+- ✅ Final entry includes all conversation data
+- ✅ Token usage and cost tracked
+- ✅ Crisis detection shows appropriate resources
+
+---
+
+### 12.6 Phase 4: Dashboard & Historical Insights
+
+**Goal:** Users can view their history and understand patterns over time
+
+**Key Deliverables:**
+- ✅ Dashboard with stats and trends
+- ✅ Score timeline graph
+- ✅ Entry browsing and filtering
+
+**Tasks:**
+
+**4.1 Backend: Dashboard Endpoints**
+- Implement `GET /api/dashboard/stats` endpoint
+- Calculate aggregates (averages, min/max, distribution)
+- Calculate streaks (current, longest)
+- Implement score trend analysis (improving/declining/stable)
+- Implement `GET /api/dashboard/timeline` endpoint
+- Generate timeline data for graphing
+
+**4.2 Backend: Stats Caching**
+- Update user_profiles cached stats on entry creation
+- Recalculate averages (7-day, 30-day, all-time)
+- Update streak counts
+- Optimize queries for large datasets
+
+**4.3 Frontend: Dashboard Page**
+- Create `DashboardPage.tsx`
+- Create `StatsCard.tsx` component (total entries, streak, averages)
+- Create `ScoreChart.tsx` component (line chart of scores over time)
+- Create `RecentEntries.tsx` component (last 5-10 entries)
+- Add "Write Today's Entry" CTA button
+
+**4.4 Frontend: Chart Library**
+- Choose and install chart library (Chart.js, Recharts, or similar)
+- Create reusable chart wrapper component
+- Style charts to match app design
+- Add responsive behavior for mobile
+
+**4.5 Frontend: History Filtering**
+- Add date range filter to `HistoryPage.tsx`
+- Add sorting options (date, score)
+- Add search by content (optional for MVP)
+- Update API calls to use filters
+
+**4.6 Frontend: Entry Detail Enhancements**
+- Show relative score context ("above your 30-day average")
+- Display cost data (for debugging)
+- Show AI model used
+- Link to previous/next entry
+
+**4.7 User Profile Settings**
+- Create `SettingsPage.tsx`
+- Add theme toggle (light/dark/system)
+- Add default_refine_enabled toggle
+- Save settings via `PATCH /api/profile`
+
+**Success Criteria:**
+- ✅ Dashboard loads and shows accurate stats
+- ✅ Score chart displays correctly
+- ✅ Stats update after creating new entry
+- ✅ Streak calculation accurate
+- ✅ User can filter/sort entries
+- ✅ Relative score context shown
+- ✅ Settings page works and persists changes
+- ✅ Theme switching works
+
+---
+
+### 12.7 Phase 5: Polish & Launch Preparation
+
+**Goal:** Add remaining features and prepare for launch
+
+**Key Deliverables:**
+- ✅ Voice input functional
+- ✅ Analytics tracking implemented
+- ✅ Data export working
+- ✅ Error handling polished
+- ✅ MVP ready for use
+
+**Tasks:**
+
+**5.1 Voice Input**
+- Implement `useVoiceInput.ts` hook with Web Speech API
+- Add voice recording button to entry form
+- Show recording indicator while active
+- Display transcription in real-time or after completion
+- Allow user to edit transcription
+- Store voice metadata (duration, input method)
+
+**5.2 Analytics Implementation**
+- Implement `POST /api/analytics/events` endpoint (batch)
+- Create `analytics.ts` helper on frontend
+- Add analytics calls for key events:
+  - Page views
+  - Entry creation (started, saved, refined)
+  - Conversation interactions
+  - Score adjustments
+  - Settings changes
+- Batch events and send periodically
+
+**5.3 Data Export**
+- Implement `GET /api/export/entries` (JSON and CSV)
+- Create export UI in settings
+- Add "Download my data" button
+- Format CSV with readable columns
+- Implement `DELETE /api/export/delete-all`
+- Add confirmation dialog for delete all
+
+**5.4 Error Handling & UX**
+- Add global error boundary on frontend
+- Improve error messages (user-friendly)
+- Add loading states to all async operations
+- Add empty states (no entries yet, etc.)
+- Add success toasts for actions
+- Handle offline state gracefully
+
+**5.5 Mobile Responsiveness**
+- Test all pages on mobile viewport
+- Fix any layout issues
+- Ensure chat interface works on mobile
+- Test touch interactions
+- Optimize for smaller screens
+
+**5.6 Performance Optimization**
+- Lazy load pages (React.lazy)
+- Optimize images (if any)
+- Minimize bundle size
+- Add loading skeletons
+- Test API response times
+
+**5.7 Security Audit**
+- Review all API endpoints for auth requirements
+- Ensure RLS policies cover all tables
+- Test JWT expiration and refresh
+- Validate all user inputs (Zod schemas)
+- Review environment variable handling
+- Test rate limiting
+
+**5.8 Documentation**
+- Update README with setup instructions
+- Document environment variables
+- Add API documentation (Swagger)
+- Write contribution guidelines (if open source)
+- Document deployment process
+
+**5.9 Testing**
+- Manual testing of all flows
+- Test with various entry lengths
+- Test conversation edge cases (very long conversations)
+- Test error scenarios (AI API down, network errors)
+- Test on different browsers
+- Load testing (optional)
+
+**5.10 Deployment**
+- Deploy backend to Railway
+- Deploy frontend to Vercel
+- Configure environment variables in production
+- Set up custom domain (optional)
+- Configure CORS for production
+- Test production deployment end-to-end
+
+**Success Criteria:**
+- ✅ Voice input works and transcribes accurately
+- ✅ Analytics events tracked correctly
+- ✅ Data export produces valid JSON/CSV
+- ✅ Delete all data works correctly
+- ✅ Error handling is user-friendly
+- ✅ App works well on mobile devices
+- ✅ Performance is acceptable (< 2s page loads)
+- ✅ Security review passed
+- ✅ Documentation complete
+- ✅ Production deployment successful
+- ✅ **App is usable for daily reflection**
+
+---
+
+### 12.8 Phase Dependencies
+
+```
+Phase 0 (Setup)
+    ↓
+Phase 1 (Auth)
+    ↓
+Phase 2 (Basic Entries) ←────┐
+    ↓                         │
+    ├→ Phase 3 (AI)          │
+    │                         │
+    └→ Phase 4 (Dashboard)   │
+         ↓          ↓         │
+         └──────────┴→ Phase 5 (Polish)
+```
+
+**Critical Path:**
+Phase 0 → Phase 1 → Phase 2 → Phase 3 → Phase 5
+
+**Can be done in parallel:**
+- Phase 3 (AI) and Phase 4 (Dashboard) after Phase 2 is complete
+
+---
+
+### 12.9 MVP Definition & Launch Criteria
+
+**Minimum Viable Product (MVP) includes:**
+
+**Core Functionality:**
+- ✅ User authentication (signup, login, logout)
+- ✅ Text entry creation
+- ✅ AI conversation refinement (optional, user choice)
+- ✅ AI summary generation with scoring
+- ✅ Entry list and detail views
+- ✅ Basic dashboard with stats and timeline
+
+**Quality Requirements:**
+- ✅ No critical bugs
+- ✅ Auth works reliably
+- ✅ AI responses are coherent and helpful
+- ✅ Data persists correctly
+- ✅ Mobile responsive
+- ✅ Error handling in place
+
+**Nice-to-have (can launch without):**
+- Voice input (add post-launch)
+- Advanced analytics (add post-launch)
+- Data export (important but not day 1)
+
+**Launch Checklist:**
+- [ ] All Phase 0-3 tasks complete
+- [ ] Phase 4 dashboard works
+- [ ] Manual testing passed
+- [ ] Deployed to production
+- [ ] Single user (you) can use daily
+- [ ] No data loss issues
+- [ ] Performance acceptable
+
+**Post-Launch Iteration:**
+- Collect feedback from daily use
+- Fix bugs as they appear
+- Add voice input (Phase 5)
+- Add analytics tracking
+- Refine AI prompts based on usage
+- Optimize scoring calibration
+
+---
+
+### 12.10 Risk Mitigation
+
+**Technical Risks:**
+
+| Risk | Impact | Mitigation |
+|------|--------|------------|
+| AI API rate limits or costs exceed budget | High | Monitor costs daily, implement rate limiting, cache responses where possible |
+| Conversation flow gets stuck or loops | Medium | Add max turn limit, allow user to skip to summary anytime |
+| Database fills up quickly | Medium | Monitor storage, implement data archiving, upgrade if needed |
+| Auth token issues | High | Extensive testing, implement refresh logic early, clear error messages |
+| Performance issues with many entries | Medium | Optimize queries, add indexes, implement pagination everywhere |
+
+**Product Risks:**
+
+| Risk | Impact | Mitigation |
+|------|--------|------------|
+| AI questions feel intrusive or unhelpful | High | Extensive prompt testing, allow users to skip, iterate based on feedback |
+| Scoring system feels arbitrary | Medium | Clear guidance, allow adjustments, explain AI reasoning |
+| User doesn't return after first use | High | Focus on frictionless UX, make value clear immediately, daily reminders (future) |
+| Users don't trust AI with personal thoughts | High | Emphasize privacy, store data securely, allow raw entry save without AI |
+
+**Mitigation Strategies:**
+- Start with single user (you) to catch issues early
+- Iterate on AI prompts based on real usage
+- Monitor costs and usage patterns closely
+- Keep scope small for MVP - add features after validation
+- Regular backups of database
+- Clear error messages and fallbacks
+
+---
+
 ## Appendix: Key Design Decisions
 
 ### Why Two Separate AI Prompts?
