@@ -719,6 +719,420 @@ sift/
 
 ---
 
+### 5.11 API Contract
+
+**Note:** This API contract is a starting point and will evolve as we build and learn. The PRD is a living document.
+
+#### API Overview
+
+**Base URL:**
+- Production: `https://api.sift.app`
+- Development: `http://localhost:3000`
+
+**Authentication:** JWT Bearer tokens (from Supabase Auth)
+```
+Authorization: Bearer <jwt_token>
+```
+
+**Content Type:** `application/json`
+
+**Standard Error Response:**
+```json
+{
+  "error": {
+    "code": "ERROR_CODE",
+    "message": "Human-readable error message",
+    "details": {}
+  }
+}
+```
+
+---
+
+#### 5.11.1 Authentication Endpoints
+
+**POST /api/auth/signup** - Register new user
+```typescript
+Request: {
+  email: string,
+  password: string
+}
+
+Response: 201 Created
+{
+  user: { id: string, email: string, created_at: string },
+  session: { access_token: string, refresh_token: string, expires_at: number }
+}
+```
+
+**POST /api/auth/login** - Login existing user
+```typescript
+Request: { email: string, password: string }
+Response: 200 OK (same as signup)
+```
+
+**POST /api/auth/logout** - Logout current user
+```typescript
+Request: (empty, uses Authorization header)
+Response: 200 OK { message: string }
+```
+
+**POST /api/auth/refresh** - Refresh access token
+```typescript
+Request: { refresh_token: string }
+Response: 200 OK { access_token: string, expires_at: number }
+```
+
+---
+
+#### 5.11.2 User Profile Endpoints
+
+**GET /api/profile** - Get current user's profile
+```typescript
+Response: 200 OK
+{
+  id: string,
+  email: string,
+  created_at: string,
+  last_login_at: string,
+  login_count: number,
+  settings: {
+    default_refine_enabled: boolean,
+    theme: "light" | "dark" | "system"
+  },
+  stats: {
+    total_entries: number,
+    current_streak: number,
+    longest_streak: number,
+    last_entry_date: string,
+    avg_score_7_days: number,
+    avg_score_30_days: number,
+    avg_score_all_time: number
+  }
+}
+```
+
+**PATCH /api/profile** - Update user settings
+```typescript
+Request: {
+  settings: {
+    default_refine_enabled?: boolean,
+    theme?: "light" | "dark" | "system"
+  }
+}
+Response: 200 OK (returns updated profile)
+```
+
+---
+
+#### 5.11.3 Entry Endpoints
+
+**POST /api/entries** - Create new entry
+```typescript
+Request: {
+  entry_date: string,        // ISO date
+  raw_entry: string,
+  entry_type: "text" | "voice",
+  voice_input_metadata?: {
+    duration_seconds: number,
+    started_at: string,
+    completed_at: string
+  }
+}
+
+Response: 201 Created
+{
+  id: string,
+  user_id: string,
+  entry_date: string,
+  raw_entry: string,
+  entry_type: "text" | "voice",
+  skipped_refinement: boolean,
+  created_at: string,
+  updated_at: string
+}
+```
+
+**GET /api/entries** - List entries with pagination
+```typescript
+Query Parameters:
+  ?limit=20          // default: 20, max: 100
+  &offset=0          // default: 0
+  &start_date=YYYY-MM-DD
+  &end_date=YYYY-MM-DD
+  &sort=date_desc    // date_asc, date_desc, score_asc, score_desc
+
+Response: 200 OK
+{
+  entries: Array<{
+    id: string,
+    entry_date: string,
+    tldr: string,
+    final_score: number,
+    entry_type: "text" | "voice",
+    created_at: string
+  }>,
+  pagination: {
+    total: number,
+    limit: number,
+    offset: number,
+    has_more: boolean
+  }
+}
+```
+
+**GET /api/entries/:id** - Get single entry (full details)
+```typescript
+Response: 200 OK
+{
+  id: string,
+  user_id: string,
+  entry_date: string,
+  created_at: string,
+  updated_at: string,
+
+  // Raw input
+  raw_entry: string,
+  entry_type: "text" | "voice",
+  voice_input_metadata: object | null,
+
+  // Conversation
+  conversation_transcript: Array<{
+    role: "user" | "assistant",
+    content: string,
+    timestamp: string
+  }>,
+  skipped_refinement: boolean,
+  refinement_started_at: string | null,
+  refinement_completed_at: string | null,
+
+  // Refined output
+  refined_narrative: string,
+  key_moments: string[],
+  tldr: string,
+
+  // Scoring
+  ai_suggested_score: number,
+  ai_score_explanation: string,
+  final_score: number,
+  user_adjusted_score: boolean,
+  user_score_justification: string | null,
+
+  // AI metadata
+  ai_model_used: string,
+  conversation_token_count: number,
+  summary_token_count: number,
+  total_cost_usd: number
+}
+```
+
+**PATCH /api/entries/:id** - Update entry
+```typescript
+Request: {
+  final_score?: number,
+  user_score_justification?: string
+}
+Response: 200 OK (returns updated entry)
+```
+
+**DELETE /api/entries/:id** - Delete entry
+```typescript
+Response: 204 No Content
+```
+
+---
+
+#### 5.11.4 AI Conversation Endpoints
+
+**POST /api/conversation/start** - Start refinement conversation
+```typescript
+Request: {
+  entry_id: string,
+  raw_entry: string
+}
+
+Response: 200 OK
+{
+  should_refine: boolean,
+  message: string,            // AI's response or "Your summary looks good as is"
+  conversation_id: string
+}
+```
+
+**POST /api/conversation/message** - Send message in conversation
+```typescript
+Request: {
+  conversation_id: string,
+  entry_id: string,
+  message: string
+}
+
+Response: 200 OK
+{
+  message: string | null,     // AI's next question or null if complete
+  is_complete: boolean,
+  ready_for_summary?: boolean
+}
+```
+
+---
+
+#### 5.11.5 Summary Generation Endpoints
+
+**POST /api/summary/generate** - Generate summary from conversation
+```typescript
+Request: {
+  entry_id: string,
+  conversation_id: string
+}
+
+Response: 200 OK
+{
+  refined_narrative: string,
+  key_moments: string[],
+  tldr: string,
+  ai_suggested_score: number,
+  ai_score_explanation: string,
+  ai_model_used: string,
+  token_count: number,
+  cost_usd: number
+}
+```
+
+**POST /api/summary/finalize** - Save final summary with user's score
+```typescript
+Request: {
+  entry_id: string,
+  final_score: number,
+  user_adjusted_score: boolean,
+  user_score_justification?: string
+}
+
+Response: 200 OK (returns complete entry)
+```
+
+---
+
+#### 5.11.6 Dashboard & Analytics Endpoints
+
+**GET /api/dashboard/stats** - Get dashboard statistics
+```typescript
+Query Parameters:
+  ?period=30d    // "7d", "30d", "all"
+
+Response: 200 OK
+{
+  period: string,
+  entries: {
+    total: number,
+    with_refinement: number,
+    without_refinement: number
+  },
+  scores: {
+    average: number,
+    min: number,
+    max: number,
+    distribution: { [range: string]: number }
+  },
+  trends: {
+    score_trend: "improving" | "declining" | "stable",
+    avg_conversation_length: number
+  },
+  streak: {
+    current: number,
+    longest: number
+  }
+}
+```
+
+**GET /api/dashboard/timeline** - Get score timeline for graphing
+```typescript
+Query Parameters:
+  ?start_date=YYYY-MM-DD
+  &end_date=YYYY-MM-DD
+  &granularity=day    // "day" or "week"
+
+Response: 200 OK
+{
+  timeline: Array<{
+    date: string,
+    score: number | null,
+    has_entry: boolean
+  }>
+}
+```
+
+**POST /api/analytics/events** - Log analytics events (batch)
+```typescript
+Request: {
+  session_id: string,
+  events: Array<{
+    event_type: string,
+    event_category: string,
+    event_data: object,
+    timestamp: string
+  }>
+}
+
+Response: 202 Accepted
+{
+  received: number
+}
+```
+
+---
+
+#### 5.11.7 Data Export Endpoints
+
+**GET /api/export/entries** - Export all entries
+```typescript
+Query Parameters:
+  ?format=json    // "json" or "csv"
+
+Response: 200 OK (JSON)
+{
+  export_date: string,
+  total_entries: number,
+  entries: Array<Entry>
+}
+
+Response: 200 OK (CSV)
+Content-Type: text/csv
+Content-Disposition: attachment; filename="sift-export-YYYY-MM-DD.csv"
+```
+
+**DELETE /api/export/delete-all** - Delete all user data
+```typescript
+Request: {
+  confirm: "DELETE_ALL_MY_DATA"
+}
+
+Response: 200 OK
+{
+  message: string,
+  entries_deleted: number,
+  events_deleted: number
+}
+```
+
+---
+
+#### 5.11.8 Error Codes
+
+| HTTP Status | Error Code | Description |
+|-------------|------------|-------------|
+| 400 | VALIDATION_ERROR | Request validation failed |
+| 401 | UNAUTHORIZED | Missing or invalid auth token |
+| 403 | FORBIDDEN | User doesn't have access to resource |
+| 404 | NOT_FOUND | Resource not found |
+| 409 | CONFLICT | Entry already exists for date (soft check) |
+| 422 | UNPROCESSABLE_ENTITY | Invalid data (e.g., score out of range) |
+| 429 | RATE_LIMIT_EXCEEDED | Too many requests |
+| 500 | INTERNAL_ERROR | Server error |
+| 503 | SERVICE_UNAVAILABLE | AI service temporarily down |
+
+---
+
 ## 6. System Prompts
 
 ### 6.1 Core Principles (Included in Both Prompts)
