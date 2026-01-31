@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entry Saved - Sift</title>
+    <link rel="stylesheet" href="shared.css">
+    <style>
+        /* Entry saved confirmation styles */
+        .confirmation-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 80px 30px;
+            text-align: center;
+        }
+
+        .confirmation-card {
+            background: white;
+            padding: 60px 50px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .checkmark {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 2rem;
+            background: #3B82F6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+        }
+
+        .confirmation-title {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: #1a202c;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .confirmation-date {
+            font-size: 1rem;
+            color: #718096;
+            margin-bottom: 2.5rem;
+            font-weight: 500;
+        }
+
+        .streak-section {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 8px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .streak-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #3B82F6;
+            margin-bottom: 0.5rem;
+            line-height: 1;
+        }
+
+        .streak-label {
+            font-size: 1.125rem;
+            color: #2d3748;
+            font-weight: 500;
+            margin-bottom: 0.75rem;
+        }
+
+        .streak-encouragement {
+            font-size: 0.9375rem;
+            color: #4a5568;
+            line-height: 1.6;
+            font-style: italic;
+        }
+
+        /* Optional insight section */
+        .insight-section {
+            background: #fef3c7;
+            border: 1px solid #fde68a;
+            border-radius: 8px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+
+        .insight-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #92400e;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+        }
+
+        .insight-text {
+            font-size: 1rem;
+            color: #78350f;
+            line-height: 1.6;
+        }
+
+        .btn-continue {
+            padding: 1rem 3rem;
+            font-size: 1.0625rem;
+            margin-top: 1rem;
+        }
+
+        /* Subtle animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .confirmation-card {
+            animation: fadeInUp 0.4s ease-out;
+        }
+
+        .checkmark {
+            animation: fadeInUp 0.4s ease-out 0.1s both;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">Sift</div>
+            <nav class="nav">
+                <a href="index.html">← Back to Guide</a>
+            </nav>
+        </div>
+    </div>
+
+    <div class="confirmation-container">
+        <div class="confirmation-card">
+            <div class="checkmark">✓</div>
+
+            <h1 class="confirmation-title">Entry Saved</h1>
+            <div class="confirmation-date">January 31, 2026</div>
+
+            <!-- Streak section (always shown if user has a streak) -->
+            <div class="streak-section">
+                <div class="streak-number">5</div>
+                <div class="streak-label">Days in a row</div>
+                <div class="streak-encouragement">
+                    You're building a practice of self-awareness
+                </div>
+            </div>
+
+            <!-- Optional insight section (shown when there's a meaningful pattern) -->
+            <div class="insight-section">
+                <div class="insight-label">Pattern Notice</div>
+                <div class="insight-text">
+                    Your average score this week is 6.4, up from 5.8 last week. You're trending upward.
+                </div>
+            </div>
+
+            <a href="dashboard.html" class="btn btn-primary btn-continue">Back to Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>

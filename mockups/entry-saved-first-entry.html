@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entry Saved - Sift</title>
+    <link rel="stylesheet" href="shared.css">
+    <style>
+        /* Entry saved confirmation styles */
+        .confirmation-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 80px 30px;
+            text-align: center;
+        }
+
+        .confirmation-card {
+            background: white;
+            padding: 60px 50px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .checkmark {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 2rem;
+            background: #3B82F6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+        }
+
+        .confirmation-title {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: #1a202c;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .confirmation-date {
+            font-size: 1rem;
+            color: #718096;
+            margin-bottom: 2.5rem;
+            font-weight: 500;
+        }
+
+        .welcome-section {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 8px;
+            padding: 2rem 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .welcome-title {
+            font-size: 1.25rem;
+            color: #1a202c;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .welcome-text {
+            font-size: 0.9375rem;
+            color: #4a5568;
+            line-height: 1.7;
+        }
+
+        .btn-continue {
+            padding: 1rem 3rem;
+            font-size: 1.0625rem;
+            margin-top: 1rem;
+        }
+
+        /* Subtle animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .confirmation-card {
+            animation: fadeInUp 0.4s ease-out;
+        }
+
+        .checkmark {
+            animation: fadeInUp 0.4s ease-out 0.1s both;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">Sift</div>
+            <nav class="nav">
+                <a href="index.html">← Back to Guide</a>
+            </nav>
+        </div>
+    </div>
+
+    <div class="confirmation-container">
+        <div class="confirmation-card">
+            <div class="checkmark">✓</div>
+
+            <h1 class="confirmation-title">Your First Entry is Saved</h1>
+            <div class="confirmation-date">January 31, 2026</div>
+
+            <!-- Welcome section for first-time users -->
+            <div class="welcome-section">
+                <div class="welcome-title">You've taken the first step</div>
+                <div class="welcome-text">
+                    Reflecting on your day helps you notice patterns and gain perspective over time. The more you use Sift, the clearer these patterns become.
+                </div>
+            </div>
+
+            <a href="dashboard.html" class="btn btn-primary btn-continue">View Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>
