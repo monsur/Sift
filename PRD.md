@@ -367,57 +367,355 @@ TLDR: Neutral day, felt tired but got through meetings.
 
 ## 5. Technical Architecture
 
-### 5.1 Platform
-**Web-based application** (responsive, mobile-friendly)
+### 5.1 Architecture Overview
 
-**Rationale:**
-- Single codebase
-- No app store friction
-- Easy updates
-- Cross-platform by default
+**Architecture Pattern:** Decoupled frontend/backend with separate deployment
+- Frontend: Single-page application (SPA)
+- Backend: REST API server
+- Database: Managed PostgreSQL (Supabase)
+- Deployment: Static frontend + Node.js backend
 
-### 5.2 Database
-**Supabase** (cloud-synced, PostgreSQL-based)
+**Project Structure:** Monorepo with pnpm workspaces
+```
+sift/
+├── packages/
+│   ├── frontend/     # Vite + React SPA
+│   ├── backend/      # Fastify REST API
+│   └── shared/       # Shared TypeScript types
+├── package.json
+├── pnpm-workspace.yaml
+└── README.md
+```
 
-**Features needed:**
-- User authentication (for future multi-user support)
-- Encrypted storage of entries
-- User settings/preferences
-- Row-level security
+---
 
-**Cost:** Lean toward cheap or free tier for MVP
+### 5.2 Frontend Stack
 
-### 5.3 AI Integration
+#### Core Framework
+- **Vite 5.x** - Build tool and dev server
+  - Fast HMR (Hot Module Replacement)
+  - ESM-first, modern tooling
+  - Optimized production builds
+- **React 18** - UI library
+  - Component-based architecture
+  - Hooks for state management
+  - Concurrent features for better UX
+- **TypeScript 5.x** - Type safety
+  - Compile-time type checking
+  - Better IDE support
+  - Self-documenting code
 
-**Provider:** Anthropic Claude API (or similar)
+#### Routing
+- **React Router v6** - Client-side routing
+  - Declarative routing
+  - Nested routes for complex layouts
+  - URL-based navigation
 
-**Two API flows:**
-1. **Conversation API**: Stateless request/response, app maintains conversation history
-2. **Summary API**: Single call to generate refined summary
+#### State Management
+- **TanStack Query v5** (React Query) - Server state management
+  - API call handling (loading, error, success states)
+  - Automatic caching and refetching
+  - Optimistic updates for chat interface
+  - Background sync
+- **Zustand 4.x** - Client state management
+  - Simple, lightweight state store
+  - UI state (modals, forms, in-progress conversations)
+  - Minimal boilerplate
+  - TypeScript-first design
 
-**State Management:**
-- App maintains conversation array
-- Each API call includes full context (system prompt + conversation history + recent entries)
+#### Styling
+- **Tailwind CSS v4** - Utility-first CSS framework
+  - Rapid UI development
+  - Responsive design utilities
+  - Consistent design system
+- **shadcn/ui** - Component library
+  - Built on Radix UI (accessible primitives)
+  - Copy-paste components (you own the code)
+  - Pre-built chat UI, forms, modals
+  - Fully customizable
 
-**Models:**
-- Conversation: Standard model, lower temperature (~0.7)
-- Summary: Standard model, higher temperature (~1.0)
+#### HTTP & Data Fetching
+- **Axios** or **Fetch API** - HTTP client
+  - Integrated with TanStack Query
+  - Interceptors for auth tokens
+  - Request/response transformation
 
-### 5.4 Voice Input
-**Web Speech API** or similar speech-to-text service
-- Real-time or record-then-transcribe (TBD during implementation)
-- User can edit transcription before submitting
+---
 
-### 5.5 Authentication
-**Supabase Auth**
-- Email/password for MVP
-- Support for future sharing/multi-user features
+### 5.3 Backend Stack
 
-### 5.6 UI Architecture
-**Modular UI components**
-- Chat interface decoupled from conversation logic
-- Easy to swap UI without changing backend
-- Clean API boundaries between layers
+#### Core Framework
+- **Fastify 4.x** - Node.js web framework
+  - Fast (~2x Express performance)
+  - First-class TypeScript support
+  - Schema-based validation
+  - Plugin architecture for modularity
+- **TypeScript 5.x** - Type safety
+  - End-to-end type safety with frontend
+  - Better error catching at compile time
+
+#### Database & ORM
+- **Supabase** - Managed PostgreSQL + Auth
+  - PostgreSQL 15+
+  - Free tier: 500MB database, 2GB bandwidth/month
+  - Built-in Row Level Security (RLS)
+  - Real-time subscriptions (for future features)
+- **Supabase JS Client** - Database operations
+  - Type-safe queries
+  - Automatic connection pooling
+  - PostgreSQL extensions support
+
+#### Authentication
+- **Supabase Auth** - JWT-based authentication
+  - Email/password for MVP
+  - JWT tokens with automatic refresh
+  - Row Level Security integration
+  - Support for OAuth providers (future)
+
+#### AI Integration
+- **Anthropic SDK** (`@anthropic-ai/sdk`) - Official Claude API client
+  - **Model:** Claude 3.5 Sonnet
+  - **Conversation flow:** Temperature ~0.7 (focused questions)
+  - **Summary generation:** Temperature ~1.0 (natural writing)
+  - Streaming support for future enhancements
+- **API Key Management:**
+  - MVP: Single API key (stored in environment variables)
+  - Future: User-provided API keys (encrypted storage)
+
+#### Validation
+- **Zod 3.x** - Schema validation and type inference
+  - Runtime validation for API requests/responses
+  - Type-safe (generates TypeScript types)
+  - Works on both frontend and backend
+  - Shared validation schemas in monorepo
+
+#### Configuration
+- **dotenv** - Environment variable management
+  - Separate .env files for dev/production
+  - Secrets stored securely
+
+---
+
+### 5.4 Shared Code
+
+#### Type Definitions
+- **Shared TypeScript types** in `packages/shared/`
+  - API request/response types
+  - Database schema types
+  - Entry, user, analytics types
+  - Ensures frontend/backend stay in sync
+
+#### Validation Schemas
+- **Shared Zod schemas** in `packages/shared/`
+  - Used by both frontend (client-side validation) and backend (server-side validation)
+  - Single source of truth for data shapes
+
+---
+
+### 5.5 Development Tools
+
+#### Package Management
+- **pnpm 8.x** - Fast, efficient package manager
+  - Native workspace support for monorepo
+  - Faster installs than npm/yarn
+  - Efficient disk usage (content-addressable storage)
+
+#### Code Quality
+- **ESLint 8.x** - Linting
+  - TypeScript-specific rules
+  - React hooks rules
+  - Consistent code style
+- **Prettier 3.x** - Code formatting
+  - Automatic formatting on save
+  - Consistent style across team
+- **Husky** (optional) - Git hooks
+  - Pre-commit linting
+  - Pre-push type checking
+
+#### Development Utilities
+- **tsx** - TypeScript execution for Node.js
+  - Run backend TypeScript directly
+  - Fast, no compilation step needed
+- **concurrently** - Run multiple npm scripts
+  - Start frontend and backend simultaneously
+  - Single command for full dev environment
+- **nodemon** (optional) - Auto-restart on changes
+  - Watch backend files
+  - Restart server on code changes
+
+#### API Documentation
+- **@fastify/swagger** - OpenAPI/Swagger integration
+  - Auto-generated API docs from schemas
+  - Interactive API testing
+  - Type-safe route definitions
+
+---
+
+### 5.6 Voice Input
+
+**Implementation:**
+- **Web Speech API** - Browser-native speech recognition
+  - Free, no external service required
+  - Works in Chrome, Edge, Safari
+  - Real-time transcription
+  - Graceful fallback if unsupported
+
+**Flow:**
+1. User activates voice recording
+2. Web Speech API transcribes speech to text
+3. User can edit transcription before proceeding
+4. Only text is stored (no audio files)
+5. Optional metadata: input method, recording duration
+
+**Storage:**
+- Voice is input method only
+- All data stored as text
+- Metadata: `{ entry_type: 'voice', duration_seconds: 45 }`
+
+---
+
+### 5.7 Database Schema
+
+#### Core Tables
+
+**user_profiles**
+```sql
+- id (UUID, references auth.users)
+- created_at, updated_at, last_login_at
+- login_count
+- Settings: default_refine_enabled, theme
+- Cached stats: total_entries, current_streak, scoring averages
+```
+
+**entries**
+```sql
+- id, user_id, created_at, updated_at, entry_date
+- raw_entry (TEXT), entry_type (text/voice)
+- voice_input_metadata (JSONB)
+- conversation_transcript (JSONB)
+- refined_narrative, key_moments (JSONB), tldr
+- Scoring: ai_suggested_score, final_score, user_adjusted_score
+- AI metadata: model_used, token_counts, total_cost_usd
+```
+
+**analytics_events**
+```sql
+- id, user_id, session_id, created_at
+- event_type, event_category, event_data (JSONB)
+- Context: user_agent, page_path
+```
+
+**analytics_daily_summary**
+```sql
+- user_id, date
+- Aggregated stats: entries_created, avg_conversation_length
+- Costs: total_ai_cost_usd
+```
+
+**Key Design Decisions:**
+- No UNIQUE constraint on (user_id, entry_date) - handled in application layer
+- Full conversation transcript stored for debugging
+- Cost tracking per entry for budget monitoring
+- Row Level Security (RLS) enabled on all tables
+
+---
+
+### 5.8 Deployment & Hosting
+
+#### Frontend Hosting
+- **Vercel** (primary choice)
+  - Free tier: 100GB bandwidth/month
+  - Automatic GitHub integration
+  - Preview deployments for PRs
+  - Global CDN
+  - Alternative: Netlify (similar features)
+
+#### Backend Hosting
+- **Railway** (primary choice)
+  - Free tier: $5 credit/month
+  - Node.js support
+  - Easy GitHub integration
+  - PostgreSQL add-on available (though using Supabase)
+  - Alternative: Render (free tier with limitations)
+
+#### Database
+- **Supabase Cloud**
+  - Free tier: 500MB database, 2GB bandwidth/month
+  - Automatic backups
+  - Connection pooling
+  - PostgreSQL extensions
+
+#### Version Control
+- **GitHub** - Code repository
+  - CI/CD via GitHub Actions (optional)
+  - Issue tracking
+  - Pull request reviews
+
+#### Monitoring (Optional for MVP)
+- **Sentry** - Error tracking (free tier)
+- **Vercel Analytics** - Frontend analytics (built-in)
+- **Railway Logs** - Backend logs and monitoring
+
+---
+
+### 5.9 Cost Breakdown
+
+| Service | Free Tier | Est. Monthly Cost (MVP) | When Limit Hit |
+|---------|-----------|------------------------|----------------|
+| Vercel (Frontend) | 100GB bandwidth | $0 | Unlikely for single user |
+| Railway (Backend) | $5 credit/month | $0 (1-2 months), then ~$5 | After credit runs out |
+| Supabase (Database) | 500MB, 2GB bandwidth | $0 | ~100-200 entries with full data |
+| Anthropic API | Pay-per-use | ~$0.01-0.05/entry | Usage-based |
+| GitHub | Free for public repos | $0 | N/A |
+
+**Total estimated cost:** $0-5/month for MVP with single user
+
+---
+
+### 5.10 Architecture Rationale
+
+**Why separate frontend/backend?**
+- Clean separation of concerns
+- Independent scaling
+- No function timeout limits (vs serverless)
+- Better for learning modern architecture
+- Can swap implementations independently
+
+**Why Vite over Next.js?**
+- No need for SSR (server-side rendering)
+- Faster dev experience
+- More control over architecture
+- Lighter weight
+
+**Why Fastify over Express?**
+- Modern, faster (~2x performance)
+- First-class TypeScript support
+- Built-in schema validation
+- Better async/await handling
+
+**Why monorepo?**
+- Shared types between frontend/backend
+- Single version control
+- Atomic commits across packages
+- Easier local development
+
+**Why TanStack Query?**
+- Industry standard for API state
+- Handles caching, refetching automatically
+- Perfect for chat interface (optimistic updates)
+- Great developer experience
+
+**Why Zustand over Redux?**
+- Much simpler API
+- Less boilerplate
+- Sufficient for this app's complexity
+- Great TypeScript support
+
+**Why Zod?**
+- Runtime validation + TypeScript types
+- Single source of truth for data shapes
+- Shared between frontend/backend
+- Great error messages for users
 
 ---
 
