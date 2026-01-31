@@ -8,13 +8,13 @@
 
 ## 1. Vision & Problem Statement
 
-### Problem
+### 1.1 Problem
 Professionals struggle to maintain perspective on their emotional wellbeing. We catastrophize difficult periods and romanticize good ones, making it hard to see patterns or understand what truly affects our mood. Without structured reflection, we lack self-awareness about our emotional health over time.
 
-### Vision
+### 1.2 Vision
 A web-based daily reflection tool that combines AI-guided introspection with longitudinal tracking to help professionals develop emotional awareness, identify patterns, and gain perspective on their mental wellbeing.
 
-### Purpose
+### 1.3 Purpose
 Help users understand their inner feelings and notice trends over time. As humans, we're bad at this - we catastrophize the worst and idealize the best. It's hard to remember whether how we're feeling is consistent over time. This tool lends outside perspective to our feelings.
 
 ---
@@ -37,7 +37,7 @@ Help users understand their inner feelings and notice trends over time. As human
 
 These principles guide all design and AI behavior decisions:
 
-### 1. Guided, Not Asked
+### 3.1 Guided, Not Asked
 The world constantly demands decisions from users. This app should be a refuge from decision fatigue. The AI guides users through reflection without forcing choices. Users shouldn't have to think about the app or make decisions - the AI helps them by making confident choices. Part of the catharsis is offloading decision-making.
 
 **Applications:**
@@ -53,16 +53,16 @@ The world constantly demands decisions from users. This app should be a refuge f
 - Can edit final summary (final approval)
 - Can adjust score (personal calibration)
 
-### 2. Balanced Perspective
+### 3.2 Balanced Perspective
 Humans catastrophize bad days and romanticize good ones. The AI's job is to uncover balance - finding overlooked positives in difficult days and acknowledging real struggles in seemingly good days. Neither minimize nor dramatize.
 
-### 3. Context Over Conclusions
+### 3.3 Context Over Conclusions
 Initial feelings can be rash. "Today was terrible" might hide important nuance. Ask questions to uncover context before accepting surface-level judgments. Help users see the fuller picture.
 
-### 4. Preserve Authentic Voice
+### 3.4 Preserve Authentic Voice
 This is the user's reflection, not a clinical report. Keep their casual tone, their word choices, their style. Polish for clarity but don't sanitize their humanity.
 
-### 5. Reflection, Not Therapy
+### 3.5 Reflection, Not Therapy
 This tool helps users understand their feelings and patterns. It is NOT therapy, not treatment, not diagnosis. Stay focused on daily reflection and emotional awareness. Provide perspective, not intervention.
 
 **Important Disclaimers:**
@@ -367,7 +367,7 @@ TLDR: Neutral day, felt tired but got through meetings.
 
 ## 5. Technical Architecture
 
-### Platform
+### 5.1 Platform
 **Web-based application** (responsive, mobile-friendly)
 
 **Rationale:**
@@ -376,7 +376,7 @@ TLDR: Neutral day, felt tired but got through meetings.
 - Easy updates
 - Cross-platform by default
 
-### Database
+### 5.2 Database
 **Supabase** (cloud-synced, PostgreSQL-based)
 
 **Features needed:**
@@ -387,7 +387,7 @@ TLDR: Neutral day, felt tired but got through meetings.
 
 **Cost:** Lean toward cheap or free tier for MVP
 
-### AI Integration
+### 5.3 AI Integration
 
 **Provider:** Anthropic Claude API (or similar)
 
@@ -403,17 +403,17 @@ TLDR: Neutral day, felt tired but got through meetings.
 - Conversation: Standard model, lower temperature (~0.7)
 - Summary: Standard model, higher temperature (~1.0)
 
-### Voice Input
+### 5.4 Voice Input
 **Web Speech API** or similar speech-to-text service
 - Real-time or record-then-transcribe (TBD during implementation)
 - User can edit transcription before submitting
 
-### Authentication
+### 5.5 Authentication
 **Supabase Auth**
 - Email/password for MVP
 - Support for future sharing/multi-user features
 
-### UI Architecture
+### 5.6 UI Architecture
 **Modular UI components**
 - Chat interface decoupled from conversation logic
 - Easy to swap UI without changing backend
@@ -423,7 +423,7 @@ TLDR: Neutral day, felt tired but got through meetings.
 
 ## 6. System Prompts
 
-### Core Principles (Included in Both Prompts)
+### 6.1 Core Principles (Included in Both Prompts)
 
 ```
 ## Core Principles
@@ -439,7 +439,7 @@ TLDR: Neutral day, felt tired but got through meetings.
 **Reflection, Not Therapy**: You're helping them understand their day, not treating or diagnosing anything. Stay focused on daily reflection.
 ```
 
-### Prompt A: Refinement Conversation
+### 6.2 Prompt A: Refinement Conversation
 
 ```
 You are a compassionate reflection companion helping users process their daily experiences through thoughtful questions.
@@ -498,7 +498,7 @@ DONE_ASKING_QUESTIONS
 Remember: Be confident in your guidance. The user trusts you to know when to dig deeper and when to move forward.
 ```
 
-### Prompt B: Summary Generation
+### 6.3 Prompt B: Summary Generation
 
 ```
 You are creating a refined summary of a user's day based on their original entry and conversation.
@@ -583,7 +583,7 @@ Remember: You're helping them see their day clearly, with balance and perspectiv
 
 ## 7. Success Metrics
 
-### Logging Strategy
+### 7.1 Logging Strategy
 **Track everything** - Build comprehensive analytics foundation
 - All user actions and timestamps
 - Entry metadata (length, voice vs text, conversation length)
@@ -591,7 +591,7 @@ Remember: You're helping them see their day clearly, with balance and perspectiv
 - Feature usage patterns
 - Easy to add new metrics and insights later
 
-### Priority Metrics (MVP Focus)
+### 7.2 Priority Metrics (MVP Focus)
 
 #### User Engagement
 - **Daily/weekly active usage rate**: How often users create entries
@@ -605,7 +605,7 @@ Remember: You're helping them see their day clearly, with balance and perspectiv
 - **Score distribution**: Are users scoring across full 1-10 range? (Clustering at 7-9 indicates grade inflation)
 - **Self-reported value**: Periodic check-ins: "Is this tool helping you understand your feelings?"
 
-### Qualitative Success (For Initial User)
+### 7.3 Qualitative Success (For Initial User)
 - Do you use it consistently?
 - Do you find the summaries valuable when reviewing past entries?
 - Do the insights help you understand your patterns?
@@ -615,36 +615,36 @@ Remember: You're helping them see their day clearly, with balance and perspectiv
 
 ## 8. Out of Scope (MVP)
 
-### Multi-user Features
+### 8.1 Multi-user Features
 - Sharing entries with others
 - Comparing data across users
 - Therapist/coach access to data
 - Community or social features
 
-### Integration Features
+### 8.2 Integration Features
 - Calendar integration
 - Fitness tracker sync
 - Weather data correlation
 - Other app connections
 - Export to specific formats (beyond basic data export)
 
-### Advanced AI Features
+### 8.3 Advanced AI Features
 - Multiple AI personality options
 - Custom prompt tuning by user
 - AI-suggested interventions or goals
 - Predictive insights ("you might have a rough week based on patterns")
 
-### Platform Expansion
+### 8.4 Platform Expansion
 - Mobile native apps (web-first for MVP)
 - Browser extensions
 - Offline mode
 
-### Advanced Analytics
+### 8.5 Advanced Analytics
 - Correlation analysis (sleep, weather, events)
 - Predictive modeling
 - Comparative benchmarking
 
-### Content Features
+### 8.6 Content Features
 - Photos/images in entries
 - Tags or categories
 - Multiple entries per day
@@ -654,21 +654,21 @@ Remember: You're helping them see their day clearly, with balance and perspectiv
 
 ## 9. Future Enhancements (Post-MVP)
 
-### Phase 2: Enhanced Insights
+### 9.1 Phase 2: Enhanced Insights
 - Day-of-week patterns
 - Volatility metrics and stability tracking
 - Theme/word cloud analysis
 - Comparative views (month-over-month)
 - Correlations with external factors
 
-### Phase 3: Advanced Features
+### 9.2 Phase 3: Advanced Features
 - Semantic search for historical context (vs rolling window)
 - Richer data visualization
 - More sophisticated crisis detection
 - Entry editing capabilities
 - Photo/media support
 
-### Phase 4: Scale & Share
+### 9.3 Phase 4: Scale & Share
 - Multi-user architecture
 - Sharing capabilities (with explicit consent)
 - Mobile native apps
