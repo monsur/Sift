@@ -38,7 +38,7 @@ body {
 .logo {
     font-size: 1.5rem;
     font-weight: 600;
-    color: #5e72e4;
+    color: #3B82F6;
     letter-spacing: -0.03em;
 }
 
@@ -52,7 +52,7 @@ body {
 }
 
 .nav a:hover {
-    color: #5e72e4;
+    color: #3B82F6;
 }
 
 /* Container */
@@ -144,7 +144,7 @@ p {
 }
 
 .btn-primary {
-    background: #5e72e4;
+    background: #3B82F6;
     color: white;
 }
 
@@ -173,7 +173,7 @@ p {
 /* Score Badge */
 .score-badge {
     display: inline-block;
-    background: #5e72e4;
+    background: #3B82F6;
     color: white;
     padding: 0.125rem 0.625rem;
     border-radius: 12px;
@@ -195,7 +195,7 @@ p {
 /* Info/Note Boxes */
 .info-box {
     background: #f8f9fa;
-    border-left: 3px solid #5e72e4;
+    border-left: 3px solid #3B82F6;
     padding: 20px 25px;
     margin-bottom: 30px;
     border-radius: 4px;
@@ -220,7 +220,7 @@ p {
     background: #f8f9fa;
     padding: 20px 25px;
     border-radius: 6px;
-    border-left: 3px solid #5e72e4;
+    border-left: 3px solid #3B82F6;
     margin-bottom: 30px;
 }
 
@@ -269,7 +269,7 @@ p {
     content: "•";
     position: absolute;
     left: 0.625rem;
-    color: #5e72e4;
+    color: #3B82F6;
     font-weight: 700;
     font-size: 1.25rem;
 }
@@ -291,7 +291,7 @@ p {
 
 .entry-textarea:focus {
     outline: none;
-    border-color: #5e72e4;
+    border-color: #3B82F6;
 }
 
 .entry-textarea::placeholder {
@@ -309,7 +309,7 @@ p {
 
 /* Read More Links */
 .read-more {
-    color: #5e72e4;
+    color: #3B82F6;
     text-decoration: none;
     font-size: 0.9375rem;
     font-weight: 600;
@@ -327,7 +327,7 @@ p {
 }
 
 .view-all a {
-    color: #5e72e4;
+    color: #3B82F6;
     text-decoration: none;
     font-size: 0.9375rem;
     font-weight: 600;
