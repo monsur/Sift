@@ -1,0 +1,274 @@
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    line-height: 1.6;
+    color: #2c3e50;
+    background: #f8f9fa;
+    min-height: 100vh;
+}
+
+/* Header */
+.header {
+    background: white;
+    border-bottom: 1px solid #e9ecef;
+    padding: 20px 0;
+}
+
+.header-content {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 1.5em;
+    font-weight: 300;
+    color: #5e72e4;
+    letter-spacing: -0.5px;
+}
+
+.nav a {
+    color: #8898aa;
+    text-decoration: none;
+    font-size: 0.95em;
+    transition: color 0.2s;
+}
+
+.nav a:hover {
+    color: #5e72e4;
+}
+
+/* Container */
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 30px;
+}
+
+/* Typography */
+h1 {
+    font-size: 1.8em;
+    font-weight: 300;
+    color: #32325d;
+    margin-bottom: 30px;
+}
+
+h2 {
+    font-size: 1.3em;
+    font-weight: 400;
+    color: #32325d;
+    margin-bottom: 25px;
+}
+
+/* Sections */
+.section {
+    background: white;
+    padding: 35px 40px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+/* Buttons */
+.btn {
+    padding: 14px 32px;
+    border-radius: 6px;
+    font-size: 1em;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s;
+    font-weight: 400;
+    border: none;
+}
+
+.btn-primary {
+    background: #5e72e4;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #4c63d2;
+}
+
+.btn-secondary {
+    background: #f1f3f5;
+    color: #32325d;
+}
+
+.btn-secondary:hover {
+    background: #e9ecef;
+}
+
+/* Date and Labels */
+.date-label {
+    color: #8898aa;
+    font-size: 0.9em;
+    margin-bottom: 25px;
+}
+
+/* Score Badge */
+.score-badge {
+    display: inline-block;
+    background: #5e72e4;
+    color: white;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 0.85em;
+    margin-left: 8px;
+}
+
+/* Helper Text */
+.helper-text {
+    color: #8898aa;
+    font-size: 0.9em;
+    margin-top: 15px;
+    line-height: 1.5;
+}
+
+/* Info/Note Boxes */
+.info-box {
+    background: #f8f9fa;
+    border-left: 3px solid #5e72e4;
+    padding: 20px 25px;
+    margin-bottom: 30px;
+    border-radius: 4px;
+}
+
+.info-box h3 {
+    font-size: 1em;
+    font-weight: 500;
+    color: #32325d;
+    margin-bottom: 10px;
+}
+
+.info-box p {
+    color: #8898aa;
+    font-size: 0.95em;
+    line-height: 1.6;
+}
+
+/* TLDR Section */
+.tldr {
+    background: #f8f9fa;
+    padding: 20px 25px;
+    border-radius: 6px;
+    border-left: 3px solid #5e72e4;
+    margin-bottom: 30px;
+}
+
+.tldr-label {
+    font-size: 0.85em;
+    font-weight: 500;
+    color: #8898aa;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+.tldr-text {
+    color: #32325d;
+    font-size: 1.05em;
+    line-height: 1.6;
+}
+
+/* Narrative */
+.narrative {
+    color: #32325d;
+    line-height: 1.8;
+    font-size: 1.05em;
+    margin-bottom: 30px;
+}
+
+/* Key Moments */
+.key-moments {
+    list-style: none;
+    margin-bottom: 30px;
+}
+
+.key-moments li {
+    padding: 12px 0;
+    padding-left: 30px;
+    position: relative;
+    color: #32325d;
+    line-height: 1.6;
+}
+
+.key-moments li:before {
+    content: "•";
+    position: absolute;
+    left: 10px;
+    color: #5e72e4;
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+/* Form Elements */
+.entry-textarea {
+    width: 100%;
+    min-height: 300px;
+    padding: 20px;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    font-size: 1.05em;
+    font-family: inherit;
+    line-height: 1.7;
+    color: #32325d;
+    resize: vertical;
+    transition: border-color 0.2s;
+}
+
+.entry-textarea:focus {
+    outline: none;
+    border-color: #5e72e4;
+}
+
+.entry-textarea::placeholder {
+    color: #adb5bd;
+}
+
+/* Actions */
+.actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+    justify-content: flex-end;
+}
+
+/* Read More Links */
+.read-more {
+    color: #5e72e4;
+    text-decoration: none;
+    font-size: 0.9em;
+    font-weight: 500;
+}
+
+.read-more:hover {
+    text-decoration: underline;
+}
+
+/* View All Links */
+.view-all {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.view-all a {
+    color: #5e72e4;
+    text-decoration: none;
+    font-size: 0.95em;
+    font-weight: 500;
+}
+
+.view-all a:hover {
+    text-decoration: underline;
+}
