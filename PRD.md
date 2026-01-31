@@ -1774,11 +1774,62 @@ Remember: You're helping them see their day clearly, with balance and perspectiv
 
 ---
 
-## 12. Implementation Plan
+## 12. UI Mockups
+
+Visual mockups demonstrating the complete user experience and design system are available in the `/mockups` directory.
+
+### 12.1 Overview
+
+The mockups are built with HTML and CSS to showcase:
+- **Design system**: Typography, colors, spacing, and component styling
+- **User flows**: Complete journey from entry creation to viewing history
+- **Interaction states**: Various UI states including empty states, confirmations, and error handling
+
+### 12.2 Accessing the Mockups
+
+1. Open `/mockups/index.html` in a web browser
+2. Navigate through the different flows and pages
+3. All mockups are static HTML/CSS (no JavaScript) for easy review
+
+### 12.3 Key Pages
+
+**Core User Flows:**
+- Dashboard: Overview with trends, streak, and recent entries
+- New Entry: Text input with Save/Refine options
+- AI Conversation: Chat-style refinement interface
+- Summary & Scoring: Review polished summary and set wellbeing score
+- Entry Detail: View complete saved entry
+- Entry Saved Confirmation: Celebration pages with streak and optional insights
+
+**Additional States:**
+- Empty State: First-time user experience
+- Crisis Detection: Resource banner for concerning language
+
+### 12.4 Design System
+
+The mockups implement a refined design system featuring:
+- **Typography**: Inter font for UI, Georgia serif for narrative content
+- **Color Palette**: Calming blue (#3B82F6) as primary color with refined grays
+- **Spacing**: Consistent rem-based spacing following an 8pt grid
+- **Visual Hierarchy**: Clear distinction between data/UI and personal reflection content
+
+### 12.5 Design Principles Applied
+
+The mockups reflect the core UX principles:
+- **Calm & Minimal**: Clean layouts with generous whitespace
+- **Professional**: Sophisticated typography and refined color choices
+- **Guided Experience**: Clear primary actions, minimal decision points
+- **Authentic**: Serif fonts for personal content preserve human voice
+
+Refer to `/mockups/tasks.md` for additional design enhancement options considered but not yet implemented.
+
+---
+
+## 13. Implementation Plan
 
 This section breaks down the MVP development into logical phases with clear milestones and success criteria. Phases are designed to deliver working functionality incrementally, allowing for testing and iteration along the way.
 
-### 12.1 Development Phases Overview
+### 13.1 Development Phases Overview
 
 | Phase | Focus | Key Deliverable | Dependencies |
 |-------|-------|----------------|--------------|
@@ -1791,7 +1842,7 @@ This section breaks down the MVP development into logical phases with clear mile
 
 ---
 
-### 12.2 Phase 0: Project Setup & Foundation
+### 13.2 Phase 0: Project Setup & Foundation
 
 **Goal:** Establish development environment and project structure
 
@@ -1865,7 +1916,7 @@ This section breaks down the MVP development into logical phases with clear mile
 
 ---
 
-### 12.3 Phase 1: Authentication & User Profile
+### 13.3 Phase 1: Authentication & User Profile
 
 **Goal:** Users can sign up, log in, and access protected routes
 
@@ -1947,7 +1998,7 @@ This section breaks down the MVP development into logical phases with clear mile
 
 ---
 
-### 12.4 Phase 2: Basic Entry Creation (Text Only)
+### 13.4 Phase 2: Basic Entry Creation (Text Only)
 
 **Goal:** Users can create and save simple text entries without AI refinement
 
@@ -2038,7 +2089,7 @@ This section breaks down the MVP development into logical phases with clear mile
 
 ---
 
-### 12.5 Phase 3: AI Integration (Conversation & Summary)
+### 13.5 Phase 3: AI Integration (Conversation & Summary)
 
 **Goal:** Complete AI refinement flow - conversation, summary generation, scoring
 
@@ -2179,7 +2230,7 @@ This section breaks down the MVP development into logical phases with clear mile
 
 ---
 
-### 12.6 Phase 4: Dashboard & Historical Insights
+### 13.6 Phase 4: Dashboard & Historical Insights
 
 **Goal:** Users can view their history and understand patterns over time
 
@@ -2286,7 +2337,7 @@ This section breaks down the MVP development into logical phases with clear mile
 
 ---
 
-### 12.7 Phase 5: Polish & Launch Preparation
+### 13.7 Phase 5: Polish & Launch Preparation
 
 **Goal:** Add remaining features and prepare for launch
 
@@ -2447,7 +2498,7 @@ This section breaks down the MVP development into logical phases with clear mile
 
 ---
 
-### 12.8 Testing Strategy
+### 13.8 Testing Strategy
 
 Testing is integrated throughout development, not just at the end. Each phase includes specific testing tasks to ensure quality and catch issues early.
 
@@ -2584,7 +2635,7 @@ Before moving to next phase, ensure:
 
 ---
 
-### 12.9 Phase Dependencies
+### 13.9 Phase Dependencies
 
 ```
 Phase 0 (Setup)
@@ -2608,7 +2659,7 @@ Phase 0 → Phase 1 → Phase 2 → Phase 3 → Phase 5
 
 ---
 
-### 12.10 MVP Definition & Launch Criteria
+### 13.10 MVP Definition & Launch Criteria
 
 **Minimum Viable Product (MVP) includes:**
 
@@ -2659,7 +2710,7 @@ Phase 0 → Phase 1 → Phase 2 → Phase 3 → Phase 5
 
 ---
 
-### 12.11 Risk Mitigation
+### 13.11 Risk Mitigation
 
 **Technical Risks:**
 
