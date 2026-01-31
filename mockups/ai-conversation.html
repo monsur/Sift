@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Refining Entry - Sift</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            background: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: white;
+            border-bottom: 1px solid #e9ecef;
+            padding: 20px 0;
+        }
+
+        .header-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5em;
+            font-weight: 300;
+            color: #5e72e4;
+            letter-spacing: -0.5px;
+        }
+
+        .btn-save-header {
+            padding: 10px 24px;
+            background: #5e72e4;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.95em;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        .btn-save-header:hover {
+            background: #4c63d2;
+        }
+
+        .conversation-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 30px;
+            flex: 1;
+        }
+
+        .message {
+            margin-bottom: 30px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .message-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9em;
+        }
+
+        .avatar-ai {
+            background: #5e72e4;
+            color: white;
+        }
+
+        .avatar-user {
+            background: #e9ecef;
+            color: #32325d;
+        }
+
+        .message-content {
+            flex: 1;
+            background: white;
+            padding: 20px 25px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .message.user .message-content {
+            background: #f8f9fa;
+        }
+
+        .message-text {
+            color: #32325d;
+            line-height: 1.6;
+        }
+
+        .message-label {
+            font-size: 0.85em;
+            color: #8898aa;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .input-section {
+            background: white;
+            border-top: 1px solid #e9ecef;
+            padding: 20px 0;
+        }
+
+        .input-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 30px;
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+        }
+
+        .input-field {
+            flex: 1;
+            padding: 14px 18px;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            font-size: 1em;
+            font-family: inherit;
+            line-height: 1.5;
+            resize: none;
+            min-height: 50px;
+            max-height: 150px;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #5e72e4;
+        }
+
+        .btn-send {
+            padding: 14px 28px;
+            background: #5e72e4;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-send:hover {
+            background: #4c63d2;
+        }
+
+        .helper-text {
+            color: #8898aa;
+            font-size: 0.85em;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .thinking-indicator {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            color: #8898aa;
+            font-size: 0.95em;
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            background: #8898aa;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">Sift</div>
+            <a href="summary-scoring.html" class="btn-save-header">Save & Continue</a>
+        </div>
+    </div>
+
+    <div class="conversation-container">
+        <div class="message ai">
+            <div class="message-avatar avatar-ai">AI</div>
+            <div class="message-content">
+                <div class="message-label">Sift</div>
+                <div class="message-text">
+                    I notice you mentioned the client meeting didn't go well and you felt anxious. What specifically about the presentation made you feel it didn't land?
+                </div>
+            </div>
+        </div>
+
+        <div class="message user">
+            <div class="message-avatar avatar-user">You</div>
+            <div class="message-content">
+                <div class="message-label">You</div>
+                <div class="message-text">
+                    I think I rushed through the slides and didn't answer their questions confidently. There were some technical details I wasn't prepared for, and I could see them exchanging looks.
+                </div>
+            </div>
+        </div>
+
+        <div class="message ai">
+            <div class="message-avatar avatar-ai">AI</div>
+            <div class="message-content">
+                <div class="message-label">Sift</div>
+                <div class="message-text">
+                    That sounds tough. You also mentioned lunch with Maya helped you see things differently. What did she say that shifted your perspective?
+                </div>
+            </div>
+        </div>
+
+        <div class="message user">
+            <div class="message-avatar avatar-user">You</div>
+            <div class="message-content">
+                <div class="message-label">You</div>
+                <div class="message-text">
+                    She reminded me that this client has been difficult from the start and their timeline was unrealistic. She said I did my best with what we had. That helped me stop spiraling.
+                </div>
+            </div>
+        </div>
+
+        <div class="message ai">
+            <div class="message-avatar avatar-ai">AI</div>
+            <div class="message-content">
+                <div class="message-label">Sift</div>
+                <div class="message-text">
+                    It sounds like Maya's perspective gave you some important context. You ended the day coding, which you said helps you decompress. Did that help ease some of the stress, or was the deadline still weighing on you?
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="input-section">
+        <div class="input-container">
+            <div class="input-wrapper">
+                <textarea class="input-field" placeholder="Type your response..."></textarea>
+                <button class="btn-send">Send</button>
+            </div>
+            <div class="helper-text">
+                You can save anytime to complete your entry
+            </div>
+        </div>
+    </div>
+</body>
+</html>

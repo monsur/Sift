@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sift - Mockup Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            background: #f8f9fa;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px 50px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        h1 {
+            font-size: 2.5em;
+            font-weight: 300;
+            color: #5e72e4;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            color: #8898aa;
+            font-size: 1.1em;
+            margin-bottom: 50px;
+            font-weight: 300;
+        }
+
+        h2 {
+            font-size: 1.4em;
+            font-weight: 400;
+            color: #32325d;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .flow-list {
+            list-style: none;
+        }
+
+        .flow-item {
+            margin-bottom: 25px;
+        }
+
+        .flow-item a {
+            display: block;
+            padding: 20px 25px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            text-decoration: none;
+            color: #32325d;
+            transition: all 0.2s ease;
+            border-left: 3px solid #5e72e4;
+        }
+
+        .flow-item a:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .flow-title {
+            font-weight: 500;
+            font-size: 1.1em;
+            color: #5e72e4;
+            margin-bottom: 5px;
+        }
+
+        .flow-description {
+            color: #8898aa;
+            font-size: 0.95em;
+        }
+
+        .note {
+            background: #fff3cd;
+            border-left: 3px solid #ffc107;
+            padding: 15px 20px;
+            margin-top: 40px;
+            border-radius: 4px;
+            color: #856404;
+        }
+
+        .note strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Sift</h1>
+        <p class="subtitle">Daily Reflection Tool - UI Mockups</p>
+
+        <h2>Core User Flows</h2>
+        <ul class="flow-list">
+            <li class="flow-item">
+                <a href="dashboard.html">
+                    <div class="flow-title">1. Dashboard / Home</div>
+                    <div class="flow-description">Overview showing current streak, trends, and recent entries</div>
+                </a>
+            </li>
+
+            <li class="flow-item">
+                <a href="new-entry.html">
+                    <div class="flow-title">2. New Entry</div>
+                    <div class="flow-description">Write a daily reflection with option to Save or Refine</div>
+                </a>
+            </li>
+
+            <li class="flow-item">
+                <a href="ai-conversation.html">
+                    <div class="flow-title">3. AI Refinement Conversation</div>
+                    <div class="flow-description">Chat-style interface where AI asks clarifying questions</div>
+                </a>
+            </li>
+
+            <li class="flow-item">
+                <a href="summary-scoring.html">
+                    <div class="flow-title">4. Summary & Scoring</div>
+                    <div class="flow-description">Review polished summary and set wellbeing score (1-10)</div>
+                </a>
+            </li>
+
+            <li class="flow-item">
+                <a href="entry-detail.html">
+                    <div class="flow-title">5. Entry Detail View</div>
+                    <div class="flow-description">Read a complete saved entry with full narrative and context</div>
+                </a>
+            </li>
+        </ul>
+
+        <h2>Additional States</h2>
+        <ul class="flow-list">
+            <li class="flow-item">
+                <a href="crisis-banner.html">
+                    <div class="flow-title">6. Crisis Detection</div>
+                    <div class="flow-description">Example of resource banner shown during crisis language detection</div>
+                </a>
+            </li>
+
+            <li class="flow-item">
+                <a href="empty-state.html">
+                    <div class="flow-title">7. Empty State</div>
+                    <div class="flow-description">Dashboard when user has no entries yet</div>
+                </a>
+            </li>
+        </ul>
+
+        <div class="note">
+            <strong>Note:</strong>
+            These are static HTML/CSS mockups demonstrating the UI design and user flows.
+            No JavaScript is used. Each page represents a different state in the application.
+        </div>
+    </div>
+</body>
+</html>

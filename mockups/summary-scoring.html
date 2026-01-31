@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Summary & Score - Sift</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            background: #f8f9fa;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: white;
+            border-bottom: 1px solid #e9ecef;
+            padding: 20px 0;
+        }
+
+        .header-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5em;
+            font-weight: 300;
+            color: #5e72e4;
+            letter-spacing: -0.5px;
+        }
+
+        .nav a {
+            color: #8898aa;
+            text-decoration: none;
+            font-size: 0.95em;
+            transition: color 0.2s;
+        }
+
+        .nav a:hover {
+            color: #5e72e4;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 30px;
+        }
+
+        .summary-section {
+            background: white;
+            padding: 40px 50px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .date-label {
+            color: #8898aa;
+            font-size: 0.9em;
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            font-size: 1.8em;
+            font-weight: 300;
+            color: #32325d;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            font-size: 1.1em;
+            font-weight: 500;
+            color: #32325d;
+            margin-top: 35px;
+            margin-bottom: 15px;
+        }
+
+        .narrative {
+            color: #32325d;
+            line-height: 1.8;
+            font-size: 1.05em;
+            margin-bottom: 30px;
+        }
+
+        .key-moments {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+
+        .key-moments li {
+            padding: 12px 0;
+            padding-left: 30px;
+            position: relative;
+            color: #32325d;
+            line-height: 1.6;
+        }
+
+        .key-moments li:before {
+            content: "•";
+            position: absolute;
+            left: 10px;
+            color: #5e72e4;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .tldr {
+            background: #f8f9fa;
+            padding: 20px 25px;
+            border-radius: 6px;
+            border-left: 3px solid #5e72e4;
+            margin-bottom: 30px;
+        }
+
+        .tldr-label {
+            font-size: 0.85em;
+            font-weight: 500;
+            color: #8898aa;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .tldr-text {
+            color: #32325d;
+            font-size: 1.05em;
+            line-height: 1.6;
+        }
+
+        .scoring-section {
+            background: white;
+            padding: 40px 50px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .score-intro {
+            color: #32325d;
+            margin-bottom: 30px;
+            line-height: 1.7;
+            background: #f8f9fa;
+            padding: 20px 25px;
+            border-radius: 6px;
+        }
+
+        .slider-container {
+            margin: 40px 0;
+        }
+
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .slider-label {
+            font-size: 0.85em;
+            color: #8898aa;
+        }
+
+        .slider-track {
+            height: 8px;
+            background: linear-gradient(to right, #f77171, #ffd93d, #6bcf7f);
+            border-radius: 4px;
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .slider-thumb {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border: 3px solid #5e72e4;
+            border-radius: 50%;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .slider-value {
+            text-align: center;
+            font-size: 2em;
+            font-weight: 300;
+            color: #5e72e4;
+            margin-top: 20px;
+        }
+
+        .score-guide {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 6px;
+            margin-top: 30px;
+        }
+
+        .score-guide-title {
+            font-size: 0.95em;
+            font-weight: 500;
+            color: #32325d;
+            margin-bottom: 15px;
+        }
+
+        .guide-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 0.9em;
+            color: #8898aa;
+        }
+
+        .guide-score {
+            font-weight: 500;
+            color: #5e72e4;
+        }
+
+        .score-note {
+            margin-top: 30px;
+        }
+
+        .score-note label {
+            display: block;
+            font-size: 0.95em;
+            color: #32325d;
+            margin-bottom: 10px;
+        }
+
+        .score-note textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.95em;
+            line-height: 1.5;
+            resize: vertical;
+        }
+
+        .score-note textarea:focus {
+            outline: none;
+            border-color: #5e72e4;
+        }
+
+        .actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 35px;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border-radius: 6px;
+            font-size: 1em;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.2s;
+            font-weight: 400;
+            border: none;
+        }
+
+        .btn-secondary {
+            background: #f1f3f5;
+            color: #32325d;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+        }
+
+        .btn-primary {
+            background: #5e72e4;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #4c63d2;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">Sift</div>
+            <nav class="nav">
+                <a href="index.html">← Back to Guide</a>
+            </nav>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="summary-section">
+            <div class="date-label">January 31, 2026</div>
+            <h1>Your Day's Summary</h1>
+
+            <h2>Narrative</h2>
+            <div class="narrative">
+                Today was a mixed bag. The morning was rough - that client meeting left me feeling pretty anxious and disappointed in myself. I rushed through the presentation and fumbled some technical questions I should have been ready for. But lunch with Maya really helped. She reminded me that this client's expectations were unrealistic from the start, and hearing that outside perspective stopped me from spiraling. The evening coding session was therapeutic, like it usually is, though I'm still carrying some stress about tomorrow's deadline.
+            </div>
+
+            <h2>Key Moments</h2>
+            <ul class="key-moments">
+                <li>Client presentation felt rushed and I wasn't prepared for their technical questions</li>
+                <li>Lunch conversation with Maya gave me helpful perspective on unrealistic expectations</li>
+                <li>Evening coding session helped me decompress</li>
+                <li>Still carrying stress about tomorrow's deadline</li>
+            </ul>
+
+            <div class="tldr">
+                <div class="tldr-label">TL;DR</div>
+                <div class="tldr-text">
+                    Rough morning with difficult client meeting, but friend's perspective helped, and coding in the evening provided some relief.
+                </div>
+            </div>
+        </div>
+
+        <div class="scoring-section">
+            <h1>Rate Your Day</h1>
+
+            <div class="score-intro">
+                Based on your day, I'd score this around a 5/10. While the morning was challenging with the client meeting, you had meaningful support from Maya and found some relief through coding. The anxiety was real, but so were the moments that helped you cope.
+            </div>
+
+            <div class="slider-container">
+                <div class="slider-labels">
+                    <span class="slider-label">1 - Very difficult</span>
+                    <span class="slider-label">10 - Exceptional</span>
+                </div>
+                <div class="slider-track">
+                    <div class="slider-thumb"></div>
+                </div>
+                <div class="slider-value">5</div>
+            </div>
+
+            <div class="score-guide">
+                <div class="score-guide-title">Score Guide</div>
+                <div class="guide-item">
+                    <span class="guide-score">10</span>
+                    <span>Exceptional: One of your best days</span>
+                </div>
+                <div class="guide-item">
+                    <span class="guide-score">8-9</span>
+                    <span>Great: Felt good, things went well</span>
+                </div>
+                <div class="guide-item">
+                    <span class="guide-score">6-7</span>
+                    <span>Good: Solid day, mostly positive</span>
+                </div>
+                <div class="guide-item">
+                    <span class="guide-score">5</span>
+                    <span>Neutral: Neither good nor bad</span>
+                </div>
+                <div class="guide-item">
+                    <span class="guide-score">3-4</span>
+                    <span>Challenging: Struggled but managed</span>
+                </div>
+                <div class="guide-item">
+                    <span class="guide-score">1-2</span>
+                    <span>Very difficult: One of your harder days</span>
+                </div>
+            </div>
+
+            <div class="score-note">
+                <label>Add a note about your score (optional)</label>
+                <textarea placeholder="Why did you adjust the score, or any additional context..."></textarea>
+            </div>
+
+            <div class="actions">
+                <a href="ai-conversation.html" class="btn btn-secondary">Back</a>
+                <a href="dashboard.html" class="btn btn-primary">Save Entry</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
