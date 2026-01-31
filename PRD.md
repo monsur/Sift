@@ -1133,6 +1133,364 @@ Response: 200 OK
 
 ---
 
+### 5.12 Project Structure
+
+This section outlines the complete folder structure for the monorepo project.
+
+#### 5.12.1 Root Level Structure
+
+```
+sift/
+├── .github/
+│   └── workflows/              # CI/CD workflows (optional for MVP)
+├── packages/
+│   ├── frontend/              # Vite + React SPA
+│   ├── backend/               # Fastify REST API
+│   └── shared/                # Shared TypeScript types & schemas
+├── .gitignore
+├── .prettierrc
+├── .eslintrc.js
+├── package.json               # Root workspace config
+├── pnpm-workspace.yaml        # pnpm workspace definition
+├── PRD.md                     # Product Requirements Document
+└── README.md                  # Project overview and setup instructions
+```
+
+---
+
+#### 5.12.2 Frontend Package (`packages/frontend/`)
+
+```
+frontend/
+├── public/                    # Static assets
+│   ├── favicon.ico
+│   └── robots.txt
+│
+├── src/
+│   ├── api/                   # API client layer
+│   │   ├── client.ts         # Axios instance with auth interceptor
+│   │   ├── auth.api.ts       # Authentication API calls
+│   │   ├── entries.api.ts    # Entry CRUD operations
+│   │   ├── conversation.api.ts # AI conversation endpoints
+│   │   ├── summary.api.ts    # Summary generation
+│   │   └── dashboard.api.ts  # Dashboard & analytics
+│   │
+│   ├── components/            # React components
+│   │   ├── ui/               # shadcn/ui base components
+│   │   │   ├── button.tsx
+│   │   │   ├── input.tsx
+│   │   │   ├── dialog.tsx
+│   │   │   └── ...
+│   │   ├── chat/             # Chat interface components
+│   │   │   ├── ChatInterface.tsx
+│   │   │   ├── ChatMessage.tsx
+│   │   │   └── ChatInput.tsx
+│   │   ├── entry/            # Entry-related components
+│   │   │   ├── EntryForm.tsx
+│   │   │   ├── EntryCard.tsx
+│   │   │   ├── EntryDetail.tsx
+│   │   │   └── ScoreSlider.tsx
+│   │   ├── dashboard/        # Dashboard components
+│   │   │   ├── StatsCard.tsx
+│   │   │   ├── ScoreChart.tsx
+│   │   │   └── RecentEntries.tsx
+│   │   ├── layout/           # Layout components
+│   │   │   ├── Header.tsx
+│   │   │   ├── Sidebar.tsx
+│   │   │   └── Layout.tsx
+│   │   └── common/           # Shared components
+│   │       ├── LoadingSpinner.tsx
+│   │       ├── ErrorBoundary.tsx
+│   │       └── ProtectedRoute.tsx
+│   │
+│   ├── hooks/                 # Custom React hooks
+│   │   ├── useAuth.ts        # Authentication state & methods
+│   │   ├── useEntries.ts     # Entry queries (TanStack Query)
+│   │   ├── useConversation.ts # Conversation state management
+│   │   ├── useSummary.ts     # Summary generation
+│   │   ├── useDashboard.ts   # Dashboard data
+│   │   └── useVoiceInput.ts  # Voice recording functionality
+│   │
+│   ├── stores/                # Zustand stores
+│   │   ├── authStore.ts      # Auth state (tokens, user info)
+│   │   ├── uiStore.ts        # UI state (modals, theme)
+│   │   └── conversationStore.ts # In-progress conversation
+│   │
+│   ├── pages/                 # Page components (route-level)
+│   │   ├── LoginPage.tsx
+│   │   ├── SignupPage.tsx
+│   │   ├── DashboardPage.tsx
+│   │   ├── NewEntryPage.tsx
+│   │   ├── EntryDetailPage.tsx
+│   │   ├── HistoryPage.tsx
+│   │   └── SettingsPage.tsx
+│   │
+│   ├── lib/                   # Utility libraries
+│   │   ├── queryClient.ts    # TanStack Query configuration
+│   │   ├── analytics.ts      # Analytics tracking helpers
+│   │   └── utils.ts          # Generic utilities
+│   │
+│   ├── types/                 # Frontend-specific types
+│   │   ├── ui.types.ts       # UI-related types
+│   │   └── state.types.ts    # State management types
+│   │
+│   ├── App.tsx                # Root component
+│   ├── main.tsx               # Application entry point
+│   ├── router.tsx             # React Router configuration
+│   └── index.css              # Global styles (Tailwind imports)
+│
+├── index.html
+├── vite.config.ts
+├── tailwind.config.js
+├── postcss.config.js
+├── tsconfig.json
+├── tsconfig.node.json
+└── package.json
+```
+
+**Key Principles:**
+- **Feature-based organization**: Components grouped by feature (chat, entry, dashboard)
+- **Separation of concerns**: API calls isolated in `/api` directory
+- **Hooks for logic**: Business logic extracted into custom hooks
+- **Stores for client state**: Zustand for UI and temporary state
+
+---
+
+#### 5.12.3 Backend Package (`packages/backend/`)
+
+```
+backend/
+├── src/
+│   ├── routes/                # API route handlers
+│   │   ├── auth.routes.ts    # POST /api/auth/*
+│   │   ├── profile.routes.ts # GET/PATCH /api/profile
+│   │   ├── entries.routes.ts # /api/entries/* CRUD
+│   │   ├── conversation.routes.ts # /api/conversation/*
+│   │   ├── summary.routes.ts # /api/summary/*
+│   │   ├── dashboard.routes.ts # /api/dashboard/*
+│   │   ├── analytics.routes.ts # /api/analytics/*
+│   │   └── export.routes.ts  # /api/export/*
+│   │
+│   ├── services/              # Business logic layer
+│   │   ├── auth.service.ts   # Authentication operations (Supabase)
+│   │   ├── entry.service.ts  # Entry CRUD business logic
+│   │   ├── ai.service.ts     # Anthropic API integration
+│   │   │   ├── conversationAI.ts # Conversation flow
+│   │   │   └── summaryAI.ts  # Summary generation
+│   │   ├── context.service.ts # Historical context retrieval
+│   │   ├── scoring.service.ts # Score calculation & validation
+│   │   ├── analytics.service.ts # Analytics event processing
+│   │   └── export.service.ts # Data export logic
+│   │
+│   ├── db/                    # Database layer
+│   │   ├── client.ts         # Supabase client singleton
+│   │   ├── migrations/       # SQL migration files
+│   │   │   ├── 001_initial_schema.sql
+│   │   │   ├── 002_add_indexes.sql
+│   │   │   └── ...
+│   │   ├── repositories/     # Data access layer (Repository pattern)
+│   │   │   ├── user.repository.ts
+│   │   │   ├── entry.repository.ts
+│   │   │   └── analytics.repository.ts
+│   │   └── seed.ts           # Development seed data
+│   │
+│   ├── middleware/            # Fastify middleware
+│   │   ├── auth.middleware.ts # JWT validation
+│   │   ├── errorHandler.middleware.ts # Global error handling
+│   │   ├── validation.middleware.ts # Request validation (Zod)
+│   │   ├── rateLimiter.middleware.ts # Rate limiting
+│   │   └── logger.middleware.ts # Request logging
+│   │
+│   ├── config/                # Configuration management
+│   │   ├── env.ts            # Environment variables (Zod validated)
+│   │   ├── supabase.config.ts # Supabase configuration
+│   │   └── anthropic.config.ts # Anthropic API configuration
+│   │
+│   ├── types/                 # Backend-specific types
+│   │   ├── request.types.ts  # Extended request types
+│   │   └── service.types.ts  # Service layer types
+│   │
+│   ├── utils/                 # Utility functions
+│   │   ├── logger.ts         # Structured logging
+│   │   ├── errors.ts         # Custom error classes
+│   │   └── helpers.ts        # Generic helper functions
+│   │
+│   ├── prompts/               # AI system prompts (versioned)
+│   │   ├── conversation.prompt.ts # Refinement conversation prompt
+│   │   └── summary.prompt.ts # Summary generation prompt
+│   │
+│   ├── app.ts                 # Fastify app setup & plugin registration
+│   └── server.ts              # Server entry point
+│
+├── tests/                     # Test files (optional for MVP)
+│   ├── unit/                 # Unit tests
+│   ├── integration/          # Integration tests
+│   └── e2e/                  # End-to-end tests
+│
+├── .env.example               # Example environment variables
+├── .env                       # Local environment variables (gitignored)
+├── tsconfig.json
+└── package.json
+```
+
+**Key Principles:**
+- **Layered architecture**: Routes → Services → Repositories
+- **Repository pattern**: Abstracts database access
+- **Middleware folder**: Reusable cross-cutting concerns
+- **Prompts as code**: AI prompts versioned in codebase
+- **Configuration validation**: Environment variables validated with Zod
+
+---
+
+#### 5.12.4 Shared Package (`packages/shared/`)
+
+```
+shared/
+├── src/
+│   ├── types/                 # Shared TypeScript types
+│   │   ├── user.types.ts     # User, UserProfile, UserSettings
+│   │   ├── entry.types.ts    # Entry, EntryCreate, EntryUpdate
+│   │   ├── conversation.types.ts # Conversation message types
+│   │   ├── summary.types.ts  # Summary-related types
+│   │   ├── analytics.types.ts # Analytics event types
+│   │   └── api.types.ts      # API request/response types
+│   │
+│   ├── schemas/               # Zod validation schemas
+│   │   ├── user.schemas.ts   # User validation
+│   │   ├── entry.schemas.ts  # Entry validation
+│   │   ├── conversation.schemas.ts # Conversation validation
+│   │   ├── summary.schemas.ts # Summary validation
+│   │   └── analytics.schemas.ts # Analytics validation
+│   │
+│   ├── constants/             # Shared constants
+│   │   ├── scores.ts         # Score ranges, descriptions, guidance
+│   │   ├── events.ts         # Analytics event type constants
+│   │   └── errors.ts         # Error codes and messages
+│   │
+│   └── index.ts               # Barrel export (re-exports all modules)
+│
+├── tsconfig.json
+└── package.json
+```
+
+**Key Principles:**
+- **Single source of truth**: All shared types and validation in one place
+- **Types + Schemas together**: TypeScript types paired with Zod schemas
+- **Constants**: Event types, error codes, score guidance shared
+- **Barrel exports**: Clean imports from other packages
+
+---
+
+#### 5.12.5 Root Configuration Files
+
+**`pnpm-workspace.yaml`**
+```yaml
+packages:
+  - 'packages/*'
+```
+
+**Root `package.json`**
+```json
+{
+  "name": "sift",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"pnpm dev:frontend\" \"pnpm dev:backend\"",
+    "dev:frontend": "pnpm --filter frontend dev",
+    "dev:backend": "pnpm --filter backend dev",
+    "build": "pnpm --filter shared build && pnpm --filter frontend build && pnpm --filter backend build",
+    "lint": "pnpm --recursive lint",
+    "format": "prettier --write \"packages/**/*.{ts,tsx,js,json,css,md}\"",
+    "type-check": "pnpm --recursive type-check"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "concurrently": "^8.2.0",
+    "eslint": "^8.0.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.0.0"
+  }
+}
+```
+
+**`.gitignore`**
+```
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Testing
+coverage/
+
+# Production
+dist/
+build/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Misc
+.turbo/
+.cache/
+```
+
+---
+
+#### 5.12.6 Design Decisions & Rationale
+
+**Monorepo with pnpm Workspaces**
+- Single repository for all code
+- Shared `node_modules` (efficient storage)
+- Type safety across frontend/backend via shared package
+- Easy to run both services with single command
+
+**Frontend Organization**
+- Feature-based component structure (not generic "components" folder)
+- API layer separated from components
+- Custom hooks contain business logic
+- Stores handle only client state (server state in TanStack Query)
+
+**Backend Organization**
+- Three-layer architecture: Routes → Services → Repositories
+- Services contain business logic (testable, reusable)
+- Repositories abstract database operations
+- Middleware for cross-cutting concerns
+
+**Shared Package Benefits**
+- TypeScript types ensure frontend/backend alignment
+- Zod schemas used for both validation and type inference
+- Single source of truth for data shapes
+- Constants prevent magic strings
+
+**Prompts as Code**
+- AI prompts versioned in codebase (not database)
+- Easy to track changes and A/B test
+- Can be reviewed in pull requests
+- No database query needed to serve prompts
+
+---
+
 ## 6. System Prompts
 
 ### 6.1 Core Principles (Included in Both Prompts)
