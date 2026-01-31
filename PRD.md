@@ -1844,6 +1844,15 @@ This section breaks down the MVP development into logical phases with clear mile
 - Test type sharing between packages
 - Verify imports work correctly (shared → frontend/backend)
 
+**0.7 Testing Infrastructure Setup**
+- Install testing dependencies (Vitest for both frontend/backend)
+- Configure Vitest for frontend with React Testing Library
+- Configure Vitest for backend with supertest for API testing
+- Set up test scripts in root `package.json`
+- Create example test files to verify setup works
+- Configure code coverage reporting
+- Add `test` and `test:coverage` scripts to workspace
+
 **Success Criteria:**
 - ✅ `pnpm dev` starts both frontend and backend
 - ✅ Frontend accessible at `http://localhost:5173`
@@ -1851,6 +1860,8 @@ This section breaks down the MVP development into logical phases with clear mile
 - ✅ Types from shared package import correctly
 - ✅ Database connection successful
 - ✅ Linting and type-checking pass
+- ✅ Test infrastructure runs successfully (`pnpm test`)
+- ✅ Example tests pass in frontend and backend
 
 ---
 
@@ -1903,6 +1914,28 @@ This section breaks down the MVP development into logical phases with clear mile
 - Wrap authenticated routes with protection
 - Redirect to login if not authenticated
 - Create basic `Layout.tsx` with header
+
+**1.7 Testing: Auth Flow**
+- **Backend Tests:**
+  - Unit test auth service methods (signup, login, token validation)
+  - Integration test `POST /api/auth/signup` endpoint
+  - Integration test `POST /api/auth/login` endpoint (success and failure cases)
+  - Integration test `POST /api/auth/refresh` endpoint
+  - Test auth middleware rejects invalid/expired tokens
+  - Test profile creation on signup
+- **Frontend Tests:**
+  - Unit test `authStore` state management
+  - Unit test `useAuth` hook
+  - Integration test login flow (form → API → redirect)
+  - Integration test signup flow
+  - Test protected route redirects when not authenticated
+  - Test token persistence in localStorage
+- **Manual Testing Checklist:**
+  - Sign up with new account
+  - Log in with existing account
+  - Try accessing protected route without auth
+  - Verify token refresh works
+  - Test logout clears tokens
 
 **Success Criteria:**
 - ✅ User can sign up with email/password
@@ -1966,6 +1999,33 @@ This section breaks down the MVP development into logical phases with clear mile
 - Allow user to change date (date picker)
 - Handle "entry already exists for date" in UI (soft check)
 - Show warning if user tries to create duplicate
+
+**2.7 Testing: Entry CRUD**
+- **Backend Tests:**
+  - Unit test entry repository methods (create, get, list, update, delete)
+  - Unit test entry service business logic
+  - Integration test `POST /api/entries` creates entry correctly
+  - Integration test `GET /api/entries` returns paginated results
+  - Integration test `GET /api/entries/:id` returns single entry
+  - Integration test `PATCH /api/entries/:id` updates score
+  - Integration test `DELETE /api/entries/:id` removes entry
+  - Test RLS policies (users can only access own entries)
+  - Test validation (score must be 1-10, entry_date format, etc.)
+  - Test pagination edge cases (last page, empty results)
+- **Frontend Tests:**
+  - Unit test `useEntries` hook
+  - Test entry form validation (required fields, score range)
+  - Test entry creation flow
+  - Test entry list rendering with mock data
+  - Test entry deletion with confirmation
+  - Test cache invalidation after mutations
+- **Manual Testing Checklist:**
+  - Create entry with various content lengths
+  - Create entry with different dates
+  - Update score on existing entry
+  - Delete entry and verify it's gone
+  - Test pagination with 20+ entries
+  - Try invalid scores (0, 11, negative)
 
 **Success Criteria:**
 - ✅ User can write text entry and save it
@@ -2053,6 +2113,58 @@ This section breaks down the MVP development into logical phases with clear mile
 - Allow user to continue or exit
 - Log crisis detection events
 
+**3.10 Testing: AI Integration**
+- **Backend Tests:**
+  - **AI Service Tests (with mocking):**
+    - Mock Anthropic API responses for conversation
+    - Mock Anthropic API responses for summary generation
+    - Test conversation flow with different entry types
+    - Test "DONE_ASKING_QUESTIONS" detection
+    - Test summary parsing (narrative, key_moments, tldr, score)
+    - Test error handling when AI API fails
+    - Test retry logic for transient failures
+    - Test token counting and cost calculation
+  - **Context Service Tests:**
+    - Test retrieving last 7-14 days of entries
+    - Test context formatting for AI
+    - Test caching behavior
+  - **Integration Tests:**
+    - Test `POST /api/conversation/start` endpoint
+    - Test `POST /api/conversation/message` endpoint
+    - Test `POST /api/summary/generate` endpoint
+    - Test `POST /api/summary/finalize` endpoint
+    - Test full conversation flow (start → message → summary → finalize)
+    - Test conversation with empty context (new user)
+  - **Crisis Detection Tests:**
+    - Test keyword detection triggers correctly
+    - Test no false positives for normal sad entries
+    - Test event logging when crisis detected
+- **Frontend Tests:**
+  - Unit test `useConversation` hook
+  - Unit test `conversationStore` state management
+  - Test chat message rendering (user vs AI)
+  - Test conversation flow state transitions
+  - Test "Save" mid-conversation generates summary
+  - Test summary display component
+  - Test score adjustment UI
+- **Contract Tests:**
+  - Verify AI responses match expected schema
+  - Test prompt changes don't break parsing
+  - Create test fixtures of AI responses
+- **Manual Testing Checklist:**
+  - Test with various entry tones (happy, sad, neutral, mixed)
+  - Test very short entries (1 sentence)
+  - Test very long entries (500+ words)
+  - Test entries with contradictions
+  - Test conversation that should end after 1 question
+  - Test conversation that needs 4+ questions
+  - Verify AI references past entries when relevant
+  - Test crisis detection with concerning language
+  - Test "Save" mid-conversation
+  - Verify summaries preserve user's voice
+  - Check score suggestions are reasonable
+  - Test AI cost tracking is accurate
+
 **Success Criteria:**
 - ✅ User can click "Refine" and start conversation
 - ✅ AI asks relevant questions based on entry
@@ -2122,6 +2234,45 @@ This section breaks down the MVP development into logical phases with clear mile
 - Add theme toggle (light/dark/system)
 - Add default_refine_enabled toggle
 - Save settings via `PATCH /api/profile`
+
+**4.8 Testing: Dashboard & Analytics**
+- **Backend Tests:**
+  - **Dashboard Stats Tests:**
+    - Test score average calculations (7-day, 30-day, all-time)
+    - Test score distribution calculation
+    - Test streak calculation (current and longest)
+    - Test with edge cases (0 entries, 1 entry, gaps in dates)
+    - Test timeline generation for different date ranges
+    - Test filtering by date range
+  - **Aggregation Tests:**
+    - Test user_profiles stats cache updates correctly
+    - Test stats recalculation on new entry
+    - Verify accuracy against raw data queries
+  - **Integration Tests:**
+    - Test `GET /api/dashboard/stats` with different periods
+    - Test `GET /api/dashboard/timeline` with date ranges
+    - Test stats update after creating entry
+- **Frontend Tests:**
+  - Unit test `useDashboard` hook
+  - Test dashboard component with mock data
+  - Test chart rendering with various datasets
+  - Test empty state (no entries)
+  - Test filtering and sorting on history page
+  - Test settings persistence
+- **Calculation Accuracy Tests:**
+  - Create test dataset with known averages
+  - Verify dashboard shows correct calculations
+  - Test relative score context displays correctly
+  - Verify streak logic with various patterns
+- **Manual Testing Checklist:**
+  - Create multiple entries across different dates
+  - Verify averages update correctly
+  - Check streak calculation with consecutive days
+  - Test with gaps in entries
+  - Verify chart displays data accurately
+  - Test filtering by date range
+  - Test theme switching
+  - Verify settings persist after logout/login
 
 **Success Criteria:**
 - ✅ Dashboard loads and shows accurate stats
@@ -2212,13 +2363,66 @@ This section breaks down the MVP development into logical phases with clear mile
 - Write contribution guidelines (if open source)
 - Document deployment process
 
-**5.9 Testing**
-- Manual testing of all flows
-- Test with various entry lengths
-- Test conversation edge cases (very long conversations)
-- Test error scenarios (AI API down, network errors)
-- Test on different browsers
-- Load testing (optional)
+**5.9 End-to-End Testing**
+- **Voice Input Tests:**
+  - Test Web Speech API on different browsers (Chrome, Safari, Edge)
+  - Test voice recording start/stop
+  - Test transcription accuracy
+  - Test editing transcribed text
+  - Test fallback when Web Speech API unavailable
+  - Test voice metadata storage
+- **Analytics Tests:**
+  - Test event batching and sending
+  - Test analytics endpoint receives events correctly
+  - Verify events stored in database
+  - Test event data structure validation
+- **Data Export Tests:**
+  - Test JSON export completeness (all fields included)
+  - Test CSV export formatting
+  - Test export with large datasets (50+ entries)
+  - Test delete all confirmation flow
+  - Verify delete all actually removes all data
+- **Cross-Browser Testing:**
+  - Test on Chrome, Firefox, Safari, Edge
+  - Test on mobile browsers (iOS Safari, Chrome mobile)
+  - Test responsive layouts
+  - Test touch interactions on mobile
+- **Error Scenario Testing:**
+  - Simulate AI API failure (test retry logic and fallback)
+  - Simulate network errors (offline mode)
+  - Test expired token handling
+  - Test database connection failures
+  - Test malformed AI responses
+  - Test validation errors (frontend and backend)
+- **Performance Testing:**
+  - Test page load times (< 2s target)
+  - Test API response times (< 500ms for CRUD, < 5s for AI)
+  - Test with large entry lists (100+ entries)
+  - Test chat interface performance with long conversations
+  - Monitor memory usage during extended sessions
+- **Security Testing:**
+  - Test auth endpoints reject invalid credentials
+  - Test protected routes require valid JWT
+  - Test RLS policies prevent cross-user data access
+  - Test input sanitization (XSS prevention)
+  - Test SQL injection prevention (parameterized queries)
+  - Verify sensitive data not logged
+  - Test rate limiting works
+- **User Acceptance Testing (UAT):**
+  - Complete end-to-end flows as a user
+  - Create entry without refinement
+  - Create entry with AI refinement (short conversation)
+  - Create entry with AI refinement (long conversation)
+  - View dashboard and verify stats
+  - Browse historical entries
+  - Export data
+  - Change settings
+  - Use on mobile device
+- **Regression Testing:**
+  - Re-run all unit tests
+  - Re-run all integration tests
+  - Verify previous phases still work
+  - Check for any breaking changes
 
 **5.10 Deployment**
 - Deploy backend to Railway
@@ -2243,7 +2447,144 @@ This section breaks down the MVP development into logical phases with clear mile
 
 ---
 
-### 12.8 Phase Dependencies
+### 12.8 Testing Strategy
+
+Testing is integrated throughout development, not just at the end. Each phase includes specific testing tasks to ensure quality and catch issues early.
+
+#### Testing Philosophy
+
+**Test as you build:** Write tests alongside features, not after completion. This ensures:
+- Immediate feedback on code quality
+- Better designed, more testable code
+- Catching bugs before they compound
+- Documentation through test cases
+
+**Test pyramid approach:**
+```
+         /\
+        /E2E\        Few (expensive, slow, brittle)
+       /------\
+      / Integ  \     Some (moderate cost, moderate speed)
+     /----------\
+    /   Unit     \   Many (cheap, fast, reliable)
+   /--------------\
+```
+
+#### Testing Levels
+
+**Unit Tests (Most tests)**
+- Test individual functions and components in isolation
+- Mock external dependencies
+- Fast execution (< 1s for entire suite)
+- Run on every save during development
+- **Examples:**
+  - Zod schema validation
+  - Store state transitions
+  - Service methods with mocked dependencies
+  - React component rendering with mock props
+
+**Integration Tests (Moderate)**
+- Test how components work together
+- Test API endpoints with real database (test DB)
+- Test frontend hooks with mocked API calls
+- Slower than unit tests but still fast (< 10s)
+- **Examples:**
+  - API endpoint calls database and returns correct data
+  - Auth middleware validates JWT correctly
+  - Frontend form submits and updates cache
+
+**End-to-End Tests (Fewest)**
+- Test complete user flows
+- Frontend + Backend + Database all working together
+- Slow and potentially flaky
+- Run before deployment
+- **Examples:**
+  - User signs up, creates entry, views dashboard
+  - Complete AI refinement flow from start to finish
+
+**Manual Tests**
+- Exploratory testing
+- UX and visual testing
+- Cross-browser compatibility
+- Mobile device testing
+
+#### Testing Tools & Libraries
+
+**Frontend:**
+- **Vitest**: Test runner (fast, modern, works with Vite)
+- **React Testing Library**: Component testing
+- **MSW (Mock Service Worker)**: Mock API calls in tests
+- **@testing-library/user-event**: Simulate user interactions
+
+**Backend:**
+- **Vitest**: Test runner
+- **Supertest**: HTTP assertion library (test API endpoints)
+- **Test database**: Separate Supabase project or local PostgreSQL
+- **Mock Anthropic SDK**: Mock AI API responses for testing
+
+**Coverage Goals:**
+- **Unit tests**: 80%+ coverage for services and utilities
+- **Integration tests**: Cover all API endpoints
+- **E2E tests**: Cover critical user paths
+
+#### Testing Per Phase
+
+| Phase | Test Focus | Priority Tests |
+|-------|-----------|----------------|
+| **0** | Infrastructure | Test setup works, example tests pass |
+| **1** | Auth flows | Auth endpoints, token validation, protected routes |
+| **2** | CRUD operations | Entry creation, listing, updates, validation |
+| **3** | AI integration | Mocked AI responses, conversation flow, summary parsing |
+| **4** | Calculations | Dashboard stats accuracy, streak logic, aggregations |
+| **5** | Full system | E2E flows, cross-browser, performance, security |
+
+#### Continuous Testing
+
+**During development:**
+- Run unit tests in watch mode (`vitest --watch`)
+- Fix failing tests before moving forward
+- Write tests for bugs before fixing them (TDD for bugs)
+
+**Before committing:**
+- Run full test suite (`pnpm test`)
+- Run linting (`pnpm lint`)
+- Run type checking (`pnpm type-check`)
+
+**Before deployment:**
+- Run full test suite with coverage
+- Run E2E tests
+- Manual testing of critical paths
+- Check for test flakiness
+
+#### Test Data Management
+
+**Test fixtures:**
+- Create reusable test data (users, entries, conversations)
+- Store in `tests/fixtures/` directories
+- Mock AI responses in fixtures
+
+**Database seeding:**
+- Seed test database with known data
+- Reset database between test runs
+- Use transactions for isolated tests
+
+**Mocking strategy:**
+- Mock external APIs (Anthropic) in tests
+- Don't mock internal code (test real implementations)
+- Use MSW for frontend API mocking
+
+#### Success Criteria for Testing
+
+Before moving to next phase, ensure:
+- ✅ All new tests pass
+- ✅ Code coverage meets targets
+- ✅ No regression in previous tests
+- ✅ Manual testing checklist completed
+- ✅ No known critical bugs
+
+---
+
+### 12.9 Phase Dependencies
 
 ```
 Phase 0 (Setup)
@@ -2267,7 +2608,7 @@ Phase 0 → Phase 1 → Phase 2 → Phase 3 → Phase 5
 
 ---
 
-### 12.9 MVP Definition & Launch Criteria
+### 12.10 MVP Definition & Launch Criteria
 
 **Minimum Viable Product (MVP) includes:**
 
@@ -2295,11 +2636,18 @@ Phase 0 → Phase 1 → Phase 2 → Phase 3 → Phase 5
 **Launch Checklist:**
 - [ ] All Phase 0-3 tasks complete
 - [ ] Phase 4 dashboard works
-- [ ] Manual testing passed
+- [ ] **All automated tests passing** (unit, integration, E2E)
+- [ ] **Test coverage meets targets** (80%+ for critical paths)
+- [ ] **Manual testing passed** (all user flows work)
+- [ ] **Security testing passed** (auth, RLS, input validation)
+- [ ] **Cross-browser testing passed** (Chrome, Firefox, Safari)
+- [ ] **Mobile testing passed** (iOS and Android browsers)
 - [ ] Deployed to production
 - [ ] Single user (you) can use daily
 - [ ] No data loss issues
-- [ ] Performance acceptable
+- [ ] No critical bugs found in testing
+- [ ] Performance acceptable (< 2s page loads, < 5s AI responses)
+- [ ] Error handling works gracefully
 
 **Post-Launch Iteration:**
 - Collect feedback from daily use
@@ -2311,7 +2659,7 @@ Phase 0 → Phase 1 → Phase 2 → Phase 3 → Phase 5
 
 ---
 
-### 12.10 Risk Mitigation
+### 12.11 Risk Mitigation
 
 **Technical Risks:**
 
