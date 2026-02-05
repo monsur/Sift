@@ -1722,38 +1722,6 @@ pnpm-debug.log*
 
 ---
 
-#### 5.12.6 Design Decisions & Rationale
-
-**Monorepo with pnpm Workspaces**
-- Single repository for all code
-- Shared `node_modules` (efficient storage)
-- Type safety across frontend/backend via shared package
-- Easy to run both services with single command
-
-**Frontend Organization**
-- Feature-based component structure (not generic "components" folder)
-- API layer separated from components
-- Custom hooks contain business logic
-- Stores handle only client state (server state in TanStack Query)
-
-**Backend Organization**
-- Three-layer architecture: Routes → Services → Repositories
-- Services contain business logic (testable, reusable)
-- Repositories abstract database operations
-- Middleware for cross-cutting concerns
-
-**Shared Package Benefits**
-- TypeScript types ensure frontend/backend alignment
-- Zod schemas used for both validation and type inference
-- Single source of truth for data shapes
-- Constants prevent magic strings
-
-**Prompts as Code**
-- AI prompts versioned in codebase (not database)
-- Easy to track changes and A/B test
-- Can be reviewed in pull requests
-- No database query needed to serve prompts
-
 ---
 
 ## 6. System Prompts
@@ -3280,6 +3248,38 @@ Phase 0 → Phase 1 → Phase 2 → Phase 3 → Phase 5
 - Single source of truth for data shapes
 - Shared between frontend/backend
 - Great error messages for users
+
+### Project Structure Design Decisions
+
+**Monorepo with pnpm Workspaces**
+- Single repository for all code
+- Shared `node_modules` (efficient storage)
+- Type safety across frontend/backend via shared package
+- Easy to run both services with single command
+
+**Frontend Organization**
+- Feature-based component structure (not generic "components" folder)
+- API layer separated from components
+- Custom hooks contain business logic
+- Stores handle only client state (server state in TanStack Query)
+
+**Backend Organization**
+- Three-layer architecture: Routes → Services → Repositories
+- Services contain business logic (testable, reusable)
+- Repositories abstract database operations
+- Middleware for cross-cutting concerns
+
+**Shared Package Benefits**
+- TypeScript types ensure frontend/backend alignment
+- Zod schemas used for both validation and type inference
+- Single source of truth for data shapes
+- Constants prevent magic strings
+
+**Prompts as Code**
+- AI prompts versioned in codebase (not database)
+- Easy to track changes and A/B test
+- Can be reviewed in pull requests
+- No database query needed to serve prompts
 
 ---
 
