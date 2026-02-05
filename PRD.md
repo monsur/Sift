@@ -367,6 +367,8 @@ TLDR: Neutral day, felt tired but got through meetings.
 
 ## 5. Technical Architecture
 
+*Note: For rationale behind major architectural decisions, see the Appendix.*
+
 ### 5.1 Architecture Overview
 
 **Architecture Pattern:** Decoupled frontend/backend with separate deployment
@@ -375,17 +377,9 @@ TLDR: Neutral day, felt tired but got through meetings.
 - Database: Managed PostgreSQL (Supabase)
 - Deployment: Static frontend + Node.js backend
 
-**Project Structure:** Monorepo with pnpm workspaces
-```
-sift/
-├── packages/
-│   ├── frontend/     # Vite + React SPA
-│   ├── backend/      # Fastify REST API
-│   └── shared/       # Shared TypeScript types
-├── package.json
-├── pnpm-workspace.yaml
-└── README.md
-```
+**Project Structure:** Monorepo with pnpm workspaces containing three packages: `frontend` (Vite + React), `backend` (Fastify API), and `shared` (TypeScript types and validation schemas).
+
+*See Section 5.12 for detailed project structure.*
 
 ---
 
@@ -678,7 +672,7 @@ sift/
 
 ### 5.10 API Contract
 
-**Note:** This API contract is a starting point and will evolve as we build and learn. The PRD is a living document.
+**Note:** This API contract is a starting point and will evolve as we build and learn.
 
 #### API Overview
 
@@ -710,10 +704,9 @@ Authorization: Bearer <jwt_token>
 
 **Authentication Approach:**
 - Email/password authentication via Supabase Auth
-- Privacy-first: No third-party OAuth for MVP (may add "Sign in with Apple" post-MVP)
+- Privacy-first: No third-party OAuth for MVP
 - Email verification required before first use
-- Strong password requirements (12+ characters, mixed case, numbers, symbols)
-- Rate limiting to prevent brute force attacks
+- See Section 5.11.1 for detailed security requirements
 
 **POST /api/auth/signup** - Register new user
 ```typescript
@@ -1724,23 +1717,11 @@ pnpm-debug.log*
 
 ## 6. System Prompts
 
-### 6.1 Core Principles (Included in Both Prompts)
+This section contains the complete AI system prompts that will be implemented in the backend (see Section 5.12.3, `/src/prompts/` directory). These prompts are versioned in the codebase for easy iteration and testing.
 
-```
-## Core Principles
+### 6.1 Prompt A: Refinement Conversation
 
-**Guided, Not Asked**: Make confident decisions. The user trusts you to guide them without asking for permission.
-
-**Balanced Perspective**: Humans catastrophize bad days and romanticize good ones. Find the nuance - acknowledge both struggles and bright spots honestly.
-
-**Context Over Conclusions**: Initial reactions can be rash. Use conversation to see beyond "terrible day" to the fuller picture.
-
-**Preserve Authentic Voice** (Summary only): Keep their casual tone and word choices. Polish for clarity, not perfection.
-
-**Reflection, Not Therapy**: You're helping them understand their day, not treating or diagnosing anything. Stay focused on daily reflection.
-```
-
-### 6.2 Prompt A: Refinement Conversation
+**Note:** This prompt incorporates the Core Principles from Section 3.
 
 ```
 You are a compassionate reflection companion helping users process their daily experiences through thoughtful questions.
@@ -1799,7 +1780,9 @@ DONE_ASKING_QUESTIONS
 Remember: Be confident in your guidance. The user trusts you to know when to dig deeper and when to move forward.
 ```
 
-### 6.3 Prompt B: Summary Generation
+### 6.2 Prompt B: Summary Generation
+
+**Note:** This prompt incorporates the Core Principles from Section 3.
 
 ```
 You are creating a refined summary of a user's day based on their original entry and conversation.
@@ -1954,6 +1937,8 @@ Remember: You're helping them see their day clearly, with balance and perspectiv
 ---
 
 ## 9. Future Enhancements (Post-MVP)
+
+While Section 8 outlines what's explicitly out of scope for the MVP, this section describes potential enhancements that could be prioritized after successful MVP launch and validation.
 
 ### 9.1 Phase 2: Enhanced Insights
 - Day-of-week patterns
@@ -2935,7 +2920,7 @@ This section breaks down the MVP development into logical phases with clear mile
 
 ### 13.8 Testing Strategy
 
-Testing is integrated throughout development, not just at the end. Each phase includes specific testing tasks to ensure quality and catch issues early.
+Testing is integrated throughout development, not just at the end. Each phase (13.2-13.7) includes specific testing tasks to ensure quality and catch issues early. This section provides the overall testing philosophy and approach.
 
 #### Testing Philosophy
 
@@ -3178,75 +3163,55 @@ Phase 0 → Phase 1 → Phase 2 → Phase 3 → Phase 5
 
 ## Appendix: Key Design Decisions
 
-### Product Design
+This appendix consolidates the rationale for major architectural and product decisions made throughout the PRD. For implementation details, refer to Section 5 (Technical Architecture) and Section 13 (Implementation Plan).
 
-**Two Separate AI Prompts**
-- Dedicated prompts for conversation vs. summary generation produce better quality
-- Easier to iterate and optimize each independently
-- Clear separation simplifies debugging
+### Product Design Decisions
 
-**Mandatory Scoring**
-- Core to longitudinal tracking value proposition
-- AI suggestions reduce user burden
-- Future: may add "Let AI decide" option if users struggle
+**Two Separate AI Prompts (Section 4.2)**
+- **Why:** Dedicated prompts for conversation vs. summary generation produce better quality. Easier to iterate and optimize each independently. Clear separation simplifies debugging.
 
-**Web-First Approach**
-- No app store friction, faster iteration
-- Mobile-responsive covers most use cases
-- Easy updates and experimentation
+**Mandatory Scoring (Section 4.3)**
+- **Why:** Core to longitudinal tracking value proposition. AI suggestions reduce user burden. Future: may add "Let AI decide" option if users struggle.
 
-### Architecture & Infrastructure
+**Web-First Approach (Section 8.4)**
+- **Why:** No app store friction, faster iteration. Mobile-responsive covers most use cases. Easy updates and experimentation.
 
-**Separate Frontend/Backend**
-- Clean separation of concerns, independent scaling
-- No serverless timeout limits for long AI conversations
-- Can swap implementations independently
+### Architecture Decisions
 
-**Monorepo with pnpm Workspaces**
-- Shared types between frontend/backend for type safety
-- Single version control, atomic commits across packages
-- Efficient storage with shared `node_modules`
+**Separate Frontend/Backend (Section 5.1)**
+- **Why:** Clean separation of concerns, independent scaling. No serverless timeout limits for long AI conversations. Can swap implementations independently.
 
-**Supabase (PostgreSQL + Auth)**
-- Cost-effective free tier for MVP
-- Built-in auth, Row Level Security, and real-time capabilities
-- PostgreSQL flexibility for complex queries
+**Monorepo with pnpm Workspaces (Section 5.1)**
+- **Why:** Shared types between frontend/backend for type safety. Single version control, atomic commits across packages. Efficient storage with shared `node_modules`.
 
-### Technology Stack
+**Supabase (PostgreSQL + Auth) (Section 5.3)**
+- **Why:** Cost-effective free tier for MVP. Built-in auth, Row Level Security, and real-time capabilities. PostgreSQL flexibility for complex queries.
 
-**Frontend: Vite + React + TypeScript**
-- Vite: No need for SSR, faster dev experience, lighter weight than Next.js
-- React: Industry standard, great ecosystem
-- TanStack Query: Handles API state, caching, optimistic updates automatically
-- Zustand: Much simpler than Redux, sufficient for client state complexity
-- Tailwind + shadcn/ui: Rapid UI development with consistency
+### Technology Stack Rationale
 
-**Backend: Fastify + TypeScript**
-- 2x faster than Express with better async/await handling
-- First-class TypeScript support
-- Built-in schema validation
+**Frontend: Vite + React (Section 5.2)**
+- **Vite over Next.js:** No need for SSR, faster dev experience, lighter weight
+- **React:** Industry standard, great ecosystem
+- **TanStack Query:** Handles API state, caching, optimistic updates automatically
+- **Zustand over Redux:** Much simpler, sufficient for client state complexity
+- **Tailwind + shadcn/ui:** Rapid UI development with consistency
 
-**Shared: Zod**
-- Runtime validation + TypeScript types from single source
-- Shared schemas between frontend/backend
-- Great error messages for users
+**Backend: Fastify (Section 5.3)**
+- **Fastify over Express:** 2x faster with better async/await handling. First-class TypeScript support. Built-in schema validation.
 
-### Code Organization
+**Shared: Zod (Section 5.3)**
+- **Why:** Runtime validation + TypeScript types from single source. Shared schemas between frontend/backend. Great error messages for users.
 
-**Frontend Structure**
-- Feature-based components (not generic folders)
-- Separated API layer and custom hooks
-- Zustand for client state, TanStack Query for server state
+### Code Organization Rationale
 
-**Backend Structure**
-- Three layers: Routes → Services → Repositories
-- Services contain testable business logic
-- Repositories abstract database operations
+**Frontend Structure (Section 5.12.2)**
+- **Why feature-based:** Related components grouped together, easier to navigate. Separated API layer and custom hooks for maintainability. Zustand for client state, TanStack Query for server state.
 
-**Prompts as Code**
-- AI prompts versioned in codebase (not database)
-- Easy to review in PRs and A/B test
-- No runtime database query needed
+**Backend Structure (Section 5.12.3)**
+- **Why layered:** Three layers (Routes → Services → Repositories) separate concerns. Services contain testable business logic. Repositories abstract database operations.
+
+**Prompts as Code (Section 5.12.3)**
+- **Why:** AI prompts versioned in codebase (not database). Easy to review in PRs and A/B test. No runtime database query needed.
 
 ---
 
