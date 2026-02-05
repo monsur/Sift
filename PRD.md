@@ -1722,8 +1722,6 @@ pnpm-debug.log*
 
 ---
 
----
-
 ## 6. System Prompts
 
 ### 6.1 Core Principles (Included in Both Prompts)
@@ -3180,106 +3178,75 @@ Phase 0 → Phase 1 → Phase 2 → Phase 3 → Phase 5
 
 ## Appendix: Key Design Decisions
 
-### Why Two Separate AI Prompts?
-- **Quality**: Summary generation is critical - dedicated prompt produces better results
-- **Iteration**: Easier to tweak summary format without affecting conversation
-- **Optimization**: Different temperatures and parameters for different tasks
-- **Debugging**: Clear separation makes it easier to identify and fix issues
+### Product Design
 
-### Why Mandatory Scoring?
-- Core value proposition is longitudinal tracking
-- Scores enable meaningful insights and trends
-- AI suggestion reduces user burden (not starting from scratch)
-- Can add "Let AI decide" option if users struggle
+**Two Separate AI Prompts**
+- Dedicated prompts for conversation vs. summary generation produce better quality
+- Easier to iterate and optimize each independently
+- Clear separation simplifies debugging
 
-### Why Web-First?
-- Single codebase, faster iteration
-- No app store friction for initial users
-- Easy updates and experimentation
+**Mandatory Scoring**
+- Core to longitudinal tracking value proposition
+- AI suggestions reduce user burden
+- Future: may add "Let AI decide" option if users struggle
+
+**Web-First Approach**
+- No app store friction, faster iteration
 - Mobile-responsive covers most use cases
+- Easy updates and experimentation
 
-### Why Supabase?
-- Cost-effective (free tier for MVP)
-- Built-in auth and security
-- PostgreSQL flexibility
-- Easy to scale if needed
+### Architecture & Infrastructure
 
-### Architecture Rationale
-
-**Why separate frontend/backend?**
-- Clean separation of concerns
-- Independent scaling
-- No function timeout limits (vs serverless)
-- Better for learning modern architecture
+**Separate Frontend/Backend**
+- Clean separation of concerns, independent scaling
+- No serverless timeout limits for long AI conversations
 - Can swap implementations independently
 
-**Why Vite over Next.js?**
-- No need for SSR (server-side rendering)
-- Faster dev experience
-- More control over architecture
-- Lighter weight
+**Monorepo with pnpm Workspaces**
+- Shared types between frontend/backend for type safety
+- Single version control, atomic commits across packages
+- Efficient storage with shared `node_modules`
 
-**Why Fastify over Express?**
-- Modern, faster (~2x performance)
+**Supabase (PostgreSQL + Auth)**
+- Cost-effective free tier for MVP
+- Built-in auth, Row Level Security, and real-time capabilities
+- PostgreSQL flexibility for complex queries
+
+### Technology Stack
+
+**Frontend: Vite + React + TypeScript**
+- Vite: No need for SSR, faster dev experience, lighter weight than Next.js
+- React: Industry standard, great ecosystem
+- TanStack Query: Handles API state, caching, optimistic updates automatically
+- Zustand: Much simpler than Redux, sufficient for client state complexity
+- Tailwind + shadcn/ui: Rapid UI development with consistency
+
+**Backend: Fastify + TypeScript**
+- 2x faster than Express with better async/await handling
 - First-class TypeScript support
 - Built-in schema validation
-- Better async/await handling
 
-**Why monorepo?**
-- Shared types between frontend/backend
-- Single version control
-- Atomic commits across packages
-- Easier local development
-
-**Why TanStack Query?**
-- Industry standard for API state
-- Handles caching, refetching automatically
-- Perfect for chat interface (optimistic updates)
-- Great developer experience
-
-**Why Zustand over Redux?**
-- Much simpler API
-- Less boilerplate
-- Sufficient for this app's complexity
-- Great TypeScript support
-
-**Why Zod?**
-- Runtime validation + TypeScript types
-- Single source of truth for data shapes
-- Shared between frontend/backend
+**Shared: Zod**
+- Runtime validation + TypeScript types from single source
+- Shared schemas between frontend/backend
 - Great error messages for users
 
-### Project Structure Design Decisions
+### Code Organization
 
-**Monorepo with pnpm Workspaces**
-- Single repository for all code
-- Shared `node_modules` (efficient storage)
-- Type safety across frontend/backend via shared package
-- Easy to run both services with single command
+**Frontend Structure**
+- Feature-based components (not generic folders)
+- Separated API layer and custom hooks
+- Zustand for client state, TanStack Query for server state
 
-**Frontend Organization**
-- Feature-based component structure (not generic "components" folder)
-- API layer separated from components
-- Custom hooks contain business logic
-- Stores handle only client state (server state in TanStack Query)
-
-**Backend Organization**
-- Three-layer architecture: Routes → Services → Repositories
-- Services contain business logic (testable, reusable)
+**Backend Structure**
+- Three layers: Routes → Services → Repositories
+- Services contain testable business logic
 - Repositories abstract database operations
-- Middleware for cross-cutting concerns
-
-**Shared Package Benefits**
-- TypeScript types ensure frontend/backend alignment
-- Zod schemas used for both validation and type inference
-- Single source of truth for data shapes
-- Constants prevent magic strings
 
 **Prompts as Code**
 - AI prompts versioned in codebase (not database)
-- Easy to track changes and A/B test
-- Can be reviewed in pull requests
-- No database query needed to serve prompts
+- Easy to review in PRs and A/B test
+- No runtime database query needed
 
 ---
 
