@@ -54,10 +54,30 @@ None currently.
 - Add validation commands to verify each step
 - Update "Recent Notes" with important decisions
 
+**After completing each task (standard workflow):**
+```bash
+# 1. Ensure tests exist and pass
+pnpm test
+
+# 2. Run type checking
+pnpm type-check
+
+# 3. Run linting
+pnpm lint
+
+# 4. Update IMPLEMENTATION.md (check off tasks, add notes)
+
+# 5. Commit and push
+git add -A
+git commit -m "Task X.X: Description"
+git push
+```
+
 **Completing a phase:**
 - Mark phase status as ✅ Complete
 - Add completion date
 - Update "Current Task" to next phase
+- Run full verification before moving on
 
 ---
 
