@@ -706,7 +706,7 @@ Authorization: Bearer <jwt_token>
 
 ---
 
-#### 5.11.1 Authentication Endpoints
+#### 5.10.1 Authentication Endpoints
 
 **Authentication Approach:**
 - Email/password authentication via Supabase Auth
@@ -875,7 +875,7 @@ Requires: Valid authentication token
 
 ---
 
-#### 5.11.2 User Profile Endpoints
+#### 5.10.2 User Profile Endpoints
 
 **GET /api/profile** - Get current user's profile
 ```typescript
@@ -915,7 +915,7 @@ Response: 200 OK (returns updated profile)
 
 ---
 
-#### 5.11.3 Entry Endpoints
+#### 5.10.3 Entry Endpoints
 
 **POST /api/entries** - Create new entry
 ```typescript
@@ -1032,7 +1032,7 @@ Response: 204 No Content
 
 ---
 
-#### 5.11.4 AI Conversation Endpoints
+#### 5.10.4 AI Conversation Endpoints
 
 **POST /api/conversation/start** - Start refinement conversation
 ```typescript
@@ -1067,7 +1067,7 @@ Response: 200 OK
 
 ---
 
-#### 5.11.5 Summary Generation Endpoints
+#### 5.10.5 Summary Generation Endpoints
 
 **POST /api/summary/generate** - Generate summary from conversation
 ```typescript
@@ -1103,7 +1103,7 @@ Response: 200 OK (returns complete entry)
 
 ---
 
-#### 5.11.6 Dashboard & Analytics Endpoints
+#### 5.10.6 Dashboard & Analytics Endpoints
 
 **GET /api/dashboard/stats** - Get dashboard statistics
 ```typescript
@@ -1172,7 +1172,7 @@ Response: 202 Accepted
 
 ---
 
-#### 5.11.7 Data Export Endpoints
+#### 5.10.7 Data Export Endpoints
 
 **GET /api/export/entries** - Export all entries
 ```typescript
@@ -1207,7 +1207,7 @@ Response: 200 OK
 
 ---
 
-#### 5.11.8 Error Codes
+#### 5.10.8 Error Codes
 
 | HTTP Status | Error Code | Description |
 |-------------|------------|-------------|
@@ -1227,7 +1227,7 @@ Response: 200 OK
 
 Security is a foundational requirement for a personal reflection app handling intimate user data.
 
-#### 5.12.1 Authentication Security
+#### 5.11.1 Authentication Security
 
 **Password Requirements:**
 - Minimum 12 characters (not the typical 8)
@@ -1256,7 +1256,7 @@ Security is a foundational requirement for a personal reflection app handling in
 - Logout invalidates all tokens for that session
 - Consider device fingerprinting (post-MVP)
 
-#### 5.12.2 API Security
+#### 5.11.2 API Security
 
 **Authentication & Authorization:**
 - All endpoints except auth routes require valid JWT
@@ -1290,7 +1290,7 @@ Security is a foundational requirement for a personal reflection app handling in
 - Secure cookie flags if using cookies
 - HSTS headers
 
-#### 5.12.3 Data Protection
+#### 5.11.3 Data Protection
 
 **Data Storage:**
 - Passwords hashed with bcrypt (Supabase handles this)
@@ -1312,7 +1312,7 @@ Security is a foundational requirement for a personal reflection app handling in
 - Privacy: don't report to authorities without explicit danger
 - Log events but don't expose to analytics
 
-#### 5.12.4 Frontend Security
+#### 5.11.4 Frontend Security
 
 **XSS Prevention:**
 - React escapes content by default (safe)
@@ -1335,7 +1335,7 @@ Security is a foundational requirement for a personal reflection app handling in
 - Monitor for security vulnerabilities (npm audit, Snyk)
 - Use lock files (pnpm-lock.yaml)
 
-#### 5.12.5 AI Integration Security
+#### 5.11.5 AI Integration Security
 
 **API Key Protection:**
 - Store Anthropic API key in environment variables
@@ -1354,7 +1354,7 @@ Security is a foundational requirement for a personal reflection app handling in
 - Rate limit AI API calls
 - Monitor for abuse
 
-#### 5.12.6 Security Testing
+#### 5.11.6 Security Testing
 
 **Testing Requirements:**
 - Test auth flows thoroughly (see Phase 1 testing)
@@ -1375,7 +1375,7 @@ Security is a foundational requirement for a personal reflection app handling in
 - ✅ Dependencies up to date
 - ✅ CORS configured correctly
 
-#### 5.12.7 Security Monitoring
+#### 5.11.7 Security Monitoring
 
 **Logging (for security events):**
 - Failed login attempts
