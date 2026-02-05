@@ -676,54 +676,7 @@ sift/
 
 ---
 
-### 5.10 Architecture Rationale
-
-**Why separate frontend/backend?**
-- Clean separation of concerns
-- Independent scaling
-- No function timeout limits (vs serverless)
-- Better for learning modern architecture
-- Can swap implementations independently
-
-**Why Vite over Next.js?**
-- No need for SSR (server-side rendering)
-- Faster dev experience
-- More control over architecture
-- Lighter weight
-
-**Why Fastify over Express?**
-- Modern, faster (~2x performance)
-- First-class TypeScript support
-- Built-in schema validation
-- Better async/await handling
-
-**Why monorepo?**
-- Shared types between frontend/backend
-- Single version control
-- Atomic commits across packages
-- Easier local development
-
-**Why TanStack Query?**
-- Industry standard for API state
-- Handles caching, refetching automatically
-- Perfect for chat interface (optimistic updates)
-- Great developer experience
-
-**Why Zustand over Redux?**
-- Much simpler API
-- Less boilerplate
-- Sufficient for this app's complexity
-- Great TypeScript support
-
-**Why Zod?**
-- Runtime validation + TypeScript types
-- Single source of truth for data shapes
-- Shared between frontend/backend
-- Great error messages for users
-
----
-
-### 5.11 API Contract
+### 5.10 API Contract
 
 **Note:** This API contract is a starting point and will evolve as we build and learn. The PRD is a living document.
 
@@ -1270,7 +1223,7 @@ Response: 200 OK
 
 ---
 
-### 5.12 Security Considerations
+### 5.11 Security Considerations
 
 Security is a foundational requirement for a personal reflection app handling intimate user data.
 
@@ -1445,7 +1398,7 @@ Security is a foundational requirement for a personal reflection app handling in
 
 ---
 
-### 5.13 Project Structure
+### 5.12 Project Structure
 
 This section outlines the complete folder structure for the monorepo project.
 
@@ -3282,6 +3235,51 @@ Phase 0 → Phase 1 → Phase 2 → Phase 3 → Phase 5
 - Built-in auth and security
 - PostgreSQL flexibility
 - Easy to scale if needed
+
+### Architecture Rationale
+
+**Why separate frontend/backend?**
+- Clean separation of concerns
+- Independent scaling
+- No function timeout limits (vs serverless)
+- Better for learning modern architecture
+- Can swap implementations independently
+
+**Why Vite over Next.js?**
+- No need for SSR (server-side rendering)
+- Faster dev experience
+- More control over architecture
+- Lighter weight
+
+**Why Fastify over Express?**
+- Modern, faster (~2x performance)
+- First-class TypeScript support
+- Built-in schema validation
+- Better async/await handling
+
+**Why monorepo?**
+- Shared types between frontend/backend
+- Single version control
+- Atomic commits across packages
+- Easier local development
+
+**Why TanStack Query?**
+- Industry standard for API state
+- Handles caching, refetching automatically
+- Perfect for chat interface (optimistic updates)
+- Great developer experience
+
+**Why Zustand over Redux?**
+- Much simpler API
+- Less boilerplate
+- Sufficient for this app's complexity
+- Great TypeScript support
+
+**Why Zod?**
+- Runtime validation + TypeScript types
+- Single source of truth for data shapes
+- Shared between frontend/backend
+- Great error messages for users
 
 ---
 
