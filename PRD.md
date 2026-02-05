@@ -583,6 +583,10 @@ sift/
 - id (UUID, references auth.users)
 - created_at, updated_at, last_login_at
 - login_count
+- email_verified (BOOLEAN, default false)
+- email_verified_at (TIMESTAMPTZ)
+- failed_login_attempts (INTEGER, default 0)
+- locked_until (TIMESTAMPTZ, null when not locked)
 - Settings: default_refine_enabled, theme
 - Cached stats: total_entries, current_streak, scoring averages
 ```
@@ -751,36 +755,169 @@ Authorization: Bearer <jwt_token>
 
 #### 5.11.1 Authentication Endpoints
 
+**Authentication Approach:**
+- Email/password authentication via Supabase Auth
+- Privacy-first: No third-party OAuth for MVP (may add "Sign in with Apple" post-MVP)
+- Email verification required before first use
+- Strong password requirements (12+ characters, mixed case, numbers, symbols)
+- Rate limiting to prevent brute force attacks
+
 **POST /api/auth/signup** - Register new user
+```typescript
+Request: {
+  email: string,
+  password: string  // Min 12 chars, mixed case, numbers, symbols
+}
+
+Response: 201 Created
+{
+  user: {
+    id: string,
+    email: string,
+    email_verified: false,
+    created_at: string
+  },
+  message: "Verification email sent. Please check your inbox."
+}
+
+Note: User cannot log in until email is verified.
+Password requirements enforced server-side.
+```
+
+**POST /api/auth/verify-email** - Verify email address
+```typescript
+Request: {
+  token: string  // Token from verification email
+}
+
+Response: 200 OK
+{
+  message: "Email verified successfully",
+  user: { id: string, email: string, email_verified: true }
+}
+
+Errors:
+- 400: Invalid or expired token
+- 410: Token already used
+```
+
+**POST /api/auth/resend-verification** - Resend verification email
+```typescript
+Request: {
+  email: string
+}
+
+Response: 200 OK
+{
+  message: "Verification email sent"
+}
+
+Rate limited: Max 3 requests per hour per email
+```
+
+**POST /api/auth/login** - Login existing user
 ```typescript
 Request: {
   email: string,
   password: string
 }
 
-Response: 201 Created
+Response: 200 OK
 {
-  user: { id: string, email: string, created_at: string },
+  user: { id: string, email: string, email_verified: true },
   session: { access_token: string, refresh_token: string, expires_at: number }
 }
-```
 
-**POST /api/auth/login** - Login existing user
-```typescript
-Request: { email: string, password: string }
-Response: 200 OK (same as signup)
+Errors:
+- 401: Invalid credentials
+- 403: Email not verified (include resend verification option)
+- 429: Too many failed attempts (account locked for 15 minutes)
+
+Rate limiting: Max 5 attempts per 15 minutes per email
 ```
 
 **POST /api/auth/logout** - Logout current user
 ```typescript
 Request: (empty, uses Authorization header)
-Response: 200 OK { message: string }
+
+Response: 200 OK
+{
+  message: "Logged out successfully"
+}
+
+Side effects:
+- Invalidates refresh token
+- Clears session from database
 ```
 
 **POST /api/auth/refresh** - Refresh access token
 ```typescript
-Request: { refresh_token: string }
-Response: 200 OK { access_token: string, expires_at: number }
+Request: {
+  refresh_token: string
+}
+
+Response: 200 OK
+{
+  access_token: string,
+  refresh_token: string,  // New refresh token (rotation)
+  expires_at: number
+}
+
+Errors:
+- 401: Invalid or expired refresh token
+```
+
+**POST /api/auth/forgot-password** - Request password reset
+```typescript
+Request: {
+  email: string
+}
+
+Response: 200 OK
+{
+  message: "Password reset email sent if account exists"
+}
+
+Note: Always returns success to prevent email enumeration
+Rate limited: Max 3 requests per hour per email
+Reset link expires in 1 hour
+```
+
+**POST /api/auth/reset-password** - Reset password with token
+```typescript
+Request: {
+  token: string,      // Token from reset email
+  new_password: string  // Must meet password requirements
+}
+
+Response: 200 OK
+{
+  message: "Password reset successfully. Please log in with your new password."
+}
+
+Errors:
+- 400: Invalid or expired token, or password doesn't meet requirements
+- 409: New password cannot be same as old password
+```
+
+**POST /api/auth/change-password** - Change password (authenticated)
+```typescript
+Request: {
+  current_password: string,
+  new_password: string
+}
+
+Response: 200 OK
+{
+  message: "Password changed successfully"
+}
+
+Errors:
+- 401: Current password incorrect
+- 400: New password doesn't meet requirements
+- 409: New password cannot be same as old password
+
+Requires: Valid authentication token
 ```
 
 ---
@@ -1133,7 +1270,182 @@ Response: 200 OK
 
 ---
 
-### 5.12 Project Structure
+### 5.12 Security Considerations
+
+Security is a foundational requirement for a personal reflection app handling intimate user data.
+
+#### 5.12.1 Authentication Security
+
+**Password Requirements:**
+- Minimum 12 characters (not the typical 8)
+- Must include: uppercase, lowercase, numbers, symbols
+- Server-side validation (never trust client-side only)
+- Password strength indicator on frontend
+- Check against common password lists (optional enhancement)
+
+**Account Protection:**
+- Rate limiting on login attempts (5 per 15 minutes per email)
+- Account locking after failed attempts (15-minute lockout)
+- Email verification required before first login
+- Failed attempt tracking in database
+- Clear error messages without revealing sensitive info
+
+**Token Management:**
+- JWT tokens with reasonable expiration (access: 15min, refresh: 7 days)
+- Refresh token rotation (new token on each refresh)
+- Token invalidation on logout
+- Secure token storage (httpOnly cookies or localStorage with XSS protection)
+- Automatic token refresh before expiration
+
+**Session Security:**
+- Track last_login_at and login_count
+- Single active session per user (or allow multiple with session management)
+- Logout invalidates all tokens for that session
+- Consider device fingerprinting (post-MVP)
+
+#### 5.12.2 API Security
+
+**Authentication & Authorization:**
+- All endpoints except auth routes require valid JWT
+- Middleware validates tokens on every request
+- Check email_verified status for protected resources
+- Never expose user data without authentication
+
+**Row Level Security (RLS):**
+- Supabase RLS policies on all tables
+- Users can only access their own data
+- Enforce at database level (defense in depth)
+- Test RLS policies thoroughly
+
+**Input Validation:**
+- Zod schemas validate all API requests
+- Validate on both frontend (UX) and backend (security)
+- Sanitize user input to prevent XSS
+- Use parameterized queries (prevent SQL injection)
+- Validate content-type headers
+
+**Rate Limiting:**
+- Login attempts: 5 per 15 minutes per email
+- Email verification: 3 per hour per email
+- Password reset: 3 per hour per email
+- API endpoints: 100 requests per minute per user (general)
+- Adjust limits based on usage patterns
+
+**HTTPS Only:**
+- Force HTTPS in production
+- No mixed content
+- Secure cookie flags if using cookies
+- HSTS headers
+
+#### 5.12.3 Data Protection
+
+**Data Storage:**
+- Passwords hashed with bcrypt (Supabase handles this)
+- JWTs signed and optionally encrypted
+- Sensitive data encrypted at rest (Supabase provides this)
+- No sensitive data in logs
+- No sensitive data in error messages sent to client
+
+**Privacy:**
+- User data not shared with third parties (no OAuth for MVP)
+- AI API calls include user data but with trusted provider (Anthropic)
+- Clear privacy policy about data usage
+- GDPR compliance: right to export, right to deletion
+- Data retention policy (keep forever, or delete after inactivity?)
+
+**Crisis Detection:**
+- Keyword detection for self-harm/crisis language
+- Show resources, don't store/flag differently
+- Privacy: don't report to authorities without explicit danger
+- Log events but don't expose to analytics
+
+#### 5.12.4 Frontend Security
+
+**XSS Prevention:**
+- React escapes content by default (safe)
+- Don't use `dangerouslySetInnerHTML` unless necessary
+- Sanitize any user-generated HTML
+- CSP headers to prevent inline scripts
+
+**CSRF Protection:**
+- Use CSRF tokens for state-changing operations
+- Or rely on JWT in headers (not cookies) for CSRF protection
+- Supabase handles CSRF for auth endpoints
+
+**Secure Storage:**
+- Store tokens in localStorage or httpOnly cookies
+- Don't store sensitive data in localStorage
+- Clear tokens on logout
+
+**Dependencies:**
+- Regular dependency updates
+- Monitor for security vulnerabilities (npm audit, Snyk)
+- Use lock files (pnpm-lock.yaml)
+
+#### 5.12.5 AI Integration Security
+
+**API Key Protection:**
+- Store Anthropic API key in environment variables
+- Never expose in frontend code
+- Rotate keys periodically
+- Monitor usage for anomalies
+
+**Prompt Injection Protection:**
+- User input is clearly separated from system prompts
+- AI cannot execute commands or access data
+- Validate AI responses before storing
+
+**Cost Control:**
+- Track AI usage per user
+- Set spending limits
+- Rate limit AI API calls
+- Monitor for abuse
+
+#### 5.12.6 Security Testing
+
+**Testing Requirements:**
+- Test auth flows thoroughly (see Phase 1 testing)
+- Test RLS policies prevent unauthorized access
+- Test input validation rejects malformed data
+- Test rate limiting works correctly
+- Penetration testing (post-MVP)
+
+**Security Checklist:**
+- ✅ All passwords hashed (never plaintext)
+- ✅ All API endpoints require authentication (except auth routes)
+- ✅ RLS policies on all database tables
+- ✅ Input validation on all endpoints
+- ✅ Rate limiting on sensitive endpoints
+- ✅ HTTPS only in production
+- ✅ Tokens expire and rotate
+- ✅ No sensitive data in logs or errors
+- ✅ Dependencies up to date
+- ✅ CORS configured correctly
+
+#### 5.12.7 Security Monitoring
+
+**Logging (for security events):**
+- Failed login attempts
+- Account lockouts
+- Password reset requests
+- Token refresh failures
+- Unusual API usage patterns
+
+**Alerts (post-MVP):**
+- Multiple failed login attempts
+- Unusual spending on AI API
+- Database connection errors
+- Rate limit violations
+
+**Incident Response:**
+- Plan for handling security incidents
+- User notification process if breach
+- Steps to rotate keys/tokens
+- Database backup and recovery
+
+---
+
+### 5.13 Project Structure
 
 This section outlines the complete folder structure for the monorepo project.
 
@@ -1738,7 +2050,37 @@ Remember: You're helping them see their day clearly, with balance and perspectiv
 - Entry editing capabilities
 - Photo/media support
 
-### 9.3 Phase 4: Scale & Share
+### 9.3 Phase 4: Authentication Enhancements
+- **"Sign in with Apple"** (privacy-focused OAuth)
+  - Apple anonymizes email addresses
+  - Preferred by privacy-conscious users
+  - Required for iOS App Store if offering any SSO
+  - Better security with built-in 2FA
+- **Two-Factor Authentication (2FA)**
+  - TOTP (Time-based One-Time Password) via authenticator apps
+  - SMS backup option (less secure but more accessible)
+  - Recovery codes for account access
+- **Passwordless authentication** (Magic Links)
+  - One-time login links via email
+  - No password to remember or manage
+  - Good alternative for users who prefer it
+- **Session management improvements**
+  - View active sessions
+  - Revoke sessions remotely
+  - Device fingerprinting
+- **Account security dashboard**
+  - View login history
+  - Security events log
+  - Password strength audit
+
+**Why not for MVP:**
+- Email/password with verification provides sufficient security
+- Privacy-first: No data shared with third parties
+- Simpler implementation and testing
+- SSO adds complexity without adding core value initially
+- Can add after validating core product
+
+### 9.4 Phase 5: Scale & Share
 - Multi-user architecture
 - Sharing capabilities (with explicit consent)
 - Mobile native apps
@@ -1918,83 +2260,257 @@ This section breaks down the MVP development into logical phases with clear mile
 
 ### 13.3 Phase 1: Authentication & User Profile
 
-**Goal:** Users can sign up, log in, and access protected routes
+**Goal:** Secure, privacy-focused authentication with email verification and password reset
 
 **Key Deliverables:**
-- ✅ User registration and login working
+- ✅ User registration with email verification
+- ✅ Secure login with rate limiting
+- ✅ Password reset flow
 - ✅ JWT authentication implemented
 - ✅ Protected routes on frontend
 - ✅ User profile created on signup
 
 **Tasks:**
 
-**1.1 Backend: Auth Endpoints**
+**1.1 Backend: Core Auth Endpoints**
 - Implement `POST /api/auth/signup` (uses Supabase Auth)
+  - Enforce strong password requirements (12+ chars, mixed case, numbers, symbols)
+  - Validate password strength server-side
+  - Send verification email
+  - Mark email_verified as false
 - Implement `POST /api/auth/login`
+  - Check email_verified status
+  - Implement rate limiting (max 5 attempts per 15 min)
+  - Track failed login attempts
+  - Lock account for 15 min after 5 failed attempts
+  - Update last_login_at and login_count on success
 - Implement `POST /api/auth/logout`
+  - Invalidate refresh token
+  - Clear session from database
 - Implement `POST /api/auth/refresh`
+  - Rotate refresh tokens for security
 - Create auth middleware for JWT validation
-- Add error handling for auth failures
+- Add comprehensive error handling for auth failures
 
-**1.2 Backend: Profile Endpoints**
+**1.2 Backend: Email Verification**
+- Implement `POST /api/auth/verify-email`
+  - Validate verification token
+  - Mark email_verified as true
+  - Set email_verified_at timestamp
+  - Return error for invalid/expired/used tokens
+- Implement `POST /api/auth/resend-verification`
+  - Send new verification email
+  - Rate limit: max 3 per hour per email
+- Configure email templates for verification
+- Set verification token expiration (24 hours)
+
+**1.3 Backend: Password Reset Flow**
+- Implement `POST /api/auth/forgot-password`
+  - Generate password reset token
+  - Send reset email
+  - Always return success (prevent email enumeration)
+  - Rate limit: max 3 per hour per email
+  - Token expires in 1 hour
+- Implement `POST /api/auth/reset-password`
+  - Validate reset token
+  - Check new password meets requirements
+  - Ensure new password differs from old
+  - Invalidate all existing sessions
+- Implement `POST /api/auth/change-password` (authenticated)
+  - Verify current password
+  - Validate new password requirements
+  - Prevent password reuse
+
+**1.4 Backend: Security Features**
+- Implement rate limiting middleware
+  - Login attempts: 5 per 15 minutes per email
+  - Verification emails: 3 per hour per email
+  - Password reset: 3 per hour per email
+- Add account locking mechanism
+  - Lock after 5 failed login attempts
+  - Auto-unlock after 15 minutes
+  - Store locked_until timestamp
+- Update user_profiles table with security fields
+  - email_verified, email_verified_at
+  - failed_login_attempts
+  - locked_until
+
+**1.5 Backend: Profile Endpoints**
 - Implement `GET /api/profile`
+  - Return email_verified status
 - Implement `PATCH /api/profile`
-- Create user profile on signup (trigger or service)
-- Initialize default settings (theme, default_refine_enabled)
+  - Update settings only (not email/password)
+- Create user profile on signup (database trigger or service)
+  - Initialize default settings (theme, default_refine_enabled)
+  - Set email_verified to false
 
-**1.3 Shared: Auth Types & Schemas**
+**1.6 Shared: Auth Types & Schemas**
 - Define `User`, `UserProfile`, `UserSettings` types
 - Create Zod schemas for signup/login requests
-- Define auth response types (tokens, user data)
+  - Password schema: min 12 chars, mixed case, numbers, symbols
+  - Email validation schema
+- Define auth response types (tokens, user data, email_verified)
+- Create error response types for auth failures
 
-**1.4 Frontend: Auth Pages**
-- Create `LoginPage.tsx` with form
+**1.7 Frontend: Auth Pages - Signup & Login**
 - Create `SignupPage.tsx` with form
-- Add form validation (client-side with Zod)
+  - Email and password fields
+  - Password strength indicator (show requirements)
+  - Real-time validation feedback
+  - Show success message about verification email
+- Create `LoginPage.tsx` with form
+  - Email and password fields
+  - "Forgot password?" link
+  - Handle "email not verified" error with resend option
+  - Show error for locked accounts with time remaining
+- Add client-side validation (Zod schemas)
 - Style with Tailwind + shadcn/ui components
 
-**1.5 Frontend: Auth State Management**
+**1.8 Frontend: Email Verification Flow**
+- Create `VerifyEmailPage.tsx`
+  - Extract token from URL query param
+  - Auto-verify on page load
+  - Show success/error messages
+  - Redirect to login on success
+- Create "Email Sent" confirmation page
+  - Show after signup
+  - Include resend verification button
+  - Clear instructions to check inbox/spam
+
+**1.9 Frontend: Password Reset Flow**
+- Create `ForgotPasswordPage.tsx`
+  - Email input field
+  - Submit button
+  - Show "email sent" message on success
+- Create `ResetPasswordPage.tsx`
+  - Extract token from URL query param
+  - New password field with strength indicator
+  - Confirm password field
+  - Submit button
+  - Show success message and redirect to login
+- Handle token expiration errors gracefully
+
+**1.10 Frontend: Auth State Management**
 - Create `authStore.ts` (Zustand) for tokens and user
-- Create `useAuth.ts` hook for login/signup/logout
+  - Store email_verified status
+  - Track authentication state
+- Create `useAuth.ts` hook
+  - signup, login, logout methods
+  - verifyEmail, resendVerification methods
+  - forgotPassword, resetPassword methods
+  - changePassword method
 - Implement token persistence (localStorage)
 - Implement automatic token refresh
 - Create axios interceptor for adding auth headers
+- Handle 403 errors (email not verified)
 
-**1.6 Frontend: Protected Routes**
+**1.11 Frontend: Protected Routes**
 - Create `ProtectedRoute.tsx` component
+  - Check for valid token
+  - Check email_verified status
+  - Redirect to login if not authenticated
+  - Redirect to "verify email" if not verified
 - Wrap authenticated routes with protection
-- Redirect to login if not authenticated
 - Create basic `Layout.tsx` with header
+- Add "Resend verification" banner if not verified
 
-**1.7 Testing: Auth Flow**
+**1.12 Testing: Enhanced Auth Flow**
 - **Backend Tests:**
-  - Unit test auth service methods (signup, login, token validation)
-  - Integration test `POST /api/auth/signup` endpoint
-  - Integration test `POST /api/auth/login` endpoint (success and failure cases)
-  - Integration test `POST /api/auth/refresh` endpoint
-  - Test auth middleware rejects invalid/expired tokens
-  - Test profile creation on signup
+  - **Signup & Validation:**
+    - Test password strength validation (too short, no numbers, no symbols, etc.)
+    - Test duplicate email signup
+    - Test verification email is sent
+    - Test user cannot login before email verification
+  - **Email Verification:**
+    - Test `POST /api/auth/verify-email` with valid token
+    - Test with invalid/expired/already-used tokens
+    - Test resend verification rate limiting
+  - **Login Security:**
+    - Test successful login updates last_login_at
+    - Test failed login increments failed_login_attempts
+    - Test account locks after 5 failed attempts
+    - Test locked account returns correct error
+    - Test account auto-unlocks after 15 minutes
+    - Test rate limiting (6th attempt within 15 min)
+  - **Password Reset:**
+    - Test forgot password sends email (or returns success if email doesn't exist)
+    - Test reset token validation
+    - Test password reset invalidates old sessions
+    - Test new password cannot match old password
+    - Test reset token expires after 1 hour
+  - **Token Management:**
+    - Test refresh token rotation
+    - Test auth middleware rejects invalid/expired tokens
+    - Test logout invalidates refresh token
+  - **Profile Creation:**
+    - Test user profile created on signup with correct defaults
 - **Frontend Tests:**
-  - Unit test `authStore` state management
-  - Unit test `useAuth` hook
-  - Integration test login flow (form → API → redirect)
-  - Integration test signup flow
-  - Test protected route redirects when not authenticated
-  - Test token persistence in localStorage
+  - **Auth Store & Hooks:**
+    - Unit test `authStore` state management
+    - Unit test `useAuth` hook methods
+    - Test token persistence in localStorage
+    - Test automatic token refresh
+  - **Signup Flow:**
+    - Test password strength indicator shows correctly
+    - Test form validation (client-side)
+    - Test successful signup shows "check email" message
+    - Test error handling (weak password, duplicate email)
+  - **Email Verification:**
+    - Test verify email page extracts token from URL
+    - Test success message and redirect
+    - Test error handling for invalid token
+    - Test resend verification button
+  - **Login Flow:**
+    - Test successful login redirects to dashboard
+    - Test "email not verified" error shows resend option
+    - Test account locked error shows time remaining
+    - Test failed login shows error message
+  - **Password Reset:**
+    - Test forgot password form submission
+    - Test reset password form with password strength
+    - Test token extraction from URL
+    - Test success redirect to login
+  - **Protected Routes:**
+    - Test redirect to login when not authenticated
+    - Test redirect to verify email if not verified
+    - Test successful access with valid auth
+- **Security Tests:**
+  - Test rate limiting prevents brute force
+  - Test account locking mechanism
+  - Test password requirements enforced
+  - Test token expiration and refresh
+  - Test CSRF protection (if applicable)
 - **Manual Testing Checklist:**
-  - Sign up with new account
-  - Log in with existing account
-  - Try accessing protected route without auth
-  - Verify token refresh works
-  - Test logout clears tokens
+  - ✅ Sign up with weak password (should fail)
+  - ✅ Sign up with strong password (should succeed)
+  - ✅ Check verification email received
+  - ✅ Click verification link (should verify and redirect)
+  - ✅ Try to login before verification (should fail)
+  - ✅ Login after verification (should succeed)
+  - ✅ Fail login 5 times (account should lock)
+  - ✅ Wait 15 minutes and login again (should unlock)
+  - ✅ Test forgot password flow end-to-end
+  - ✅ Test resend verification email
+  - ✅ Try accessing protected route without auth
+  - ✅ Verify token refresh works automatically
+  - ✅ Test logout clears tokens
+  - ✅ Test "remember me" functionality (if implemented)
 
 **Success Criteria:**
-- ✅ User can sign up with email/password
-- ✅ User can log in and receive JWT token
-- ✅ Token stored and sent with API requests
-- ✅ Protected routes redirect to login when not authenticated
-- ✅ User profile created in database on signup
-- ✅ Token refresh works automatically
+- ✅ User can sign up with strong password
+- ✅ Verification email sent and received
+- ✅ User cannot login before email verification
+- ✅ User can verify email via link
+- ✅ User can resend verification email
+- ✅ User can login after verification
+- ✅ Account locks after 5 failed login attempts
+- ✅ Account auto-unlocks after 15 minutes
+- ✅ User can reset forgotten password
+- ✅ JWT tokens work correctly (auth, refresh, logout)
+- ✅ Protected routes enforce authentication AND verification
+- ✅ User profile created with correct defaults on signup
+- ✅ All rate limiting works as expected
+- ✅ Security tests pass (no vulnerabilities)
 
 ---
 
