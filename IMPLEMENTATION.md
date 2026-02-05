@@ -6,6 +6,59 @@
 
 ---
 
+## Current Status
+
+**Last Updated:** 2026-02-04
+**Current Phase:** Phase 0 - Project Setup
+**Current Task:** Not started
+**Overall Progress:** 0/6 phases complete (0%)
+
+### Phase Completion Tracking
+
+| Phase | Status | Started | Completed | Notes |
+|-------|--------|---------|-----------|-------|
+| **0** | ⏳ Not Started | - | - | Project setup and foundation |
+| **1** | ⏳ Not Started | - | - | Blocked by Phase 0 |
+| **2** | ⏳ Not Started | - | - | Blocked by Phase 1 |
+| **3** | ⏳ Not Started | - | - | Blocked by Phase 2 |
+| **4** | ⏳ Not Started | - | - | Blocked by Phase 2 |
+| **5** | ⏳ Not Started | - | - | Blocked by Phases 3 & 4 |
+
+**Status Legend:**
+- ⏳ Not Started
+- 🔄 In Progress
+- ✅ Complete
+- ⚠️ Blocked
+
+### Active Blockers
+
+None currently.
+
+### Recent Notes
+
+- 2026-02-04: Implementation plan separated from PRD.md for better tracking
+
+---
+
+## How to Use This Document
+
+**Starting a new phase:**
+1. Update "Current Status" section above with phase and task
+2. Change phase status to 🔄 In Progress
+3. Ask Claude: "Let's implement Phase X, task X.X from IMPLEMENTATION.md"
+
+**During implementation:**
+- Check off completed tasks using `- [x]` syntax
+- Add validation commands to verify each step
+- Update "Recent Notes" with important decisions
+
+**Completing a phase:**
+- Mark phase status as ✅ Complete
+- Add completion date
+- Update "Current Task" to next phase
+
+---
+
 ## Overview
 
 This document breaks down the MVP development into logical phases with clear milestones and success criteria. Phases are designed to deliver working functionality incrementally, allowing for testing and iteration along the way.
@@ -40,54 +93,111 @@ This document breaks down the MVP development into logical phases with clear mil
 **Tasks:**
 
 **0.1 Initialize Monorepo**
-- Create root `package.json` with workspace scripts
-- Set up `pnpm-workspace.yaml`
-- Configure root ESLint and Prettier
-- Create `.gitignore`
+- [ ] Create root `package.json` with workspace scripts
+- [ ] Set up `pnpm-workspace.yaml`
+- [ ] Configure root ESLint and Prettier
+- [ ] Create `.gitignore`
+
+**Validation:**
+```bash
+# Verify workspace structure
+ls -la | grep package.json
+ls -la | grep pnpm-workspace.yaml
+pnpm -v  # Should show pnpm version
+```
 
 **0.2 Set Up Frontend Package**
-- Initialize Vite + React + TypeScript project
-- Install dependencies: React Router, TanStack Query, Zustand, Axios
-- Install Tailwind CSS and configure
-- Set up shadcn/ui (copy base components)
-- Create basic folder structure (src/components, src/pages, etc.)
-- Configure `vite.config.ts` with proper aliases
+- [ ] Initialize Vite + React + TypeScript project
+- [ ] Install dependencies: React Router, TanStack Query, Zustand, Axios
+- [ ] Install Tailwind CSS and configure
+- [ ] Set up shadcn/ui (copy base components)
+- [ ] Create basic folder structure (src/components, src/pages, etc.)
+- [ ] Configure `vite.config.ts` with proper aliases
+
+**Validation:**
+```bash
+cd packages/frontend
+pnpm dev  # Should start Vite dev server on port 5173
+# In another terminal:
+curl http://localhost:5173  # Should return HTML
+```
 
 **0.3 Set Up Backend Package**
-- Initialize Node.js + TypeScript project
-- Install dependencies: Fastify, Supabase client, Anthropic SDK, Zod
-- Create folder structure (src/routes, src/services, etc.)
-- Configure `tsconfig.json` with strict settings
-- Set up `app.ts` and `server.ts` entry points
-- Configure environment variables with `.env.example`
+- [ ] Initialize Node.js + TypeScript project
+- [ ] Install dependencies: Fastify, Supabase client, Anthropic SDK, Zod
+- [ ] Create folder structure (src/routes, src/services, etc.)
+- [ ] Configure `tsconfig.json` with strict settings
+- [ ] Set up `app.ts` and `server.ts` entry points
+- [ ] Configure environment variables with `.env.example`
+
+**Validation:**
+```bash
+cd packages/backend
+pnpm dev  # Should start backend server on port 3000
+# In another terminal:
+curl http://localhost:3000/health  # Should return health check response
+```
 
 **0.4 Set Up Shared Package**
-- Initialize TypeScript package
-- Create folder structure (src/types, src/schemas, src/constants)
-- Set up barrel exports in `index.ts`
-- Configure `tsconfig.json` for library compilation
+- [ ] Initialize TypeScript package
+- [ ] Create folder structure (src/types, src/schemas, src/constants)
+- [ ] Set up barrel exports in `index.ts`
+- [ ] Configure `tsconfig.json` for library compilation
+
+**Validation:**
+```bash
+cd packages/shared
+pnpm build  # Should compile TypeScript successfully
+ls dist/    # Should show compiled output
+```
 
 **0.5 Database Setup**
-- Create Supabase project (free tier)
-- Run initial migration (user_profiles, entries, analytics tables)
-- Set up Row Level Security (RLS) policies
-- Create seed data for development
-- Test database connection from backend
+- [ ] Create Supabase project (free tier)
+- [ ] Run initial migration (user_profiles, entries, analytics tables)
+- [ ] Set up Row Level Security (RLS) policies
+- [ ] Create seed data for development
+- [ ] Test database connection from backend
+
+**Validation:**
+```bash
+# Test database connection
+cd packages/backend
+pnpm test:db  # Should connect successfully
+# Or manually test with a simple query script
+```
 
 **0.6 Development Workflow**
-- Configure root `dev` script to run frontend + backend concurrently
-- Set up hot reload for both frontend and backend
-- Test type sharing between packages
-- Verify imports work correctly (shared → frontend/backend)
+- [ ] Configure root `dev` script to run frontend + backend concurrently
+- [ ] Set up hot reload for both frontend and backend
+- [ ] Test type sharing between packages
+- [ ] Verify imports work correctly (shared → frontend/backend)
+
+**Validation:**
+```bash
+# From project root
+pnpm dev  # Should start both frontend and backend
+# Frontend should be on http://localhost:5173
+# Backend should be on http://localhost:3000
+# Make a change to shared types and verify both rebuild
+```
 
 **0.7 Testing Infrastructure Setup**
-- Install testing dependencies (Vitest for both frontend/backend)
-- Configure Vitest for frontend with React Testing Library
-- Configure Vitest for backend with supertest for API testing
-- Set up test scripts in root `package.json`
-- Create example test files to verify setup works
-- Configure code coverage reporting
-- Add `test` and `test:coverage` scripts to workspace
+- [ ] Install testing dependencies (Vitest for both frontend/backend)
+- [ ] Configure Vitest for frontend with React Testing Library
+- [ ] Configure Vitest for backend with supertest for API testing
+- [ ] Set up test scripts in root `package.json`
+- [ ] Create example test files to verify setup works
+- [ ] Configure code coverage reporting
+- [ ] Add `test` and `test:coverage` scripts to workspace
+
+**Validation:**
+```bash
+# Run tests for all packages
+pnpm test
+# Run tests with coverage
+pnpm test:coverage
+# Verify example tests pass
+```
 
 **Success Criteria:**
 - ✅ `pnpm dev` starts both frontend and backend
@@ -116,146 +226,267 @@ This document breaks down the MVP development into logical phases with clear mil
 **Tasks:**
 
 **1.1 Backend: Core Auth Endpoints**
-- Implement `POST /api/auth/signup` (uses Supabase Auth)
-  - Enforce strong password requirements (12+ chars, mixed case, numbers, symbols)
-  - Validate password strength server-side
-  - Send verification email
-  - Mark email_verified as false
-- Implement `POST /api/auth/login`
-  - Check email_verified status
-  - Implement rate limiting (max 5 attempts per 15 min)
-  - Track failed login attempts
-  - Lock account for 15 min after 5 failed attempts
-  - Update last_login_at and login_count on success
-- Implement `POST /api/auth/logout`
-  - Invalidate refresh token
-  - Clear session from database
-- Implement `POST /api/auth/refresh`
-  - Rotate refresh tokens for security
-- Create auth middleware for JWT validation
-- Add comprehensive error handling for auth failures
+- [ ] Implement `POST /api/auth/signup` (uses Supabase Auth)
+  - [ ] Enforce strong password requirements (12+ chars, mixed case, numbers, symbols)
+  - [ ] Validate password strength server-side
+  - [ ] Send verification email
+  - [ ] Mark email_verified as false
+- [ ] Implement `POST /api/auth/login`
+  - [ ] Check email_verified status
+  - [ ] Implement rate limiting (max 5 attempts per 15 min)
+  - [ ] Track failed login attempts
+  - [ ] Lock account for 15 min after 5 failed attempts
+  - [ ] Update last_login_at and login_count on success
+- [ ] Implement `POST /api/auth/logout`
+  - [ ] Invalidate refresh token
+  - [ ] Clear session from database
+- [ ] Implement `POST /api/auth/refresh`
+  - [ ] Rotate refresh tokens for security
+- [ ] Create auth middleware for JWT validation
+- [ ] Add comprehensive error handling for auth failures
+
+**Validation:**
+```bash
+# Test signup endpoint
+curl -X POST http://localhost:3000/api/auth/signup \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@example.com","password":"SecurePass123!"}'
+
+# Test login endpoint
+curl -X POST http://localhost:3000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@example.com","password":"SecurePass123!"}'
+
+# Run auth endpoint tests
+pnpm --filter backend test auth
+```
 
 **1.2 Backend: Email Verification**
-- Implement `POST /api/auth/verify-email`
-  - Validate verification token
-  - Mark email_verified as true
-  - Set email_verified_at timestamp
-  - Return error for invalid/expired/used tokens
-- Implement `POST /api/auth/resend-verification`
-  - Send new verification email
-  - Rate limit: max 3 per hour per email
-- Configure email templates for verification
-- Set verification token expiration (24 hours)
+- [ ] Implement `POST /api/auth/verify-email`
+  - [ ] Validate verification token
+  - [ ] Mark email_verified as true
+  - [ ] Set email_verified_at timestamp
+  - [ ] Return error for invalid/expired/used tokens
+- [ ] Implement `POST /api/auth/resend-verification`
+  - [ ] Send new verification email
+  - [ ] Rate limit: max 3 per hour per email
+- [ ] Configure email templates for verification
+- [ ] Set verification token expiration (24 hours)
+
+**Validation:**
+```bash
+# Check email logs (development mode)
+# Verify email template renders correctly
+# Test token expiration logic
+pnpm --filter backend test email-verification
+```
 
 **1.3 Backend: Password Reset Flow**
-- Implement `POST /api/auth/forgot-password`
-  - Generate password reset token
-  - Send reset email
-  - Always return success (prevent email enumeration)
-  - Rate limit: max 3 per hour per email
-  - Token expires in 1 hour
-- Implement `POST /api/auth/reset-password`
-  - Validate reset token
-  - Check new password meets requirements
-  - Ensure new password differs from old
-  - Invalidate all existing sessions
-- Implement `POST /api/auth/change-password` (authenticated)
-  - Verify current password
-  - Validate new password requirements
-  - Prevent password reuse
+- [ ] Implement `POST /api/auth/forgot-password`
+  - [ ] Generate password reset token
+  - [ ] Send reset email
+  - [ ] Always return success (prevent email enumeration)
+  - [ ] Rate limit: max 3 per hour per email
+  - [ ] Token expires in 1 hour
+- [ ] Implement `POST /api/auth/reset-password`
+  - [ ] Validate reset token
+  - [ ] Check new password meets requirements
+  - [ ] Ensure new password differs from old
+  - [ ] Invalidate all existing sessions
+- [ ] Implement `POST /api/auth/change-password` (authenticated)
+  - [ ] Verify current password
+  - [ ] Validate new password requirements
+  - [ ] Prevent password reuse
+
+**Validation:**
+```bash
+# Test password reset flow
+curl -X POST http://localhost:3000/api/auth/forgot-password \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@example.com"}'
+
+# Run password reset tests
+pnpm --filter backend test password-reset
+```
 
 **1.4 Backend: Security Features**
-- Implement rate limiting middleware
-  - Login attempts: 5 per 15 minutes per email
-  - Verification emails: 3 per hour per email
-  - Password reset: 3 per hour per email
-- Add account locking mechanism
-  - Lock after 5 failed login attempts
-  - Auto-unlock after 15 minutes
-  - Store locked_until timestamp
-- Update user_profiles table with security fields
-  - email_verified, email_verified_at
-  - failed_login_attempts
-  - locked_until
+- [ ] Implement rate limiting middleware
+  - [ ] Login attempts: 5 per 15 minutes per email
+  - [ ] Verification emails: 3 per hour per email
+  - [ ] Password reset: 3 per hour per email
+- [ ] Add account locking mechanism
+  - [ ] Lock after 5 failed login attempts
+  - [ ] Auto-unlock after 15 minutes
+  - [ ] Store locked_until timestamp
+- [ ] Update user_profiles table with security fields
+  - [ ] email_verified, email_verified_at
+  - [ ] failed_login_attempts
+  - [ ] locked_until
+
+**Validation:**
+```bash
+# Test rate limiting (should fail on 6th attempt)
+for i in {1..6}; do
+  curl -X POST http://localhost:3000/api/auth/login \
+    -H "Content-Type: application/json" \
+    -d '{"email":"test@example.com","password":"wrong"}'
+done
+
+# Run security tests
+pnpm --filter backend test security
+```
 
 **1.5 Backend: Profile Endpoints**
-- Implement `GET /api/profile`
-  - Return email_verified status
-- Implement `PATCH /api/profile`
-  - Update settings only (not email/password)
-- Create user profile on signup (database trigger or service)
-  - Initialize default settings (theme, default_refine_enabled)
-  - Set email_verified to false
+- [ ] Implement `GET /api/profile`
+  - [ ] Return email_verified status
+- [ ] Implement `PATCH /api/profile`
+  - [ ] Update settings only (not email/password)
+- [ ] Create user profile on signup (database trigger or service)
+  - [ ] Initialize default settings (theme, default_refine_enabled)
+  - [ ] Set email_verified to false
+
+**Validation:**
+```bash
+# Test profile endpoints (with valid JWT)
+curl http://localhost:3000/api/profile \
+  -H "Authorization: Bearer YOUR_TOKEN"
+
+# Run profile tests
+pnpm --filter backend test profile
+```
 
 **1.6 Shared: Auth Types & Schemas**
-- Define `User`, `UserProfile`, `UserSettings` types
-- Create Zod schemas for signup/login requests
-  - Password schema: min 12 chars, mixed case, numbers, symbols
-  - Email validation schema
-- Define auth response types (tokens, user data, email_verified)
-- Create error response types for auth failures
+- [ ] Define `User`, `UserProfile`, `UserSettings` types
+- [ ] Create Zod schemas for signup/login requests
+  - [ ] Password schema: min 12 chars, mixed case, numbers, symbols
+  - [ ] Email validation schema
+- [ ] Define auth response types (tokens, user data, email_verified)
+- [ ] Create error response types for auth failures
+
+**Validation:**
+```bash
+# Build shared package
+pnpm --filter shared build
+
+# Verify types are exported correctly
+cd packages/shared && ls dist/types/
+
+# Run schema validation tests
+pnpm --filter shared test
+```
 
 **1.7 Frontend: Auth Pages - Signup & Login**
-- Create `SignupPage.tsx` with form
-  - Email and password fields
-  - Password strength indicator (show requirements)
-  - Real-time validation feedback
-  - Show success message about verification email
-- Create `LoginPage.tsx` with form
-  - Email and password fields
-  - "Forgot password?" link
-  - Handle "email not verified" error with resend option
-  - Show error for locked accounts with time remaining
-- Add client-side validation (Zod schemas)
-- Style with Tailwind + shadcn/ui components
+- [ ] Create `SignupPage.tsx` with form
+  - [ ] Email and password fields
+  - [ ] Password strength indicator (show requirements)
+  - [ ] Real-time validation feedback
+  - [ ] Show success message about verification email
+- [ ] Create `LoginPage.tsx` with form
+  - [ ] Email and password fields
+  - [ ] "Forgot password?" link
+  - [ ] Handle "email not verified" error with resend option
+  - [ ] Show error for locked accounts with time remaining
+- [ ] Add client-side validation (Zod schemas)
+- [ ] Style with Tailwind + shadcn/ui components
+
+**Validation:**
+```bash
+# Start frontend dev server
+cd packages/frontend && pnpm dev
+
+# Navigate to http://localhost:5173/signup
+# Navigate to http://localhost:5173/login
+# Test form validation with invalid inputs
+# Run frontend component tests
+pnpm --filter frontend test auth-pages
+```
 
 **1.8 Frontend: Email Verification Flow**
-- Create `VerifyEmailPage.tsx`
-  - Extract token from URL query param
-  - Auto-verify on page load
-  - Show success/error messages
-  - Redirect to login on success
-- Create "Email Sent" confirmation page
-  - Show after signup
-  - Include resend verification button
-  - Clear instructions to check inbox/spam
+- [ ] Create `VerifyEmailPage.tsx`
+  - [ ] Extract token from URL query param
+  - [ ] Auto-verify on page load
+  - [ ] Show success/error messages
+  - [ ] Redirect to login on success
+- [ ] Create "Email Sent" confirmation page
+  - [ ] Show after signup
+  - [ ] Include resend verification button
+  - [ ] Clear instructions to check inbox/spam
+
+**Validation:**
+```bash
+# Test verification page loads
+# http://localhost:5173/verify-email?token=test-token
+
+# Run verification flow tests
+pnpm --filter frontend test verification
+```
 
 **1.9 Frontend: Password Reset Flow**
-- Create `ForgotPasswordPage.tsx`
-  - Email input field
-  - Submit button
-  - Show "email sent" message on success
-- Create `ResetPasswordPage.tsx`
-  - Extract token from URL query param
-  - New password field with strength indicator
-  - Confirm password field
-  - Submit button
-  - Show success message and redirect to login
-- Handle token expiration errors gracefully
+- [ ] Create `ForgotPasswordPage.tsx`
+  - [ ] Email input field
+  - [ ] Submit button
+  - [ ] Show "email sent" message on success
+- [ ] Create `ResetPasswordPage.tsx`
+  - [ ] Extract token from URL query param
+  - [ ] New password field with strength indicator
+  - [ ] Confirm password field
+  - [ ] Submit button
+  - [ ] Show success message and redirect to login
+- [ ] Handle token expiration errors gracefully
+
+**Validation:**
+```bash
+# Test password reset pages
+# http://localhost:5173/forgot-password
+# http://localhost:5173/reset-password?token=test-token
+
+# Run password reset flow tests
+pnpm --filter frontend test password-reset
+```
 
 **1.10 Frontend: Auth State Management**
-- Create `authStore.ts` (Zustand) for tokens and user
-  - Store email_verified status
-  - Track authentication state
-- Create `useAuth.ts` hook
-  - signup, login, logout methods
-  - verifyEmail, resendVerification methods
-  - forgotPassword, resetPassword methods
-  - changePassword method
-- Implement token persistence (localStorage)
-- Implement automatic token refresh
-- Create axios interceptor for adding auth headers
-- Handle 403 errors (email not verified)
+- [ ] Create `authStore.ts` (Zustand) for tokens and user
+  - [ ] Store email_verified status
+  - [ ] Track authentication state
+- [ ] Create `useAuth.ts` hook
+  - [ ] signup, login, logout methods
+  - [ ] verifyEmail, resendVerification methods
+  - [ ] forgotPassword, resetPassword methods
+  - [ ] changePassword method
+- [ ] Implement token persistence (localStorage)
+- [ ] Implement automatic token refresh
+- [ ] Create axios interceptor for adding auth headers
+- [ ] Handle 403 errors (email not verified)
+
+**Validation:**
+```bash
+# Run state management tests
+pnpm --filter frontend test auth-store
+pnpm --filter frontend test useAuth
+
+# Verify localStorage persistence
+# Check token refresh works (use browser dev tools)
+```
 
 **1.11 Frontend: Protected Routes**
-- Create `ProtectedRoute.tsx` component
-  - Check for valid token
-  - Check email_verified status
-  - Redirect to login if not authenticated
-  - Redirect to "verify email" if not verified
-- Wrap authenticated routes with protection
-- Create basic `Layout.tsx` with header
-- Add "Resend verification" banner if not verified
+- [ ] Create `ProtectedRoute.tsx` component
+  - [ ] Check for valid token
+  - [ ] Check email_verified status
+  - [ ] Redirect to login if not authenticated
+  - [ ] Redirect to "verify email" if not verified
+- [ ] Wrap authenticated routes with protection
+- [ ] Create basic `Layout.tsx` with header
+- [ ] Add "Resend verification" banner if not verified
+
+**Validation:**
+```bash
+# Test protected routes redirect when not authenticated
+# Try accessing /dashboard without login
+# Verify redirect works correctly
+
+# Run protected route tests
+pnpm --filter frontend test protected-routes
+```
 
 **1.12 Testing: Enhanced Auth Flow**
 - **Backend Tests:**
@@ -370,45 +601,93 @@ This document breaks down the MVP development into logical phases with clear mil
 **Tasks:**
 
 **2.1 Shared: Entry Types & Schemas**
-- Define `Entry`, `EntryCreate`, `EntryUpdate` types
-- Create Zod schemas for entry validation
-- Define entry list response types (with pagination)
+- [ ] Define `Entry`, `EntryCreate`, `EntryUpdate` types
+- [ ] Create Zod schemas for entry validation
+- [ ] Define entry list response types (with pagination)
+
+**Validation:**
+```bash
+pnpm --filter shared build
+pnpm --filter shared test
+```
 
 **2.2 Backend: Entry Endpoints**
-- Implement `POST /api/entries` (create entry)
-- Implement `GET /api/entries` (list with pagination)
-- Implement `GET /api/entries/:id` (get single entry)
-- Implement `PATCH /api/entries/:id` (update score)
-- Implement `DELETE /api/entries/:id`
-- Create entry repository with database operations
-- Create entry service with business logic
+- [ ] Implement `POST /api/entries` (create entry)
+- [ ] Implement `GET /api/entries` (list with pagination)
+- [ ] Implement `GET /api/entries/:id` (get single entry)
+- [ ] Implement `PATCH /api/entries/:id` (update score)
+- [ ] Implement `DELETE /api/entries/:id`
+- [ ] Create entry repository with database operations
+- [ ] Create entry service with business logic
+
+**Validation:**
+```bash
+# Test entry CRUD endpoints
+curl -X POST http://localhost:3000/api/entries \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"raw_entry":"Test entry","score":7}'
+
+curl http://localhost:3000/api/entries \
+  -H "Authorization: Bearer YOUR_TOKEN"
+
+# Run backend tests
+pnpm --filter backend test entries
+```
 
 **2.3 Frontend: Entry Creation UI**
-- Create `NewEntryPage.tsx`
-- Create `EntryForm.tsx` component (textarea for entry)
-- Create `ScoreSlider.tsx` component (1-10 slider with labels)
-- Add "Save" button (no "Refine" yet)
-- Show loading state during save
-- Redirect to entry detail or list after save
+- [ ] Create `NewEntryPage.tsx`
+- [ ] Create `EntryForm.tsx` component (textarea for entry)
+- [ ] Create `ScoreSlider.tsx` component (1-10 slider with labels)
+- [ ] Add "Save" button (no "Refine" yet)
+- [ ] Show loading state during save
+- [ ] Redirect to entry detail or list after save
+
+**Validation:**
+```bash
+# Test in browser: http://localhost:5173/new-entry
+# Create an entry and verify it saves
+pnpm --filter frontend test entry-form
+```
 
 **2.4 Frontend: Entry State Management**
-- Create `useEntries.ts` hook with TanStack Query
-- Implement mutations for create/update/delete
-- Implement queries for list and single entry
-- Configure cache invalidation on mutations
+- [ ] Create `useEntries.ts` hook with TanStack Query
+- [ ] Implement mutations for create/update/delete
+- [ ] Implement queries for list and single entry
+- [ ] Configure cache invalidation on mutations
+
+**Validation:**
+```bash
+pnpm --filter frontend test useEntries
+# Verify cache updates after creating/deleting entries
+```
 
 **2.5 Frontend: Entry List & Detail**
-- Create `HistoryPage.tsx` with entry list
-- Create `EntryCard.tsx` component (shows TLDR, score, date)
-- Create `EntryDetailPage.tsx` (shows full entry)
-- Add pagination controls to list
-- Add delete confirmation dialog
+- [ ] Create `HistoryPage.tsx` with entry list
+- [ ] Create `EntryCard.tsx` component (shows TLDR, score, date)
+- [ ] Create `EntryDetailPage.tsx` (shows full entry)
+- [ ] Add pagination controls to list
+- [ ] Add delete confirmation dialog
+
+**Validation:**
+```bash
+# Test in browser: http://localhost:5173/history
+# Create 20+ entries and test pagination
+pnpm --filter frontend test history-page
+```
 
 **2.6 Entry Date Handling**
-- Default entry_date to today
-- Allow user to change date (date picker)
-- Handle "entry already exists for date" in UI (soft check)
-- Show warning if user tries to create duplicate
+- [ ] Default entry_date to today
+- [ ] Allow user to change date (date picker)
+- [ ] Handle "entry already exists for date" in UI (soft check)
+- [ ] Show warning if user tries to create duplicate
+
+**Validation:**
+```bash
+# Test date picker works
+# Try creating duplicate entry for same date
+pnpm --filter frontend test date-handling
+```
 
 **2.7 Testing: Entry CRUD**
 - **Backend Tests:**
@@ -461,67 +740,125 @@ This document breaks down the MVP development into logical phases with clear mil
 **Tasks:**
 
 **3.1 Backend: AI Service Setup**
-- Install and configure Anthropic SDK
-- Create `ai.service.ts` base class
-- Implement error handling for AI API failures
-- Add retry logic for transient failures
-- Configure API key from environment variables
+- [ ] Install and configure Anthropic SDK
+- [ ] Create `ai.service.ts` base class
+- [ ] Implement error handling for AI API failures
+- [ ] Add retry logic for transient failures
+- [ ] Configure API key from environment variables
+
+**Validation:**
+```bash
+# Test AI service connects
+pnpm --filter backend test ai-service
+```
 
 **3.2 Backend: Conversation AI**
-- Create `conversationAI.ts` service
-- Implement conversation prompt from PRD (section 6.2)
-- Implement `POST /api/conversation/start` endpoint
-- Implement `POST /api/conversation/message` endpoint
-- Load historical context (last 7-14 days) for AI
-- Detect "DONE_ASKING_QUESTIONS" signal
-- Store conversation transcript in entry
+- [ ] Create `conversationAI.ts` service
+- [ ] Implement conversation prompt from PRD (section 6.2)
+- [ ] Implement `POST /api/conversation/start` endpoint
+- [ ] Implement `POST /api/conversation/message` endpoint
+- [ ] Load historical context (last 7-14 days) for AI
+- [ ] Detect "DONE_ASKING_QUESTIONS" signal
+- [ ] Store conversation transcript in entry
+
+**Validation:**
+```bash
+# Test conversation endpoints with mock AI responses
+curl -X POST http://localhost:3000/api/conversation/start \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"entry_id":"123","raw_entry":"Test"}'
+pnpm --filter backend test conversation
+```
 
 **3.3 Backend: Summary AI**
-- Create `summaryAI.ts` service
-- Implement summary prompt from PRD (section 6.3)
-- Implement `POST /api/summary/generate` endpoint
-- Parse AI response into structured format (narrative, key_moments, tldr, score)
-- Calculate token usage and cost
-- Implement `POST /api/summary/finalize` endpoint
+- [ ] Create `summaryAI.ts` service
+- [ ] Implement summary prompt from PRD (section 6.3)
+- [ ] Implement `POST /api/summary/generate` endpoint
+- [ ] Parse AI response into structured format (narrative, key_moments, tldr, score)
+- [ ] Calculate token usage and cost
+- [ ] Implement `POST /api/summary/finalize` endpoint
+
+**Validation:**
+```bash
+# Test summary generation
+pnpm --filter backend test summary
+# Check token cost calculations are accurate
+```
 
 **3.4 Shared: Conversation & Summary Types**
-- Define `ConversationMessage` type
-- Define `ConversationResponse` type
-- Define `SummaryResponse` type
-- Create validation schemas for AI responses
+- [ ] Define `ConversationMessage` type
+- [ ] Define `ConversationResponse` type
+- [ ] Define `SummaryResponse` type
+- [ ] Create validation schemas for AI responses
+
+**Validation:**
+```bash
+pnpm --filter shared build && pnpm --filter shared test
+```
 
 **3.5 Frontend: Chat Interface**
-- Create `ChatInterface.tsx` component
-- Create `ChatMessage.tsx` component (user vs AI styling)
-- Create `ChatInput.tsx` component
-- Add "Refine" button to entry form
-- Show/hide chat based on user choice
+- [ ] Create `ChatInterface.tsx` component
+- [ ] Create `ChatMessage.tsx` component (user vs AI styling)
+- [ ] Create `ChatInput.tsx` component
+- [ ] Add "Refine" button to entry form
+- [ ] Show/hide chat based on user choice
+
+**Validation:**
+```bash
+# Test chat UI in browser
+pnpm --filter frontend test chat-interface
+```
 
 **3.6 Frontend: Conversation State**
-- Create `useConversation.ts` hook
-- Create `conversationStore.ts` for in-progress state
-- Handle conversation flow (start → messages → complete)
-- Store messages locally as user types
-- Handle "Save" mid-conversation (generate quick summary)
+- [ ] Create `useConversation.ts` hook
+- [ ] Create `conversationStore.ts` for in-progress state
+- [ ] Handle conversation flow (start → messages → complete)
+- [ ] Store messages locally as user types
+- [ ] Handle "Save" mid-conversation (generate quick summary)
+
+**Validation:**
+```bash
+pnpm --filter frontend test conversation-state
+# Verify state persists during conversation
+```
 
 **3.7 Frontend: Summary Display**
-- Display AI-generated summary (narrative, key moments, TLDR)
-- Show AI suggested score with explanation
-- Allow user to edit summary before finalizing
-- Allow user to adjust score with optional justification
-- Show final summary in entry detail view
+- [ ] Display AI-generated summary (narrative, key moments, TLDR)
+- [ ] Show AI suggested score with explanation
+- [ ] Allow user to edit summary before finalizing
+- [ ] Allow user to adjust score with optional justification
+- [ ] Show final summary in entry detail view
+
+**Validation:**
+```bash
+# Create entry with refinement and verify summary displays
+pnpm --filter frontend test summary-display
+```
 
 **3.8 Context Service**
-- Implement `context.service.ts` to retrieve recent entries
-- Load last 7-14 days of entries
-- Format for AI context (only relevant fields)
-- Cache context briefly to reduce database queries
+- [ ] Implement `context.service.ts` to retrieve recent entries
+- [ ] Load last 7-14 days of entries
+- [ ] Format for AI context (only relevant fields)
+- [ ] Cache context briefly to reduce database queries
+
+**Validation:**
+```bash
+pnpm --filter backend test context-service
+# Verify correct entries are loaded for context
+```
 
 **3.9 Crisis Detection**
-- Implement basic keyword detection in conversation
-- Show crisis resources banner when triggered
-- Allow user to continue or exit
-- Log crisis detection events
+- [ ] Implement basic keyword detection in conversation
+- [ ] Show crisis resources banner when triggered
+- [ ] Allow user to continue or exit
+- [ ] Log crisis detection events
+
+**Validation:**
+```bash
+# Test with concerning keywords
+pnpm --filter backend test crisis-detection
+```
 
 **3.10 Testing: AI Integration**
 - **Backend Tests:**
@@ -601,49 +938,92 @@ This document breaks down the MVP development into logical phases with clear mil
 **Tasks:**
 
 **4.1 Backend: Dashboard Endpoints**
-- Implement `GET /api/dashboard/stats` endpoint
-- Calculate aggregates (averages, min/max, distribution)
-- Calculate streaks (current, longest)
-- Implement score trend analysis (improving/declining/stable)
-- Implement `GET /api/dashboard/timeline` endpoint
-- Generate timeline data for graphing
+- [ ] Implement `GET /api/dashboard/stats` endpoint
+- [ ] Calculate aggregates (averages, min/max, distribution)
+- [ ] Calculate streaks (current, longest)
+- [ ] Implement score trend analysis (improving/declining/stable)
+- [ ] Implement `GET /api/dashboard/timeline` endpoint
+- [ ] Generate timeline data for graphing
+
+**Validation:**
+```bash
+curl http://localhost:3000/api/dashboard/stats \
+  -H "Authorization: Bearer YOUR_TOKEN"
+pnpm --filter backend test dashboard
+```
 
 **4.2 Backend: Stats Caching**
-- Update user_profiles cached stats on entry creation
-- Recalculate averages (7-day, 30-day, all-time)
-- Update streak counts
-- Optimize queries for large datasets
+- [ ] Update user_profiles cached stats on entry creation
+- [ ] Recalculate averages (7-day, 30-day, all-time)
+- [ ] Update streak counts
+- [ ] Optimize queries for large datasets
+
+**Validation:**
+```bash
+# Create an entry and verify stats update
+pnpm --filter backend test stats-caching
+```
 
 **4.3 Frontend: Dashboard Page**
-- Create `DashboardPage.tsx`
-- Create `StatsCard.tsx` component (total entries, streak, averages)
-- Create `ScoreChart.tsx` component (line chart of scores over time)
-- Create `RecentEntries.tsx` component (last 5-10 entries)
-- Add "Write Today's Entry" CTA button
+- [ ] Create `DashboardPage.tsx`
+- [ ] Create `StatsCard.tsx` component (total entries, streak, averages)
+- [ ] Create `ScoreChart.tsx` component (line chart of scores over time)
+- [ ] Create `RecentEntries.tsx` component (last 5-10 entries)
+- [ ] Add "Write Today's Entry" CTA button
+
+**Validation:**
+```bash
+# Visit http://localhost:5173/dashboard
+# Verify all stats display correctly
+pnpm --filter frontend test dashboard
+```
 
 **4.4 Frontend: Chart Library**
-- Choose and install chart library (Chart.js, Recharts, or similar)
-- Create reusable chart wrapper component
-- Style charts to match app design
-- Add responsive behavior for mobile
+- [ ] Choose and install chart library (Chart.js, Recharts, or similar)
+- [ ] Create reusable chart wrapper component
+- [ ] Style charts to match app design
+- [ ] Add responsive behavior for mobile
+
+**Validation:**
+```bash
+# Test chart renders with data
+# Test responsiveness on mobile viewport
+```
 
 **4.5 Frontend: History Filtering**
-- Add date range filter to `HistoryPage.tsx`
-- Add sorting options (date, score)
-- Add search by content (optional for MVP)
-- Update API calls to use filters
+- [ ] Add date range filter to `HistoryPage.tsx`
+- [ ] Add sorting options (date, score)
+- [ ] Add search by content (optional for MVP)
+- [ ] Update API calls to use filters
+
+**Validation:**
+```bash
+# Test filtering and sorting work
+pnpm --filter frontend test history-filtering
+```
 
 **4.6 Frontend: Entry Detail Enhancements**
-- Show relative score context ("above your 30-day average")
-- Display cost data (for debugging)
-- Show AI model used
-- Link to previous/next entry
+- [ ] Show relative score context ("above your 30-day average")
+- [ ] Display cost data (for debugging)
+- [ ] Show AI model used
+- [ ] Link to previous/next entry
+
+**Validation:**
+```bash
+# View entry detail page and verify enhancements
+```
 
 **4.7 User Profile Settings**
-- Create `SettingsPage.tsx`
-- Add theme toggle (light/dark/system)
-- Add default_refine_enabled toggle
-- Save settings via `PATCH /api/profile`
+- [ ] Create `SettingsPage.tsx`
+- [ ] Add theme toggle (light/dark/system)
+- [ ] Add default_refine_enabled toggle
+- [ ] Save settings via `PATCH /api/profile`
+
+**Validation:**
+```bash
+# Test settings persist after page reload
+pnpm --filter frontend test settings
+```
 
 **4.8 Testing: Dashboard & Analytics**
 - **Backend Tests:**
@@ -710,68 +1090,127 @@ This document breaks down the MVP development into logical phases with clear mil
 **Tasks:**
 
 **5.1 Voice Input**
-- Implement `useVoiceInput.ts` hook with Web Speech API
-- Add voice recording button to entry form
-- Show recording indicator while active
-- Display transcription in real-time or after completion
-- Allow user to edit transcription
-- Store voice metadata (duration, input method)
+- [ ] Implement `useVoiceInput.ts` hook with Web Speech API
+- [ ] Add voice recording button to entry form
+- [ ] Show recording indicator while active
+- [ ] Display transcription in real-time or after completion
+- [ ] Allow user to edit transcription
+- [ ] Store voice metadata (duration, input method)
+
+**Validation:**
+```bash
+# Test voice input on Chrome, Safari, Edge
+# Verify transcription works
+pnpm --filter frontend test voice-input
+```
 
 **5.2 Analytics Implementation**
-- Implement `POST /api/analytics/events` endpoint (batch)
-- Create `analytics.ts` helper on frontend
-- Add analytics calls for key events:
-  - Page views
-  - Entry creation (started, saved, refined)
-  - Conversation interactions
-  - Score adjustments
-  - Settings changes
-- Batch events and send periodically
+- [ ] Implement `POST /api/analytics/events` endpoint (batch)
+- [ ] Create `analytics.ts` helper on frontend
+- [ ] Add analytics calls for key events:
+  - [ ] Page views
+  - [ ] Entry creation (started, saved, refined)
+  - [ ] Conversation interactions
+  - [ ] Score adjustments
+  - [ ] Settings changes
+- [ ] Batch events and send periodically
+
+**Validation:**
+```bash
+# Verify events are logged correctly
+pnpm --filter backend test analytics
+# Check database for analytics records
+```
 
 **5.3 Data Export**
-- Implement `GET /api/export/entries` (JSON and CSV)
-- Create export UI in settings
-- Add "Download my data" button
-- Format CSV with readable columns
-- Implement `DELETE /api/export/delete-all`
-- Add confirmation dialog for delete all
+- [ ] Implement `GET /api/export/entries` (JSON and CSV)
+- [ ] Create export UI in settings
+- [ ] Add "Download my data" button
+- [ ] Format CSV with readable columns
+- [ ] Implement `DELETE /api/export/delete-all`
+- [ ] Add confirmation dialog for delete all
+
+**Validation:**
+```bash
+# Test export downloads correctly
+curl http://localhost:3000/api/export/entries \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Accept: text/csv"
+pnpm --filter backend test export
+```
 
 **5.4 Error Handling & UX**
-- Add global error boundary on frontend
-- Improve error messages (user-friendly)
-- Add loading states to all async operations
-- Add empty states (no entries yet, etc.)
-- Add success toasts for actions
-- Handle offline state gracefully
+- [ ] Add global error boundary on frontend
+- [ ] Improve error messages (user-friendly)
+- [ ] Add loading states to all async operations
+- [ ] Add empty states (no entries yet, etc.)
+- [ ] Add success toasts for actions
+- [ ] Handle offline state gracefully
+
+**Validation:**
+```bash
+# Test error scenarios
+# Verify loading states show
+# Test offline mode
+pnpm --filter frontend test error-handling
+```
 
 **5.5 Mobile Responsiveness**
-- Test all pages on mobile viewport
-- Fix any layout issues
-- Ensure chat interface works on mobile
-- Test touch interactions
-- Optimize for smaller screens
+- [ ] Test all pages on mobile viewport
+- [ ] Fix any layout issues
+- [ ] Ensure chat interface works on mobile
+- [ ] Test touch interactions
+- [ ] Optimize for smaller screens
+
+**Validation:**
+```bash
+# Use browser dev tools mobile viewport
+# Test on real mobile device
+# Chrome DevTools responsive mode
+```
 
 **5.6 Performance Optimization**
-- Lazy load pages (React.lazy)
-- Optimize images (if any)
-- Minimize bundle size
-- Add loading skeletons
-- Test API response times
+- [ ] Lazy load pages (React.lazy)
+- [ ] Optimize images (if any)
+- [ ] Minimize bundle size
+- [ ] Add loading skeletons
+- [ ] Test API response times
+
+**Validation:**
+```bash
+pnpm --filter frontend build
+# Check bundle size
+pnpm --filter frontend analyze
+# Run Lighthouse audit
+```
 
 **5.7 Security Audit**
-- Review all API endpoints for auth requirements
-- Ensure RLS policies cover all tables
-- Test JWT expiration and refresh
-- Validate all user inputs (Zod schemas)
-- Review environment variable handling
-- Test rate limiting
+- [ ] Review all API endpoints for auth requirements
+- [ ] Ensure RLS policies cover all tables
+- [ ] Test JWT expiration and refresh
+- [ ] Validate all user inputs (Zod schemas)
+- [ ] Review environment variable handling
+- [ ] Test rate limiting
+
+**Validation:**
+```bash
+# Run security tests
+pnpm test:security
+# Check for common vulnerabilities
+```
 
 **5.8 Documentation**
-- Update README with setup instructions
-- Document environment variables
-- Add API documentation (Swagger)
-- Write contribution guidelines (if open source)
-- Document deployment process
+- [ ] Update README with setup instructions
+- [ ] Document environment variables
+- [ ] Add API documentation (Swagger)
+- [ ] Write contribution guidelines (if open source)
+- [ ] Document deployment process
+
+**Validation:**
+```bash
+# Follow README from scratch to verify completeness
+# Check all env vars are documented
+```
 
 **5.9 End-to-End Testing**
 - **Voice Input Tests:**
