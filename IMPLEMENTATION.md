@@ -172,11 +172,11 @@ ls dist/    # Should show compiled output
 ```
 
 **0.5 Database Setup**
-- [ ] Create Supabase project (free tier) - **Manual step required**
-- [x] Run initial migration (user_profiles, entries, analytics tables) - SQL files created
-- [x] Set up Row Level Security (RLS) policies - SQL files created
+- [x] Create Supabase project (free tier)
+- [x] Run initial migration (user_profiles, entries, analytics tables)
+- [x] Set up Row Level Security (RLS) policies
 - [x] Create seed data for development - Seed file created
-- [x] Test database connection from backend - Test script created (`pnpm test:db`)
+- [x] Test database connection from backend
 
 **Validation:**
 ```bash
