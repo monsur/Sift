@@ -11,9 +11,9 @@ const envSchema = z.object({
   HOST: z.string().default('0.0.0.0'),
 
   // Supabase
-  SUPABASE_URL: z.string().url().optional(),
-  SUPABASE_ANON_KEY: z.string().optional(),
-  SUPABASE_SERVICE_ROLE_KEY: z.string().optional(),
+  SUPABASE_URL: z.string().url(),
+  SUPABASE_ANON_KEY: z.string().min(1),
+  SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
 
   // Anthropic
   ANTHROPIC_API_KEY: z.string().optional(),

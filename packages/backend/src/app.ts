@@ -2,6 +2,7 @@ import Fastify, { type FastifyInstance } from 'fastify';
 import cors from '@fastify/cors';
 import helmet from '@fastify/helmet';
 import { env } from './config/env.js';
+import { AppError } from './utils/errors.js';
 
 export async function buildApp(): Promise<FastifyInstance> {
   const isDev = env.NODE_ENV === 'development';
@@ -36,6 +37,40 @@ export async function buildApp(): Promise<FastifyInstance> {
   } else {
     await app.register(helmet);
   }
+
+  // Global error handler
+  app.setErrorHandler((error, _request, reply) => {
+    if (error instanceof AppError) {
+      return reply.status(error.statusCode).send({
+        success: false,
+        error: {
+          code: error.code,
+          message: error.message,
+          details: error.details,
+        },
+      });
+    }
+
+    // Fastify validation errors
+    if (error instanceof Error && 'validation' in error) {
+      return reply.status(400).send({
+        success: false,
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: error.message,
+        },
+      });
+    }
+
+    app.log.error(error);
+    return reply.status(500).send({
+      success: false,
+      error: {
+        code: 'INTERNAL_ERROR',
+        message: 'An unexpected error occurred',
+      },
+    });
+  });
 
   // Health check endpoint
   app.get('/health', async () => {
