@@ -10,7 +10,7 @@
 
 **Last Updated:** 2026-02-07
 **Current Phase:** Phase 3 - AI Integration
-**Current Task:** Phase 2 Complete - Ready for Phase 3
+**Current Task:** Phase 3 In Progress - AI provider abstraction, services, and prompts complete; routes and UI remaining
 **Overall Progress:** 3/6 phases complete (50%)
 
 ### Phase Completion Tracking
@@ -20,8 +20,8 @@
 | **0** | ✅ Complete | 2026-02-05 | 2026-02-05 | Project setup and foundation |
 | **1** | ✅ Complete | 2026-02-07 | 2026-02-07 | Auth system with email verification, password reset, rate limiting |
 | **2** | ✅ Complete | 2026-02-07 | 2026-02-07 | Entry CRUD with service, routes, UI pages, tests |
-| **3** | ⏳ Not Started | - | - | Blocked by Phase 2 |
-| **4** | ⏳ Not Started | - | - | Blocked by Phase 2 |
+| **3** | 🔄 In Progress | 2026-02-07 | - | AI provider abstraction + services complete |
+| **4** | ⏳ Not Started | - | - | Blocked by Phase 3 |
 | **5** | ⏳ Not Started | - | - | Blocked by Phases 3 & 4 |
 
 **Status Legend:**
@@ -36,6 +36,7 @@ None currently.
 
 ### Recent Notes
 
+- 2026-02-07: **Phase 3 Started** - AI provider abstraction layer: `AIProvider` interface + `AnthropicProvider` + factory, conversation/summary services, prompt builders, 196 tests passing
 - 2026-02-07: **Phase 2 Complete** - Entry CRUD: backend service + routes, frontend API/hooks/pages (NewEntry, EntrySaved, History, EntryDetail), UI components (Textarea, ScoreSlider, Dialog), navigation, 158 tests passing
 - 2026-02-07: **Phase 1 Complete** - Full auth system: signup, login, logout, token refresh, email verification, password reset, rate limiting, account locking, protected routes, auth store, 118 tests passing
 - 2026-02-05: **Phase 0 Complete** - Monorepo with frontend (Vite+React+Tailwind), backend (Fastify), shared package, testing infrastructure (Vitest), database migrations ready
@@ -773,65 +774,70 @@ pnpm --filter frontend test date-handling
 
 **Tasks:**
 
-**3.1 Backend: AI Service Setup**
-- [ ] Install and configure Anthropic SDK
-- [ ] Create `ai.service.ts` base class
-- [ ] Implement error handling for AI API failures
-- [ ] Add retry logic for transient failures
-- [ ] Configure API key from environment variables
+**3.1 Backend: AI Provider Abstraction & Services**
+- [x] Configure Anthropic SDK (already installed, `@anthropic-ai/sdk`)
+- [x] Create `AIProvider` interface (`services/ai/ai-provider.ts`) with `complete()` and `estimateCost()`
+- [x] Implement `AnthropicProvider` (`services/ai/anthropic-provider.ts`) — wraps Claude SDK, maps errors to `AppError`
+- [x] Create provider factory (`services/ai/ai-provider-factory.ts`) — lazy singleton, resolves from `AI_PROVIDER` env var
+- [x] Add `AI_PROVIDER` to env schema (`config/env.ts`)
+- [x] Create barrel exports (`services/ai/index.ts`)
+- [x] Implement error mapping (rate limit → 429, auth → 500, other → 502)
+- [x] Add cost estimation (Claude Sonnet pricing)
 
 **Validation:**
 ```bash
-# Test AI service connects
-pnpm --filter backend test ai-service
+pnpm --filter backend test src/services/ai/
 ```
 
-**3.2 Backend: Conversation AI**
-- [ ] Create `conversationAI.ts` service
-- [ ] Implement conversation prompt from PRD (section 6.2)
-- [ ] Implement `POST /api/conversation/start` endpoint
-- [ ] Implement `POST /api/conversation/message` endpoint
-- [ ] Load historical context (last 7-14 days) for AI
-- [ ] Detect "DONE_ASKING_QUESTIONS" signal
-- [ ] Store conversation transcript in entry
+**3.2 Backend: Prompt Builders**
+- [x] Create `prompts/conversation.prompt.ts` — builds system prompt with DONE_ASKING_QUESTIONS signal and recent entry context
+- [x] Create `prompts/summary.prompt.ts` — builds system prompt with structured JSON output instructions
 
 **Validation:**
 ```bash
-# Test conversation endpoints with mock AI responses
-curl -X POST http://localhost:3000/api/conversation/start \
-  -H "Authorization: Bearer YOUR_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"entry_id":"123","raw_entry":"Test"}'
+pnpm --filter backend test src/prompts/
+```
+
+**3.3 Backend: Conversation Service**
+- [x] Create `conversation.service.ts` with `startConversation()` and `continueConversation()`
+- [x] Detect "DONE_ASKING_QUESTIONS" signal in AI response
+- [x] Enforce `MAX_CONVERSATION_TURNS` guard (returns done when limit reached)
+- [ ] Implement `POST /api/entries/:id/conversation/start` endpoint
+- [ ] Implement `POST /api/entries/:id/conversation/message` endpoint
+- [ ] Store conversation transcript in entry on completion
+
+**Validation:**
+```bash
 pnpm --filter backend test conversation
 ```
 
-**3.3 Backend: Summary AI**
-- [ ] Create `summaryAI.ts` service
-- [ ] Implement summary prompt from PRD (section 6.3)
-- [ ] Implement `POST /api/summary/generate` endpoint
-- [ ] Parse AI response into structured format (narrative, key_moments, tldr, score)
-- [ ] Calculate token usage and cost
-- [ ] Implement `POST /api/summary/finalize` endpoint
+**3.4 Backend: Summary Service**
+- [x] Create `summary.service.ts` with `generateSummary()` and `estimateTotalCost()`
+- [x] Parse structured JSON response, validate required fields
+- [x] Clamp AI-suggested score to 1-10 range
+- [ ] Implement `POST /api/entries/:id/summary/generate` endpoint
+- [ ] Implement `POST /api/entries/:id/summary/finalize` endpoint
+- [ ] Update entry with refined data on finalize
 
 **Validation:**
 ```bash
-# Test summary generation
 pnpm --filter backend test summary
-# Check token cost calculations are accurate
 ```
 
-**3.4 Shared: Conversation & Summary Types**
-- [ ] Define `ConversationMessage` type
-- [ ] Define `ConversationResponse` type
-- [ ] Define `SummaryResponse` type
-- [ ] Create validation schemas for AI responses
+**3.5 Shared: AI Types & Constants**
+- [x] Define `AIMessage` type (provider-level, no timestamp)
+- [x] Define `AITokenUsage`, `AIConversationTurnResult` types
+- [x] Define `AISummaryResult`, `AISummaryGenerationResult` types
+- [x] Add `AI_PROVIDERS` array, `AIProviderName` type, `DEFAULT_AI_PROVIDER`
+- [x] Add temperature and max token constants
+- [x] `ConversationMessage` type already existed (with timestamp, for storage)
 
 **Validation:**
 ```bash
 pnpm --filter shared build && pnpm --filter shared test
 ```
 
-**3.5 Frontend: Chat Interface**
+**3.6 Frontend: Chat Interface**
 - [ ] Create `ChatInterface.tsx` component
 - [ ] Create `ChatMessage.tsx` component (user vs AI styling)
 - [ ] Create `ChatInput.tsx` component
@@ -844,7 +850,7 @@ pnpm --filter shared build && pnpm --filter shared test
 pnpm --filter frontend test chat-interface
 ```
 
-**3.6 Frontend: Conversation State**
+**3.7 Frontend: Conversation State**
 - [ ] Create `useConversation.ts` hook
 - [ ] Create `conversationStore.ts` for in-progress state
 - [ ] Handle conversation flow (start → messages → complete)
@@ -857,7 +863,7 @@ pnpm --filter frontend test conversation-state
 # Verify state persists during conversation
 ```
 
-**3.7 Frontend: Summary Display**
+**3.8 Frontend: Summary Display**
 - [ ] Display AI-generated summary (narrative, key moments, TLDR)
 - [ ] Show AI suggested score with explanation
 - [ ] Allow user to edit summary before finalizing
@@ -870,7 +876,7 @@ pnpm --filter frontend test conversation-state
 pnpm --filter frontend test summary-display
 ```
 
-**3.8 Context Service**
+**3.9 Context Service**
 - [ ] Implement `context.service.ts` to retrieve recent entries
 - [ ] Load last 7-14 days of entries
 - [ ] Format for AI context (only relevant fields)
@@ -882,7 +888,7 @@ pnpm --filter backend test context-service
 # Verify correct entries are loaded for context
 ```
 
-**3.9 Crisis Detection**
+**3.10 Crisis Detection**
 - [ ] Implement basic keyword detection in conversation
 - [ ] Show crisis resources banner when triggered
 - [ ] Allow user to continue or exit
@@ -894,17 +900,27 @@ pnpm --filter backend test context-service
 pnpm --filter backend test crisis-detection
 ```
 
-**3.10 Testing: AI Integration**
+**3.11 Testing: AI Integration**
 - **Backend Tests:**
-  - **AI Service Tests (with mocking):**
-    - Mock Anthropic API responses for conversation
-    - Mock Anthropic API responses for summary generation
-    - Test conversation flow with different entry types
-    - Test "DONE_ASKING_QUESTIONS" detection
-    - Test summary parsing (narrative, key_moments, tldr, score)
-    - Test error handling when AI API fails
-    - Test retry logic for transient failures
-    - Test token counting and cost calculation
+  - **AI Provider Tests (done):**
+    - ✅ Mock Anthropic SDK, test request/response mapping
+    - ✅ Test error mapping (rate limit → 429, auth → 500, generic → 502)
+    - ✅ Test cost estimation calculation
+    - ✅ Test factory default provider selection and caching
+    - ✅ Test factory rejects unimplemented providers
+  - **AI Service Tests (done):**
+    - ✅ Mock provider for conversation: test turn flow, done detection, max turns guard
+    - ✅ Mock provider for summary: test JSON parsing, field validation, score clamping
+    - ✅ Test malformed response handling
+    - ✅ Test cost estimation delegation
+  - **Prompt Builder Tests (done):**
+    - ✅ Test conversation prompt includes DONE signal instructions and recent entry context
+    - ✅ Test summary prompt includes JSON output format and score range
+  - **Remaining AI Tests (with routes):**
+    - Mock Anthropic API responses for conversation endpoints
+    - Mock Anthropic API responses for summary endpoints
+    - Test full conversation flow through routes
+    - Test token counting and cost tracking end-to-end
   - **Context Service Tests:**
     - Test retrieving last 7-14 days of entries
     - Test context formatting for AI
