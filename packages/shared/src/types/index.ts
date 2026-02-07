@@ -86,3 +86,34 @@ export interface ProfileResponse {
   user: User;
   profile: UserProfile;
 }
+
+// AI types
+export interface AIMessage {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
+export interface AITokenUsage {
+  input_tokens: number;
+  output_tokens: number;
+  total_tokens: number;
+}
+
+export interface AIConversationTurnResult {
+  message: string;
+  is_done: boolean;
+  token_usage: AITokenUsage;
+}
+
+export interface AISummaryResult {
+  refined_entry: string;
+  key_moments: string[];
+  tldr: string;
+  ai_suggested_score: number;
+  score_justification: string;
+}
+
+export interface AISummaryGenerationResult {
+  summary: AISummaryResult;
+  token_usage: AITokenUsage;
+}

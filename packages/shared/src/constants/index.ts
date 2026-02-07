@@ -42,3 +42,12 @@ export const RATE_LIMIT_PASSWORD_RESET_WINDOW_HOURS = 1;
 export const AI_MODEL = 'claude-sonnet-4-20250514';
 export const MAX_CONVERSATION_TURNS = 5;
 export const CONTEXT_DAYS = 14;
+
+// AI provider constants
+export const AI_PROVIDERS = ['anthropic', 'openai', 'gemini'] as const;
+export type AIProviderName = (typeof AI_PROVIDERS)[number];
+export const DEFAULT_AI_PROVIDER: AIProviderName = 'anthropic';
+export const CONVERSATION_TEMPERATURE = 0.7;
+export const SUMMARY_TEMPERATURE = 1.0;
+export const CONVERSATION_MAX_TOKENS = 1024;
+export const SUMMARY_MAX_TOKENS = 2048;
