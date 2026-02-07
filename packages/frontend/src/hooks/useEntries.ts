@@ -26,16 +26,14 @@ export function useEntry(id: string | undefined) {
 
 export function useCreateEntry() {
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
 
   return useMutation({
     mutationFn: async (input: CreateEntryInput) => {
       const { data } = await entriesApi.create(input);
       return data.data!;
     },
-    onSuccess: (entry) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['entries', 'list'] });
-      navigate(`/entry-saved/${entry.id}`);
     },
   });
 }

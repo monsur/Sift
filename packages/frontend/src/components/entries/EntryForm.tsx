@@ -13,8 +13,14 @@ interface EntryFormProps {
     score_justification?: string;
     input_method: 'text' | 'voice';
   }) => void;
+  onRefine?: (data: {
+    entry_date: string;
+    raw_entry: string;
+    input_method: 'text' | 'voice';
+  }) => void;
   onCancel: () => void;
   isSubmitting: boolean;
+  isRefining?: boolean;
   error?: string;
 }
 
@@ -36,7 +42,7 @@ function formatDate(dateStr: string): string {
   });
 }
 
-function EntryForm({ onSubmit, onCancel, isSubmitting, error }: EntryFormProps) {
+function EntryForm({ onSubmit, onRefine, onCancel, isSubmitting, isRefining, error }: EntryFormProps) {
   const [entryDate, setEntryDate] = useState(getTodayString);
   const [rawEntry, setRawEntry] = useState('');
   const [showScore, setShowScore] = useState(false);
@@ -141,6 +147,29 @@ function EntryForm({ onSubmit, onCancel, isSubmitting, error }: EntryFormProps) 
           <Button type="button" variant="secondary" onClick={onCancel}>
             Cancel
           </Button>
+          {onRefine && (
+            <Button
+              type="button"
+              variant="outline"
+              disabled={isRefining || isSubmitting || !rawEntry.trim()}
+              onClick={() => {
+                setValidationError('');
+                const input = {
+                  entry_date: entryDate,
+                  raw_entry: rawEntry,
+                  input_method: 'text' as const,
+                };
+                const result = createEntrySchema.safeParse(input);
+                if (!result.success) {
+                  setValidationError(result.error.issues[0]?.message ?? 'Invalid input');
+                  return;
+                }
+                onRefine(input);
+              }}
+            >
+              {isRefining ? 'Starting...' : 'Refine with AI'}
+            </Button>
+          )}
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting ? 'Saving...' : 'Save'}
           </Button>
