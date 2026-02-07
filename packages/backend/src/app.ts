@@ -3,6 +3,7 @@ import cors from '@fastify/cors';
 import helmet from '@fastify/helmet';
 import { env } from './config/env.js';
 import { AppError } from './utils/errors.js';
+import { authRoutes } from './routes/auth.routes.js';
 
 export async function buildApp(): Promise<FastifyInstance> {
   const isDev = env.NODE_ENV === 'development';
@@ -81,6 +82,9 @@ export async function buildApp(): Promise<FastifyInstance> {
   app.get('/api', async () => {
     return { message: 'Sift API v1' };
   });
+
+  // Auth routes
+  await app.register(authRoutes, { prefix: '/api/auth' });
 
   return app;
 }
