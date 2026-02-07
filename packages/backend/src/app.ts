@@ -4,6 +4,7 @@ import helmet from '@fastify/helmet';
 import { env } from './config/env.js';
 import { AppError } from './utils/errors.js';
 import { authRoutes } from './routes/auth.routes.js';
+import { profileRoutes } from './routes/profile.routes.js';
 
 export async function buildApp(): Promise<FastifyInstance> {
   const isDev = env.NODE_ENV === 'development';
@@ -85,6 +86,9 @@ export async function buildApp(): Promise<FastifyInstance> {
 
   // Auth routes
   await app.register(authRoutes, { prefix: '/api/auth' });
+
+  // Profile routes
+  await app.register(profileRoutes, { prefix: '/api/profile' });
 
   return app;
 }
