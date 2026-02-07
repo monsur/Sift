@@ -31,6 +31,29 @@ vi.mock('../middleware/auth.middleware.js', () => ({
   requireVerified: vi.fn(),
 }));
 
+// Mock entry service (needed by entry routes)
+vi.mock('../services/entry.service.js', () => ({
+  entryService: {
+    create: vi.fn(), getById: vi.fn(), list: vi.fn(), update: vi.fn(),
+    delete: vi.fn(), saveTranscript: vi.fn(), saveRefinement: vi.fn(),
+  },
+}));
+
+// Mock services needed by conversation/summary routes
+vi.mock('../services/context.service.js', () => ({
+  getRecentEntries: vi.fn().mockResolvedValue([]),
+}));
+vi.mock('../services/conversation.service.js', () => ({
+  startConversation: vi.fn(), continueConversation: vi.fn(),
+}));
+vi.mock('../services/summary.service.js', () => ({
+  generateSummary: vi.fn(), estimateTotalCost: vi.fn(),
+}));
+vi.mock('../config/supabase.js', () => ({
+  createAnonClient: vi.fn().mockReturnValue({ from: vi.fn() }),
+  getServiceClient: vi.fn().mockReturnValue({ from: vi.fn() }),
+}));
+
 import { authService } from '../services/auth.service.js';
 
 const mockAuthService = vi.mocked(authService);

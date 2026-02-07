@@ -6,6 +6,8 @@ import { AppError } from './utils/errors.js';
 import { authRoutes } from './routes/auth.routes.js';
 import { profileRoutes } from './routes/profile.routes.js';
 import { entryRoutes } from './routes/entry.routes.js';
+import { conversationRoutes } from './routes/conversation.routes.js';
+import { summaryRoutes } from './routes/summary.routes.js';
 
 export async function buildApp(): Promise<FastifyInstance> {
   const isDev = env.NODE_ENV === 'development';
@@ -93,6 +95,12 @@ export async function buildApp(): Promise<FastifyInstance> {
 
   // Entry routes
   await app.register(entryRoutes, { prefix: '/api/entries' });
+
+  // Conversation routes
+  await app.register(conversationRoutes, { prefix: '/api/conversation' });
+
+  // Summary routes
+  await app.register(summaryRoutes, { prefix: '/api/summary' });
 
   return app;
 }

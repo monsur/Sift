@@ -1,4 +1,4 @@
-import type { Entry, PaginatedResponse } from 'shared/types';
+import type { Entry, ConversationMessage, PaginatedResponse } from 'shared/types';
 import type { CreateEntryInput, UpdateEntryInput, EntryListParams } from 'shared/schemas';
 import { getServiceClient } from '../config/supabase.js';
 import { AppError, NotFoundError, ForbiddenError } from '../utils/errors.js';
@@ -134,6 +134,76 @@ export class EntryService {
 
     if (error || !data) {
       throw new AppError('Failed to update entry', 500, 'ENTRY_UPDATE_FAILED');
+    }
+
+    return this.mapEntry(data);
+  }
+
+  async saveTranscript(
+    userId: string,
+    entryId: string,
+    transcript: ConversationMessage[]
+  ): Promise<Entry> {
+    await this.getById(userId, entryId);
+    const supabase = getServiceClient();
+
+    const { data, error } = await supabase
+      .from('entries')
+      .update({
+        conversation_transcript: transcript,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', entryId)
+      .select()
+      .single();
+
+    if (error || !data) {
+      throw new AppError('Failed to save transcript', 500, 'ENTRY_UPDATE_FAILED');
+    }
+
+    return this.mapEntry(data);
+  }
+
+  async saveRefinement(
+    userId: string,
+    entryId: string,
+    refinement: {
+      refined_entry: string;
+      tldr: string;
+      key_moments: string[];
+      ai_suggested_score: number;
+      score_justification: string;
+      score?: number;
+      token_count: number;
+      estimated_cost: number;
+    }
+  ): Promise<Entry> {
+    await this.getById(userId, entryId);
+    const supabase = getServiceClient();
+
+    const { data, error } = await supabase
+      .from('entries')
+      .update({
+        refined_entry: refinement.refined_entry,
+        tldr: refinement.tldr,
+        key_moments: refinement.key_moments,
+        ai_suggested_score: refinement.ai_suggested_score,
+        score_justification: refinement.score_justification,
+        score: refinement.score ?? refinement.ai_suggested_score,
+        token_count: refinement.token_count,
+        estimated_cost: refinement.estimated_cost,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', entryId)
+      .select()
+      .single();
+
+    if (error || !data) {
+      throw new AppError(
+        'Failed to save refinement',
+        500,
+        'ENTRY_UPDATE_FAILED'
+      );
     }
 
     return this.mapEntry(data);

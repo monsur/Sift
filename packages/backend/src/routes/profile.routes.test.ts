@@ -26,6 +26,25 @@ vi.mock('../config/supabase.js', () => ({
   getServiceClient: vi.fn().mockReturnValue({ from: mockFrom }),
 }));
 
+// Mock entry service (needed by entry routes)
+vi.mock('../services/entry.service.js', () => ({
+  entryService: {
+    create: vi.fn(), getById: vi.fn(), list: vi.fn(), update: vi.fn(),
+    delete: vi.fn(), saveTranscript: vi.fn(), saveRefinement: vi.fn(),
+  },
+}));
+
+// Mock services needed by conversation/summary routes
+vi.mock('../services/context.service.js', () => ({
+  getRecentEntries: vi.fn().mockResolvedValue([]),
+}));
+vi.mock('../services/conversation.service.js', () => ({
+  startConversation: vi.fn(), continueConversation: vi.fn(),
+}));
+vi.mock('../services/summary.service.js', () => ({
+  generateSummary: vi.fn(), estimateTotalCost: vi.fn(),
+}));
+
 // Also mock auth service since auth routes are registered too
 vi.mock('../services/auth.service.js', () => ({
   authService: {

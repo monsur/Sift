@@ -9,6 +9,8 @@ const { mockEntryService, mockAuthMiddleware, mockRequireVerified } = vi.hoisted
     list: vi.fn(),
     update: vi.fn(),
     delete: vi.fn(),
+    saveTranscript: vi.fn(),
+    saveRefinement: vi.fn(),
   },
   mockAuthMiddleware: vi.fn().mockImplementation(async (request: { user: unknown }) => {
     request.user = {
@@ -33,6 +35,23 @@ vi.mock('../services/entry.service.js', () => ({
 vi.mock('../config/supabase.js', () => ({
   createAnonClient: vi.fn().mockReturnValue({ from: vi.fn() }),
   getServiceClient: vi.fn().mockReturnValue({ from: vi.fn() }),
+}));
+
+// Mock context service (needed by conversation/summary routes)
+vi.mock('../services/context.service.js', () => ({
+  getRecentEntries: vi.fn().mockResolvedValue([]),
+}));
+
+// Mock conversation service (needed by conversation routes)
+vi.mock('../services/conversation.service.js', () => ({
+  startConversation: vi.fn(),
+  continueConversation: vi.fn(),
+}));
+
+// Mock summary service (needed by summary routes)
+vi.mock('../services/summary.service.js', () => ({
+  generateSummary: vi.fn(),
+  estimateTotalCost: vi.fn(),
 }));
 
 // Mock auth service (needed by auth routes)
