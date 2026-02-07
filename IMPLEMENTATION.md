@@ -8,18 +8,18 @@
 
 ## Current Status
 
-**Last Updated:** 2026-02-05
-**Current Phase:** Phase 0 - Project Setup
-**Current Task:** Phase 0 Complete - Ready for Phase 1
-**Overall Progress:** 1/6 phases complete (17%)
+**Last Updated:** 2026-02-07
+**Current Phase:** Phase 1 - Authentication & User Profile
+**Current Task:** Phase 1 Complete - Ready for Phase 2
+**Overall Progress:** 2/6 phases complete (33%)
 
 ### Phase Completion Tracking
 
 | Phase | Status | Started | Completed | Notes |
 |-------|--------|---------|-----------|-------|
 | **0** | ✅ Complete | 2026-02-05 | 2026-02-05 | Project setup and foundation |
-| **1** | ⏳ Not Started | - | - | Blocked by Phase 0 |
-| **2** | ⏳ Not Started | - | - | Blocked by Phase 1 |
+| **1** | ✅ Complete | 2026-02-07 | 2026-02-07 | Auth system with email verification, password reset, rate limiting |
+| **2** | ⏳ Not Started | - | - | Blocked by Phase 1 (now complete) |
 | **3** | ⏳ Not Started | - | - | Blocked by Phase 2 |
 | **4** | ⏳ Not Started | - | - | Blocked by Phase 2 |
 | **5** | ⏳ Not Started | - | - | Blocked by Phases 3 & 4 |
@@ -36,6 +36,7 @@ None currently.
 
 ### Recent Notes
 
+- 2026-02-07: **Phase 1 Complete** - Full auth system: signup, login, logout, token refresh, email verification, password reset, rate limiting, account locking, protected routes, auth store, 118 tests passing
 - 2026-02-05: **Phase 0 Complete** - Monorepo with frontend (Vite+React+Tailwind), backend (Fastify), shared package, testing infrastructure (Vitest), database migrations ready
 - 2026-02-05: Task 0.1 complete - monorepo initialized with pnpm workspaces, ESLint flat config, Prettier
 - 2026-02-04: Implementation plan separated from PRD.md for better tracking
@@ -253,24 +254,24 @@ pnpm test:coverage
 **Tasks:**
 
 **1.1 Backend: Core Auth Endpoints**
-- [ ] Implement `POST /api/auth/signup` (uses Supabase Auth)
-  - [ ] Enforce strong password requirements (12+ chars, mixed case, numbers, symbols)
-  - [ ] Validate password strength server-side
-  - [ ] Send verification email
-  - [ ] Mark email_verified as false
-- [ ] Implement `POST /api/auth/login`
-  - [ ] Check email_verified status
-  - [ ] Implement rate limiting (max 5 attempts per 15 min)
-  - [ ] Track failed login attempts
-  - [ ] Lock account for 15 min after 5 failed attempts
-  - [ ] Update last_login_at and login_count on success
-- [ ] Implement `POST /api/auth/logout`
-  - [ ] Invalidate refresh token
-  - [ ] Clear session from database
-- [ ] Implement `POST /api/auth/refresh`
-  - [ ] Rotate refresh tokens for security
-- [ ] Create auth middleware for JWT validation
-- [ ] Add comprehensive error handling for auth failures
+- [x] Implement `POST /api/auth/signup` (uses Supabase Auth)
+  - [x] Enforce strong password requirements (12+ chars, mixed case, numbers, symbols)
+  - [x] Validate password strength server-side
+  - [x] Send verification email
+  - [x] Mark email_verified as false
+- [x] Implement `POST /api/auth/login`
+  - [x] Check email_verified status
+  - [x] Implement rate limiting (max 5 attempts per 15 min)
+  - [x] Track failed login attempts
+  - [x] Lock account for 15 min after 5 failed attempts
+  - [x] Update last_login_at and login_count on success
+- [x] Implement `POST /api/auth/logout`
+  - [x] Invalidate refresh token
+  - [x] Clear session from database
+- [x] Implement `POST /api/auth/refresh`
+  - [x] Rotate refresh tokens for security
+- [x] Create auth middleware for JWT validation
+- [x] Add comprehensive error handling for auth failures
 
 **Validation:**
 ```bash
@@ -289,16 +290,16 @@ pnpm --filter backend test auth
 ```
 
 **1.2 Backend: Email Verification**
-- [ ] Implement `POST /api/auth/verify-email`
-  - [ ] Validate verification token
-  - [ ] Mark email_verified as true
-  - [ ] Set email_verified_at timestamp
-  - [ ] Return error for invalid/expired/used tokens
-- [ ] Implement `POST /api/auth/resend-verification`
-  - [ ] Send new verification email
-  - [ ] Rate limit: max 3 per hour per email
-- [ ] Configure email templates for verification
-- [ ] Set verification token expiration (24 hours)
+- [x] Implement `POST /api/auth/verify-email`
+  - [x] Validate verification token
+  - [x] Mark email_verified as true
+  - [x] Set email_verified_at timestamp
+  - [x] Return error for invalid/expired/used tokens
+- [x] Implement `POST /api/auth/resend-verification`
+  - [x] Send new verification email
+  - [x] Rate limit: max 3 per hour per email
+- [x] Configure email templates for verification
+- [x] Set verification token expiration (24 hours)
 
 **Validation:**
 ```bash
@@ -309,21 +310,21 @@ pnpm --filter backend test email-verification
 ```
 
 **1.3 Backend: Password Reset Flow**
-- [ ] Implement `POST /api/auth/forgot-password`
-  - [ ] Generate password reset token
-  - [ ] Send reset email
-  - [ ] Always return success (prevent email enumeration)
-  - [ ] Rate limit: max 3 per hour per email
-  - [ ] Token expires in 1 hour
-- [ ] Implement `POST /api/auth/reset-password`
-  - [ ] Validate reset token
-  - [ ] Check new password meets requirements
-  - [ ] Ensure new password differs from old
-  - [ ] Invalidate all existing sessions
-- [ ] Implement `POST /api/auth/change-password` (authenticated)
-  - [ ] Verify current password
-  - [ ] Validate new password requirements
-  - [ ] Prevent password reuse
+- [x] Implement `POST /api/auth/forgot-password`
+  - [x] Generate password reset token
+  - [x] Send reset email
+  - [x] Always return success (prevent email enumeration)
+  - [x] Rate limit: max 3 per hour per email
+  - [x] Token expires in 1 hour
+- [x] Implement `POST /api/auth/reset-password`
+  - [x] Validate reset token
+  - [x] Check new password meets requirements
+  - [x] Ensure new password differs from old
+  - [x] Invalidate all existing sessions
+- [x] Implement `POST /api/auth/change-password` (authenticated)
+  - [x] Verify current password
+  - [x] Validate new password requirements
+  - [x] Prevent password reuse
 
 **Validation:**
 ```bash
@@ -337,18 +338,18 @@ pnpm --filter backend test password-reset
 ```
 
 **1.4 Backend: Security Features**
-- [ ] Implement rate limiting middleware
-  - [ ] Login attempts: 5 per 15 minutes per email
-  - [ ] Verification emails: 3 per hour per email
-  - [ ] Password reset: 3 per hour per email
-- [ ] Add account locking mechanism
-  - [ ] Lock after 5 failed login attempts
-  - [ ] Auto-unlock after 15 minutes
-  - [ ] Store locked_until timestamp
-- [ ] Update user_profiles table with security fields
-  - [ ] email_verified, email_verified_at
-  - [ ] failed_login_attempts
-  - [ ] locked_until
+- [x] Implement rate limiting middleware
+  - [x] Login attempts: 5 per 15 minutes per email
+  - [x] Verification emails: 3 per hour per email
+  - [x] Password reset: 3 per hour per email
+- [x] Add account locking mechanism
+  - [x] Lock after 5 failed login attempts
+  - [x] Auto-unlock after 15 minutes
+  - [x] Store locked_until timestamp
+- [x] Update user_profiles table with security fields
+  - [x] email_verified, email_verified_at
+  - [x] failed_login_attempts
+  - [x] locked_until
 
 **Validation:**
 ```bash
@@ -364,13 +365,13 @@ pnpm --filter backend test security
 ```
 
 **1.5 Backend: Profile Endpoints**
-- [ ] Implement `GET /api/profile`
-  - [ ] Return email_verified status
-- [ ] Implement `PATCH /api/profile`
-  - [ ] Update settings only (not email/password)
-- [ ] Create user profile on signup (database trigger or service)
-  - [ ] Initialize default settings (theme, default_refine_enabled)
-  - [ ] Set email_verified to false
+- [x] Implement `GET /api/profile`
+  - [x] Return email_verified status
+- [x] Implement `PATCH /api/profile`
+  - [x] Update settings only (not email/password)
+- [x] Create user profile on signup (database trigger or service)
+  - [x] Initialize default settings (theme, default_refine_enabled)
+  - [x] Set email_verified to false
 
 **Validation:**
 ```bash
@@ -383,12 +384,12 @@ pnpm --filter backend test profile
 ```
 
 **1.6 Shared: Auth Types & Schemas**
-- [ ] Define `User`, `UserProfile`, `UserSettings` types
-- [ ] Create Zod schemas for signup/login requests
-  - [ ] Password schema: min 12 chars, mixed case, numbers, symbols
-  - [ ] Email validation schema
-- [ ] Define auth response types (tokens, user data, email_verified)
-- [ ] Create error response types for auth failures
+- [x] Define `User`, `UserProfile`, `UserSettings` types
+- [x] Create Zod schemas for signup/login requests
+  - [x] Password schema: min 12 chars, mixed case, numbers, symbols
+  - [x] Email validation schema
+- [x] Define auth response types (tokens, user data, email_verified)
+- [x] Create error response types for auth failures
 
 **Validation:**
 ```bash
@@ -403,18 +404,18 @@ pnpm --filter shared test
 ```
 
 **1.7 Frontend: Auth Pages - Signup & Login**
-- [ ] Create `SignupPage.tsx` with form
-  - [ ] Email and password fields
-  - [ ] Password strength indicator (show requirements)
-  - [ ] Real-time validation feedback
-  - [ ] Show success message about verification email
-- [ ] Create `LoginPage.tsx` with form
-  - [ ] Email and password fields
-  - [ ] "Forgot password?" link
-  - [ ] Handle "email not verified" error with resend option
-  - [ ] Show error for locked accounts with time remaining
-- [ ] Add client-side validation (Zod schemas)
-- [ ] Style with Tailwind + shadcn/ui components
+- [x] Create `SignupPage.tsx` with form
+  - [x] Email and password fields
+  - [x] Password strength indicator (show requirements)
+  - [x] Real-time validation feedback
+  - [x] Show success message about verification email
+- [x] Create `LoginPage.tsx` with form
+  - [x] Email and password fields
+  - [x] "Forgot password?" link
+  - [x] Handle "email not verified" error with resend option
+  - [x] Show error for locked accounts with time remaining
+- [x] Add client-side validation (Zod schemas)
+- [x] Style with Tailwind + shadcn/ui components
 
 **Validation:**
 ```bash
@@ -429,15 +430,15 @@ pnpm --filter frontend test auth-pages
 ```
 
 **1.8 Frontend: Email Verification Flow**
-- [ ] Create `VerifyEmailPage.tsx`
-  - [ ] Extract token from URL query param
-  - [ ] Auto-verify on page load
-  - [ ] Show success/error messages
-  - [ ] Redirect to login on success
-- [ ] Create "Email Sent" confirmation page
-  - [ ] Show after signup
-  - [ ] Include resend verification button
-  - [ ] Clear instructions to check inbox/spam
+- [x] Create `VerifyEmailPage.tsx`
+  - [x] Extract token from URL query param
+  - [x] Auto-verify on page load
+  - [x] Show success/error messages
+  - [x] Redirect to login on success
+- [x] Create "Email Sent" confirmation page
+  - [x] Show after signup
+  - [x] Include resend verification button
+  - [x] Clear instructions to check inbox/spam
 
 **Validation:**
 ```bash
@@ -449,17 +450,17 @@ pnpm --filter frontend test verification
 ```
 
 **1.9 Frontend: Password Reset Flow**
-- [ ] Create `ForgotPasswordPage.tsx`
-  - [ ] Email input field
-  - [ ] Submit button
-  - [ ] Show "email sent" message on success
-- [ ] Create `ResetPasswordPage.tsx`
-  - [ ] Extract token from URL query param
-  - [ ] New password field with strength indicator
-  - [ ] Confirm password field
-  - [ ] Submit button
-  - [ ] Show success message and redirect to login
-- [ ] Handle token expiration errors gracefully
+- [x] Create `ForgotPasswordPage.tsx`
+  - [x] Email input field
+  - [x] Submit button
+  - [x] Show "email sent" message on success
+- [x] Create `ResetPasswordPage.tsx`
+  - [x] Extract token from URL query param
+  - [x] New password field with strength indicator
+  - [x] Confirm password field
+  - [x] Submit button
+  - [x] Show success message and redirect to login
+- [x] Handle token expiration errors gracefully
 
 **Validation:**
 ```bash
@@ -472,18 +473,18 @@ pnpm --filter frontend test password-reset
 ```
 
 **1.10 Frontend: Auth State Management**
-- [ ] Create `authStore.ts` (Zustand) for tokens and user
-  - [ ] Store email_verified status
-  - [ ] Track authentication state
-- [ ] Create `useAuth.ts` hook
-  - [ ] signup, login, logout methods
-  - [ ] verifyEmail, resendVerification methods
-  - [ ] forgotPassword, resetPassword methods
-  - [ ] changePassword method
-- [ ] Implement token persistence (localStorage)
-- [ ] Implement automatic token refresh
-- [ ] Create axios interceptor for adding auth headers
-- [ ] Handle 403 errors (email not verified)
+- [x] Create `authStore.ts` (Zustand) for tokens and user
+  - [x] Store email_verified status
+  - [x] Track authentication state
+- [x] Create `useAuth.ts` hook
+  - [x] signup, login, logout methods
+  - [x] verifyEmail, resendVerification methods
+  - [x] forgotPassword, resetPassword methods
+  - [x] changePassword method
+- [x] Implement token persistence (localStorage)
+- [x] Implement automatic token refresh
+- [x] Create axios interceptor for adding auth headers
+- [x] Handle 403 errors (email not verified)
 
 **Validation:**
 ```bash
@@ -496,14 +497,14 @@ pnpm --filter frontend test useAuth
 ```
 
 **1.11 Frontend: Protected Routes**
-- [ ] Create `ProtectedRoute.tsx` component
-  - [ ] Check for valid token
-  - [ ] Check email_verified status
-  - [ ] Redirect to login if not authenticated
-  - [ ] Redirect to "verify email" if not verified
-- [ ] Wrap authenticated routes with protection
-- [ ] Create basic `Layout.tsx` with header
-- [ ] Add "Resend verification" banner if not verified
+- [x] Create `ProtectedRoute.tsx` component
+  - [x] Check for valid token
+  - [x] Check email_verified status
+  - [x] Redirect to login if not authenticated
+  - [x] Redirect to "verify email" if not verified
+- [x] Wrap authenticated routes with protection
+- [x] Create basic `Layout.tsx` with header
+- [x] Add "Resend verification" banner if not verified
 
 **Validation:**
 ```bash

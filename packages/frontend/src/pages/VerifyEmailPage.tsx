@@ -8,17 +8,16 @@ import { Button } from '@components/ui/button';
 function VerifyEmailPage() {
   const [searchParams] = useSearchParams();
   const { verifyEmail } = useAuth();
-  const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
-  const [error, setError] = useState('');
-
   const token = searchParams.get('token') ?? '';
 
+  // Compute initial state from token availability
+  const [status, setStatus] = useState<'loading' | 'success' | 'error'>(
+    token ? 'loading' : 'error'
+  );
+  const [error, setError] = useState(token ? '' : 'Missing verification token');
+
   useEffect(() => {
-    if (!token) {
-      setStatus('error');
-      setError('Missing verification token');
-      return;
-    }
+    if (!token) return;
 
     let cancelled = false;
     verifyEmail(token)
