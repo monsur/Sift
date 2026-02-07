@@ -50,6 +50,20 @@ AI-powered journaling for daily self-reflection. Write about your day, optionall
    - Frontend: http://localhost:5173
    - Backend: http://localhost:3000
 
+## User-Facing URLs
+
+Once the dev servers are running (`pnpm dev`), the following pages are available:
+
+| URL | Description |
+|-----|-------------|
+| http://localhost:5173/signup | Create a new account |
+| http://localhost:5173/login | Log in to an existing account |
+| http://localhost:5173/forgot-password | Request a password reset |
+| http://localhost:5173/reset-password | Set a new password (via reset link) |
+| http://localhost:5173/dashboard | Main dashboard (requires login) |
+
+The backend API is available at http://localhost:3000/api.
+
 ## Common Commands
 
 ### Development
