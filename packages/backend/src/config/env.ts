@@ -15,7 +15,8 @@ const envSchema = z.object({
   SUPABASE_ANON_KEY: z.string().min(1),
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
 
-  // Anthropic
+  // AI
+  AI_PROVIDER: z.enum(['anthropic', 'openai', 'gemini']).optional(),
   ANTHROPIC_API_KEY: z.string().optional(),
 
   // JWT
