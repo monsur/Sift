@@ -705,7 +705,7 @@ Authorization: Bearer <jwt_token>
 **Authentication Approach:**
 - Email/password authentication via Supabase Auth
 - Privacy-first: No third-party OAuth for MVP
-- Email verification required before first use
+- Email verification deferred to post-MVP (users are auto-verified on signup)
 - See Section 5.11.1 for detailed security requirements
 
 **POST /api/auth/signup** - Register new user
@@ -726,7 +726,7 @@ Response: 201 Created
   message: "Verification email sent. Please check your inbox."
 }
 
-Note: User cannot log in until email is verified.
+Note: Email verification is deferred to post-MVP. Users can log in immediately after signup.
 Password requirements enforced server-side.
 ```
 
@@ -1232,7 +1232,7 @@ Security is a foundational requirement for a personal reflection app handling in
 **Account Protection:**
 - Rate limiting on login attempts (5 per 15 minutes per email)
 - Account locking after failed attempts (15-minute lockout)
-- Email verification required before first login
+- Email verification deferred to post-MVP (see Section 9.3)
 - Failed attempt tracking in database
 - Clear error messages without revealing sensitive info
 
@@ -1955,6 +1955,11 @@ While Section 8 outlines what's explicitly out of scope for the MVP, this sectio
 - Photo/media support
 
 ### 9.3 Phase 4: Authentication Enhancements
+- **Email verification flow**
+  - Send verification email on signup (via Supabase or custom email provider)
+  - Require verified email before accessing protected features
+  - Resend verification endpoint with rate limiting
+  - Infrastructure exists (verify-email endpoint, email_verified field, requireVerified middleware) — just needs email delivery wired up
 - **"Sign in with Apple"** (privacy-focused OAuth)
   - Apple anonymizes email addresses
   - Preferred by privacy-conscious users
@@ -1978,7 +1983,8 @@ While Section 8 outlines what's explicitly out of scope for the MVP, this sectio
   - Password strength audit
 
 **Why not for MVP:**
-- Email/password with verification provides sufficient security
+- Email/password provides sufficient security for initial launch
+- Email verification infrastructure is in place but email delivery requires additional setup (SMTP or third-party provider)
 - Privacy-first: No data shared with third parties
 - Simpler implementation and testing
 - SSO adds complexity without adding core value initially
