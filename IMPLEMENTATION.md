@@ -89,6 +89,7 @@ None currently.
 - Add completion date
 - Update "Current Task" to next phase
 - Run full verification before moving on
+- **Update MEMORY.md** with any learnings, gotchas, or patterns discovered during the phase (these persist across Claude Code sessions)
 
 ---
 
