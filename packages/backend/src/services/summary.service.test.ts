@@ -74,11 +74,11 @@ describe('Summary Service', () => {
       });
 
       // Check message includes transcript
-      const callArgs = vi.mocked(mockProvider.complete).mock.calls[0][0];
-      expect(callArgs.messages[0].content).toContain(
+      const callArgs = vi.mocked(mockProvider.complete).mock.calls[0]?.[0];
+      expect(callArgs?.messages[0]?.content).toContain(
         'assistant: How was your day?'
       );
-      expect(callArgs.messages[0].content).toContain(
+      expect(callArgs?.messages[0]?.content).toContain(
         'user: It was great!'
       );
 
