@@ -35,6 +35,12 @@ export class AuthService {
     }
 
     // Profile is auto-created by database trigger (handle_new_user)
+    // Mark as verified immediately (email verification deferred to later phase)
+    await supabase
+      .from('user_profiles')
+      .update({ email_verified: true, email_verified_at: new Date().toISOString() })
+      .eq('user_id', data.user.id);
+
     const profile = await this.getProfile(data.user.id);
 
     // Sign in to get tokens

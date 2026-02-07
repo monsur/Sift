@@ -76,16 +76,19 @@ describe('AuthService', () => {
         error: null,
       });
 
-      // Mock getProfile (profile auto-created by database trigger)
+      // Mock update (mark verified) + getProfile
       mockServiceClient.from.mockReturnValue({
+        update: vi.fn().mockReturnValue({
+          eq: vi.fn().mockResolvedValue({ error: null }),
+        }),
         select: vi.fn().mockReturnValue({
           eq: vi.fn().mockReturnValue({
             single: vi.fn().mockResolvedValue({
               data: {
                 id: 'profile-1',
                 user_id: 'user-123',
-                email_verified: false,
-                email_verified_at: null,
+                email_verified: true,
+                email_verified_at: '2024-01-01',
                 settings: { theme: 'system', default_refine_enabled: true },
                 created_at: '2024-01-01',
                 updated_at: '2024-01-01',
