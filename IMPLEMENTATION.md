@@ -9,9 +9,9 @@
 ## Current Status
 
 **Last Updated:** 2026-02-07
-**Current Phase:** Phase 1 - Authentication & User Profile
-**Current Task:** Phase 1 Complete - Ready for Phase 2
-**Overall Progress:** 2/6 phases complete (33%)
+**Current Phase:** Phase 3 - AI Integration
+**Current Task:** Phase 2 Complete - Ready for Phase 3
+**Overall Progress:** 3/6 phases complete (50%)
 
 ### Phase Completion Tracking
 
@@ -19,7 +19,7 @@
 |-------|--------|---------|-----------|-------|
 | **0** | ✅ Complete | 2026-02-05 | 2026-02-05 | Project setup and foundation |
 | **1** | ✅ Complete | 2026-02-07 | 2026-02-07 | Auth system with email verification, password reset, rate limiting |
-| **2** | ⏳ Not Started | - | - | Blocked by Phase 1 (now complete) |
+| **2** | ✅ Complete | 2026-02-07 | 2026-02-07 | Entry CRUD with service, routes, UI pages, tests |
 | **3** | ⏳ Not Started | - | - | Blocked by Phase 2 |
 | **4** | ⏳ Not Started | - | - | Blocked by Phase 2 |
 | **5** | ⏳ Not Started | - | - | Blocked by Phases 3 & 4 |
@@ -36,6 +36,7 @@ None currently.
 
 ### Recent Notes
 
+- 2026-02-07: **Phase 2 Complete** - Entry CRUD: backend service + routes, frontend API/hooks/pages (NewEntry, EntrySaved, History, EntryDetail), UI components (Textarea, ScoreSlider, Dialog), navigation, 158 tests passing
 - 2026-02-07: **Phase 1 Complete** - Full auth system: signup, login, logout, token refresh, email verification, password reset, rate limiting, account locking, protected routes, auth store, 118 tests passing
 - 2026-02-05: **Phase 0 Complete** - Monorepo with frontend (Vite+React+Tailwind), backend (Fastify), shared package, testing infrastructure (Vitest), database migrations ready
 - 2026-02-05: Task 0.1 complete - monorepo initialized with pnpm workspaces, ESLint flat config, Prettier
@@ -633,9 +634,9 @@ pnpm --filter frontend test protected-routes
 **Tasks:**
 
 **2.1 Shared: Entry Types & Schemas**
-- [ ] Define `Entry`, `EntryCreate`, `EntryUpdate` types
-- [ ] Create Zod schemas for entry validation
-- [ ] Define entry list response types (with pagination)
+- [x] Define `Entry`, `EntryCreate`, `EntryUpdate` types
+- [x] Create Zod schemas for entry validation
+- [x] Define entry list response types (with pagination)
 
 **Validation:**
 ```bash
@@ -644,13 +645,13 @@ pnpm --filter shared test
 ```
 
 **2.2 Backend: Entry Endpoints**
-- [ ] Implement `POST /api/entries` (create entry)
-- [ ] Implement `GET /api/entries` (list with pagination)
-- [ ] Implement `GET /api/entries/:id` (get single entry)
-- [ ] Implement `PATCH /api/entries/:id` (update score)
-- [ ] Implement `DELETE /api/entries/:id`
-- [ ] Create entry repository with database operations
-- [ ] Create entry service with business logic
+- [x] Implement `POST /api/entries` (create entry)
+- [x] Implement `GET /api/entries` (list with pagination)
+- [x] Implement `GET /api/entries/:id` (get single entry)
+- [x] Implement `PATCH /api/entries/:id` (update score)
+- [x] Implement `DELETE /api/entries/:id`
+- [x] Create entry repository with database operations
+- [x] Create entry service with business logic
 
 **Validation:**
 ```bash
@@ -668,12 +669,12 @@ pnpm --filter backend test entries
 ```
 
 **2.3 Frontend: Entry Creation UI**
-- [ ] Create `NewEntryPage.tsx`
-- [ ] Create `EntryForm.tsx` component (textarea for entry)
-- [ ] Create `ScoreSlider.tsx` component (1-10 slider with labels)
-- [ ] Add "Save" button (no "Refine" yet)
-- [ ] Show loading state during save
-- [ ] Redirect to entry detail or list after save
+- [x] Create `NewEntryPage.tsx`
+- [x] Create `EntryForm.tsx` component (textarea for entry)
+- [x] Create `ScoreSlider.tsx` component (1-10 slider with labels)
+- [x] Add "Save" button (no "Refine" yet)
+- [x] Show loading state during save
+- [x] Redirect to entry detail or list after save
 
 **Validation:**
 ```bash
@@ -683,10 +684,10 @@ pnpm --filter frontend test entry-form
 ```
 
 **2.4 Frontend: Entry State Management**
-- [ ] Create `useEntries.ts` hook with TanStack Query
-- [ ] Implement mutations for create/update/delete
-- [ ] Implement queries for list and single entry
-- [ ] Configure cache invalidation on mutations
+- [x] Create `useEntries.ts` hook with TanStack Query
+- [x] Implement mutations for create/update/delete
+- [x] Implement queries for list and single entry
+- [x] Configure cache invalidation on mutations
 
 **Validation:**
 ```bash
@@ -695,11 +696,11 @@ pnpm --filter frontend test useEntries
 ```
 
 **2.5 Frontend: Entry List & Detail**
-- [ ] Create `HistoryPage.tsx` with entry list
-- [ ] Create `EntryCard.tsx` component (shows TLDR, score, date)
-- [ ] Create `EntryDetailPage.tsx` (shows full entry)
-- [ ] Add pagination controls to list
-- [ ] Add delete confirmation dialog
+- [x] Create `HistoryPage.tsx` with entry list
+- [x] Create `EntryCard.tsx` component (shows TLDR, score, date)
+- [x] Create `EntryDetailPage.tsx` (shows full entry)
+- [x] Add pagination controls to list
+- [x] Add delete confirmation dialog
 
 **Validation:**
 ```bash
@@ -709,10 +710,10 @@ pnpm --filter frontend test history-page
 ```
 
 **2.6 Entry Date Handling**
-- [ ] Default entry_date to today
-- [ ] Allow user to change date (date picker)
-- [ ] Handle "entry already exists for date" in UI (soft check)
-- [ ] Show warning if user tries to create duplicate
+- [x] Default entry_date to today
+- [x] Allow user to change date (date picker)
+- [x] Handle "entry already exists for date" in UI (soft check)
+- [x] Show warning if user tries to create duplicate
 
 **Validation:**
 ```bash
