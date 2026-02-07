@@ -9,6 +9,10 @@ import VerifyEmailPage from '@pages/VerifyEmailPage';
 import ForgotPasswordPage from '@pages/ForgotPasswordPage';
 import ResetPasswordPage from '@pages/ResetPasswordPage';
 import DashboardPlaceholder from '@pages/DashboardPlaceholder';
+import NewEntryPage from '@pages/NewEntryPage';
+import EntrySavedPage from '@pages/EntrySavedPage';
+import HistoryPage from '@pages/HistoryPage';
+import EntryDetailPage from '@pages/EntryDetailPage';
 
 const queryClient = new QueryClient();
 
@@ -29,6 +33,10 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route element={<Layout />}>
               <Route path="/dashboard" element={<DashboardPlaceholder />} />
+              <Route path="/new-entry" element={<NewEntryPage />} />
+              <Route path="/entry-saved/:id" element={<EntrySavedPage />} />
+              <Route path="/history" element={<HistoryPage />} />
+              <Route path="/entries/:id" element={<EntryDetailPage />} />
             </Route>
           </Route>
 
