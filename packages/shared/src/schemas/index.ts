@@ -72,6 +72,13 @@ export const updateEntrySchema = z.object({
   score_justification: z.string().max(500).optional(),
 });
 
+export const entryListParamsSchema = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(100).default(20),
+  sort_by: z.enum(['entry_date', 'created_at', 'score']).default('entry_date'),
+  sort_order: z.enum(['asc', 'desc']).default('desc'),
+});
+
 // Type exports from schemas
 export type SignupInput = z.infer<typeof signupSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
@@ -83,3 +90,4 @@ export type ChangePasswordInput = z.infer<typeof changePasswordSchema>;
 export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
 export type CreateEntryInput = z.infer<typeof createEntrySchema>;
 export type UpdateEntryInput = z.infer<typeof updateEntrySchema>;
+export type EntryListParams = z.infer<typeof entryListParamsSchema>;

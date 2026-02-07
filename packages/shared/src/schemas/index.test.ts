@@ -12,6 +12,7 @@ import {
   updateProfileSchema,
   scoreSchema,
   createEntrySchema,
+  entryListParamsSchema,
 } from './index.js';
 
 describe('Auth Schemas', () => {
@@ -269,6 +270,54 @@ describe('Entry Schemas', () => {
         raw_entry: '',
       });
       expect(result.success).toBe(false);
+    });
+  });
+
+  describe('entryListParamsSchema', () => {
+    it('applies defaults for empty object', () => {
+      const result = entryListParamsSchema.safeParse({});
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.page).toBe(1);
+        expect(result.data.limit).toBe(20);
+        expect(result.data.sort_by).toBe('entry_date');
+        expect(result.data.sort_order).toBe('desc');
+      }
+    });
+
+    it('coerces string numbers', () => {
+      const result = entryListParamsSchema.safeParse({
+        page: '3',
+        limit: '10',
+      });
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.page).toBe(3);
+        expect(result.data.limit).toBe(10);
+      }
+    });
+
+    it('rejects page less than 1', () => {
+      const result = entryListParamsSchema.safeParse({ page: 0 });
+      expect(result.success).toBe(false);
+    });
+
+    it('rejects limit greater than 100', () => {
+      const result = entryListParamsSchema.safeParse({ limit: 101 });
+      expect(result.success).toBe(false);
+    });
+
+    it('rejects invalid sort_by', () => {
+      const result = entryListParamsSchema.safeParse({ sort_by: 'invalid' });
+      expect(result.success).toBe(false);
+    });
+
+    it('accepts valid sort options', () => {
+      const result = entryListParamsSchema.safeParse({
+        sort_by: 'score',
+        sort_order: 'asc',
+      });
+      expect(result.success).toBe(true);
     });
   });
 });
