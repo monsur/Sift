@@ -15,7 +15,7 @@ export async function profileRoutes(app: FastifyInstance): Promise<void> {
     const supabase = getServiceClient();
 
     const { data: profile, error } = await supabase
-      .from('profiles')
+      .from('user_profiles')
       .select('*')
       .eq('user_id', request.user.id)
       .single();
@@ -62,7 +62,7 @@ export async function profileRoutes(app: FastifyInstance): Promise<void> {
     if (parsed.data.settings) {
       // Merge with existing settings
       const { data: existing } = await supabase
-        .from('profiles')
+        .from('user_profiles')
         .select('settings')
         .eq('user_id', request.user.id)
         .single();
@@ -74,7 +74,7 @@ export async function profileRoutes(app: FastifyInstance): Promise<void> {
     }
 
     const { data: profile, error } = await supabase
-      .from('profiles')
+      .from('user_profiles')
       .update(updates)
       .eq('user_id', request.user.id)
       .select()

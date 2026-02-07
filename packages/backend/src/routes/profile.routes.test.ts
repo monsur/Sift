@@ -116,7 +116,7 @@ describe('Profile Routes', () => {
         settings: { theme: 'dark', default_refine_enabled: true },
       };
 
-      // from('profiles') is called twice: once for select (existing), once for update
+      // from('user_profiles') is called twice: once for select (existing), once for update
       let callCount = 0;
       mockFrom.mockImplementation(() => {
         callCount++;

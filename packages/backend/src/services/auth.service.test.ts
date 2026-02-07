@@ -63,7 +63,7 @@ describe('AuthService', () => {
   });
 
   describe('signup', () => {
-    it('creates user, profile, signs in, and returns auth response', async () => {
+    it('creates user and returns auth response (profile auto-created by trigger)', async () => {
       mockServiceClient.auth.admin.createUser.mockResolvedValue({
         data: {
           user: {
@@ -76,10 +76,8 @@ describe('AuthService', () => {
         error: null,
       });
 
-      // Mock profile insert via chained from().insert()
-      const insertMock = vi.fn().mockResolvedValue({ error: null });
+      // Mock getProfile (profile auto-created by database trigger)
       mockServiceClient.from.mockReturnValue({
-        insert: insertMock,
         select: vi.fn().mockReturnValue({
           eq: vi.fn().mockReturnValue({
             single: vi.fn().mockResolvedValue({
@@ -137,7 +135,25 @@ describe('AuthService', () => {
 
   describe('login', () => {
     it('returns auth response on valid credentials', async () => {
-      // Mock profile lookup - no lock
+      // Sign in succeeds
+      mockServiceClient.auth.signInWithPassword.mockResolvedValue({
+        data: {
+          session: {
+            access_token: 'at-123',
+            refresh_token: 'rt-123',
+            expires_in: 3600,
+          },
+          user: {
+            id: 'user-123',
+            email: 'test@example.com',
+            created_at: '2024-01-01',
+            updated_at: '2024-01-01',
+          },
+        },
+        error: null,
+      });
+
+      // Profile lookup (lock check + getProfile)
       mockServiceClient.from.mockReturnValue({
         select: vi.fn().mockReturnValue({
           eq: vi.fn().mockReturnValue({
@@ -162,47 +178,12 @@ describe('AuthService', () => {
         }),
       } as unknown as ReturnType<MockSupabase['from']>);
 
-      mockServiceClient.auth.signInWithPassword.mockResolvedValue({
-        data: {
-          session: {
-            access_token: 'at-123',
-            refresh_token: 'rt-123',
-            expires_in: 3600,
-          },
-          user: {
-            id: 'user-123',
-            email: 'test@example.com',
-            created_at: '2024-01-01',
-            updated_at: '2024-01-01',
-          },
-        },
-        error: null,
-      });
-
       const result = await service.login('test@example.com', 'password');
       expect(result.user.email).toBe('test@example.com');
       expect(result.tokens.access_token).toBe('at-123');
     });
 
     it('throws UnauthorizedError on invalid credentials', async () => {
-      mockServiceClient.from.mockReturnValue({
-        select: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            single: vi.fn().mockResolvedValue({
-              data: {
-                user_id: 'user-123',
-                locked_until: null,
-                failed_login_attempts: 0,
-              },
-              error: null,
-            }),
-          }),
-        }),
-        update: vi.fn().mockReturnValue({
-          eq: vi.fn().mockResolvedValue({ error: null }),
-        }),
-      } as unknown as ReturnType<MockSupabase['from']>);
-
       mockServiceClient.auth.signInWithPassword.mockResolvedValue({
         data: { session: null, user: null },
         error: { message: 'Invalid login credentials' },
@@ -215,6 +196,21 @@ describe('AuthService', () => {
 
     it('throws AccountLockedError when account is locked', async () => {
       const futureDate = new Date(Date.now() + 30 * 60 * 1000).toISOString();
+
+      // Sign in succeeds (Supabase doesn't know about app-level lock)
+      mockServiceClient.auth.signInWithPassword.mockResolvedValue({
+        data: {
+          session: {
+            access_token: 'at-123',
+            refresh_token: 'rt-123',
+            expires_in: 3600,
+          },
+          user: { id: 'user-123', email: 'test@example.com' },
+        },
+        error: null,
+      });
+
+      // Profile shows account is locked
       mockServiceClient.from.mockReturnValue({
         select: vi.fn().mockReturnValue({
           eq: vi.fn().mockReturnValue({
@@ -229,6 +225,9 @@ describe('AuthService', () => {
           }),
         }),
       } as unknown as ReturnType<MockSupabase['from']>);
+
+      // signOut called to invalidate the session
+      mockAnonClient.auth.signOut.mockResolvedValue({ error: null });
 
       await expect(
         service.login('test@example.com', 'password')

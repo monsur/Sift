@@ -16,8 +16,6 @@ import {
   RATE_LIMITS,
 } from '../middleware/rate-limiter.js';
 
-const MAX_FAILED_ATTEMPTS = 5;
-const LOCK_DURATION_MS = 30 * 60 * 1000; // 30 minutes
 
 export class AuthService {
   async signup(email: string, password: string): Promise<AuthResponse> {
@@ -36,18 +34,8 @@ export class AuthService {
       throw new AppError(error.message, 400, 'SIGNUP_FAILED');
     }
 
-    // Create profile
-    const { error: profileError } = await supabase.from('profiles').insert({
-      user_id: data.user.id,
-      email_verified: false,
-      settings: { theme: 'system', default_refine_enabled: true },
-    });
-
-    if (profileError) {
-      // Clean up created user if profile creation fails
-      await supabase.auth.admin.deleteUser(data.user.id);
-      throw new AppError('Failed to create profile', 500, 'PROFILE_CREATE_FAILED');
-    }
+    // Profile is auto-created by database trigger (handle_new_user)
+    const profile = await this.getProfile(data.user.id);
 
     // Sign in to get tokens
     const { data: signInData, error: signInError } =
@@ -62,7 +50,6 @@ export class AuthService {
     await anonClient.auth.resend({ type: 'signup', email });
 
     const user = this.mapUser(data.user);
-    const profile = await this.getProfile(data.user.id);
     const tokens = this.mapTokens(signInData.session);
 
     return { user, profile, tokens };
@@ -73,48 +60,14 @@ export class AuthService {
 
     const supabase = getServiceClient();
 
-    // Check if account is locked
-    const { data: profileData } = await supabase
-      .from('profiles')
-      .select('locked_until, failed_login_attempts, user_id')
-      .eq('email', email)
-      .single();
-
-    if (profileData?.locked_until) {
-      const lockedUntil = new Date(profileData.locked_until as string);
-      if (lockedUntil > new Date()) {
-        throw new AccountLockedError(lockedUntil);
-      }
-      // Lock expired, reset
-      await supabase
-        .from('profiles')
-        .update({ locked_until: null, failed_login_attempts: 0 })
-        .eq('user_id', profileData.user_id);
-    }
-
+    // Attempt sign in first
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
     if (error) {
-      // Increment failed attempts
-      if (profileData) {
-        const attempts = ((profileData.failed_login_attempts as number) ?? 0) + 1;
-        const updates: Record<string, unknown> = {
-          failed_login_attempts: attempts,
-        };
-        if (attempts >= MAX_FAILED_ATTEMPTS) {
-          updates.locked_until = new Date(
-            Date.now() + LOCK_DURATION_MS
-          ).toISOString();
-        }
-        await supabase
-          .from('profiles')
-          .update(updates)
-          .eq('user_id', profileData.user_id);
-      }
-
+      // Rate limiter handles brute force protection by email
       throw new UnauthorizedError('Invalid email or password');
     }
 
@@ -122,22 +75,39 @@ export class AuthService {
       throw new AppError('Login failed', 500, 'LOGIN_FAILED');
     }
 
-    // Reset failed attempts on successful login
-    if (profileData?.user_id) {
-      await supabase
-        .from('profiles')
-        .update({
-          failed_login_attempts: 0,
-          locked_until: null,
-          last_login_at: new Date().toISOString(),
-        })
-        .eq('user_id', profileData.user_id);
+    const userId = data.user.id;
+
+    // Check if account is locked (user_profiles has no email column, so we use user_id)
+    const { data: profileData } = await supabase
+      .from('user_profiles')
+      .select('locked_until, failed_login_attempts')
+      .eq('user_id', userId)
+      .single();
+
+    if (profileData?.locked_until) {
+      const lockedUntil = new Date(profileData.locked_until as string);
+      if (lockedUntil > new Date()) {
+        // Account is locked - invalidate the session we just created
+        const anonClient = createAnonClient(data.session.access_token);
+        await anonClient.auth.signOut();
+        throw new AccountLockedError(lockedUntil);
+      }
     }
+
+    // Reset failed attempts and update login stats
+    await supabase
+      .from('user_profiles')
+      .update({
+        failed_login_attempts: 0,
+        locked_until: null,
+        last_login_at: new Date().toISOString(),
+      })
+      .eq('user_id', userId);
 
     resetRateLimit('login', email);
 
     const user = this.mapUser(data.user);
-    const profile = await this.getProfile(data.user.id);
+    const profile = await this.getProfile(userId);
     const tokens = this.mapTokens(data.session);
 
     return { user, profile, tokens };
@@ -250,7 +220,7 @@ export class AuthService {
   private async getProfile(userId: string): Promise<UserProfile> {
     const supabase = getServiceClient();
     const { data, error } = await supabase
-      .from('profiles')
+      .from('user_profiles')
       .select('*')
       .eq('user_id', userId)
       .single();
