@@ -46,16 +46,20 @@ None currently.
 ## How to Use This Document
 
 **Starting a new phase:**
-1. Create a new branch named `PhaseXX` (e.g., `Phase01`, `Phase02`)
-   - Branch from the previous phase branch (e.g., `Phase02` branches from `Phase01`)
-   - If no previous phase branch exists, branch from `main`
+1. Merge the completed previous phase branch into `main` (if not already merged)
    ```bash
-   git checkout Phase01  # or main if starting Phase 1
+   git checkout main
+   git merge Phase01    # merge completed phase into main
+   git push
+   ```
+2. Create a new branch named `PhaseXX` from **updated `main`**
+   ```bash
+   git checkout main
    git checkout -b Phase02
    ```
-2. Update "Current Status" section above with phase and task
-3. Change phase status to 🔄 In Progress
-4. Ask Claude: "Let's implement Phase X, task X.X from IMPLEMENTATION.md"
+3. Update "Current Status" section above with phase and task
+4. Change phase status to 🔄 In Progress
+5. Ask Claude: "Let's implement Phase X, task X.X from IMPLEMENTATION.md"
 
 **During implementation:**
 - Check off completed tasks using `- [x]` syntax
