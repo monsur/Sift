@@ -24,7 +24,7 @@ export class AuthService {
     const { data, error } = await supabase.auth.admin.createUser({
       email,
       password,
-      email_confirm: false,
+      email_confirm: true,
     });
 
     if (error) {
@@ -44,10 +44,6 @@ export class AuthService {
     if (signInError || !signInData.session) {
       throw new AppError('Signup succeeded but login failed', 500, 'LOGIN_FAILED');
     }
-
-    // Send verification email
-    const anonClient = createAnonClient(signInData.session.access_token);
-    await anonClient.auth.resend({ type: 'signup', email });
 
     const user = this.mapUser(data.user);
     const tokens = this.mapTokens(signInData.session);

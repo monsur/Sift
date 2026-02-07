@@ -108,8 +108,6 @@ describe('AuthService', () => {
         error: null,
       });
 
-      mockAnonClient.auth.resend.mockResolvedValue({ error: null });
-
       const result = await service.signup('test@example.com', 'SecurePass123!');
 
       expect(result.user.id).toBe('user-123');
@@ -117,7 +115,7 @@ describe('AuthService', () => {
       expect(mockServiceClient.auth.admin.createUser).toHaveBeenCalledWith({
         email: 'test@example.com',
         password: 'SecurePass123!',
-        email_confirm: false,
+        email_confirm: true,
       });
     });
 
