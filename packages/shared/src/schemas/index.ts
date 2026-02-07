@@ -79,6 +79,27 @@ export const entryListParamsSchema = z.object({
   sort_order: z.enum(['asc', 'desc']).default('desc'),
 });
 
+// Conversation schemas
+export const conversationStartSchema = z.object({
+  entry_id: z.string().min(1),
+});
+
+export const conversationMessageSchema = z.object({
+  entry_id: z.string().min(1),
+  message: z.string().min(1, 'Message cannot be empty').max(5000),
+});
+
+// Summary schemas
+export const summaryGenerateSchema = z.object({
+  entry_id: z.string().min(1),
+});
+
+export const summaryFinalizeSchema = z.object({
+  entry_id: z.string().min(1),
+  score: scoreSchema.optional(),
+  score_justification: z.string().max(500).optional(),
+});
+
 // Type exports from schemas
 export type SignupInput = z.infer<typeof signupSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
@@ -91,3 +112,7 @@ export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
 export type CreateEntryInput = z.infer<typeof createEntrySchema>;
 export type UpdateEntryInput = z.infer<typeof updateEntrySchema>;
 export type EntryListParams = z.infer<typeof entryListParamsSchema>;
+export type ConversationStartInput = z.infer<typeof conversationStartSchema>;
+export type ConversationMessageInput = z.infer<typeof conversationMessageSchema>;
+export type SummaryGenerateInput = z.infer<typeof summaryGenerateSchema>;
+export type SummaryFinalizeInput = z.infer<typeof summaryFinalizeSchema>;
