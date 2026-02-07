@@ -113,7 +113,7 @@ export async function summaryRoutes(app: FastifyInstance): Promise<void> {
         key_moments: result.summary.key_moments,
         ai_suggested_score: result.summary.ai_suggested_score,
         score_justification: result.summary.score_justification,
-        score: parsed.data.score,
+        ...(parsed.data.score != null ? { score: parsed.data.score } : {}),
         token_count: totalTokens,
         estimated_cost: totalCost,
       }

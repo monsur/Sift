@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEntry } from '@hooks/useEntries';
 import {
@@ -8,9 +8,11 @@ import {
   useFinalizeSummary,
 } from '@hooks/useConversation';
 import { ChatInterface } from '@components/chat/ChatInterface';
+import { CrisisBanner } from '@components/common/CrisisBanner';
 import { Button } from '@components/ui/button';
 import { ScoreSlider } from '@components/ui/slider';
 import { Alert } from '@components/ui/alert';
+import { detectCrisisLanguage } from '@lib/crisis-detection';
 import type { AISummaryResult } from 'shared/types';
 
 type Phase = 'conversation' | 'generating' | 'review';
@@ -37,12 +39,17 @@ function RefinePage() {
   const [score, setScore] = useState(5);
   const [justification, setJustification] = useState('');
   const [error, setError] = useState('');
-  const [conversationStarted, setConversationStarted] = useState(false);
+  const [crisisDismissed, setCrisisDismissed] = useState(false);
+  const conversationStartedRef = useRef(false);
+
+  const showCrisisBanner =
+    !crisisDismissed &&
+    messages.some((m) => m.role === 'user' && detectCrisisLanguage(m.content));
 
   // Start the conversation when entry loads
-  const doStart = useCallback(() => {
-    if (!id || conversationStarted) return;
-    setConversationStarted(true);
+  useEffect(() => {
+    if (!entry || !id || conversationStartedRef.current) return;
+    conversationStartedRef.current = true;
     startConversation.mutate(id, {
       onSuccess: (result) => {
         setMessages([{ role: 'assistant', content: result.message }]);
@@ -54,13 +61,8 @@ function RefinePage() {
         setError('Failed to start conversation. Please try again.');
       },
     });
-  }, [id, conversationStarted, startConversation]);
-
-  useEffect(() => {
-    if (entry && !conversationStarted) {
-      doStart();
-    }
-  }, [entry, conversationStarted, doStart]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [entry, id]);
 
   function handleSend(message: string) {
     if (!id) return;
@@ -144,6 +146,13 @@ function RefinePage() {
   return (
     <div className="max-w-3xl mx-auto py-4 space-y-4">
       {error && <Alert variant="destructive">{error}</Alert>}
+
+      {showCrisisBanner && (
+        <CrisisBanner
+          onContinue={() => setCrisisDismissed(true)}
+          onExit={() => navigate('/dashboard')}
+        />
+      )}
 
       {/* Conversation Phase */}
       {phase === 'conversation' && (

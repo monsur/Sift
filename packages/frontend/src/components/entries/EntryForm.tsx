@@ -4,6 +4,8 @@ import { Button } from '@components/ui/button';
 import { Textarea } from '@components/ui/textarea';
 import { ScoreSlider } from '@components/ui/slider';
 import { Alert } from '@components/ui/alert';
+import { CrisisBanner } from '@components/common/CrisisBanner';
+import { detectCrisisLanguage } from '@lib/crisis-detection';
 
 interface EntryFormProps {
   onSubmit: (data: {
@@ -49,6 +51,9 @@ function EntryForm({ onSubmit, onRefine, onCancel, isSubmitting, isRefining, err
   const [score, setScore] = useState(5);
   const [justification, setJustification] = useState('');
   const [validationError, setValidationError] = useState('');
+  const [crisisDismissed, setCrisisDismissed] = useState(false);
+
+  const showCrisisBanner = !crisisDismissed && detectCrisisLanguage(rawEntry);
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -77,6 +82,12 @@ function EntryForm({ onSubmit, onRefine, onCancel, isSubmitting, isRefining, err
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {showCrisisBanner && (
+        <CrisisBanner
+          onContinue={() => setCrisisDismissed(true)}
+          onExit={onCancel}
+        />
+      )}
       <div className="bg-[var(--color-background)] p-8 md:p-12 rounded-lg border border-[var(--color-border)] shadow-sm">
         <div className="flex items-center gap-3 mb-2">
           <span className="text-[var(--color-muted-foreground)] text-sm">

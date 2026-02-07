@@ -51,3 +51,40 @@ export const CONVERSATION_TEMPERATURE = 0.7;
 export const SUMMARY_TEMPERATURE = 1.0;
 export const CONVERSATION_MAX_TOKENS = 1024;
 export const SUMMARY_MAX_TOKENS = 2048;
+
+// Crisis detection keywords (simple keyword matching for MVP)
+export const CRISIS_KEYWORDS = [
+  'kill myself',
+  'end my life',
+  'want to die',
+  'suicide',
+  'suicidal',
+  'self-harm',
+  'self harm',
+  'hurt myself',
+  'don\'t want to be alive',
+  "don't want to be alive",
+  'no reason to live',
+  'better off dead',
+  'can\'t go on',
+  "can't go on",
+  'end it all',
+] as const;
+
+export const CRISIS_RESOURCES = [
+  {
+    name: '988 Suicide & Crisis Lifeline',
+    contact: 'Call or text: 988',
+    details: 'Available 24/7, free and confidential support',
+  },
+  {
+    name: 'Crisis Text Line',
+    contact: 'Text: HOME to 741741',
+    details: '24/7 text-based crisis support',
+  },
+  {
+    name: 'Emergency Services',
+    contact: 'Call: 911',
+    details: 'For immediate emergency assistance or visit your nearest emergency room',
+  },
+] as const;

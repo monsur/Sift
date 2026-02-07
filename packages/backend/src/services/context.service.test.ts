@@ -50,7 +50,7 @@ describe('Context Service', () => {
 
     const entries = await getRecentEntries('user-1');
     expect(entries).toHaveLength(1);
-    expect(entries[0].id).toBe('entry-1');
+    expect(entries[0]?.id).toBe('entry-1');
   });
 
   it('returns empty array on error', async () => {
