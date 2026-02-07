@@ -45,16 +45,23 @@ None currently.
 ## How to Use This Document
 
 **Starting a new phase:**
-1. Update "Current Status" section above with phase and task
-2. Change phase status to 🔄 In Progress
-3. Ask Claude: "Let's implement Phase X, task X.X from IMPLEMENTATION.md"
+1. Create a new branch named `PhaseXX` (e.g., `Phase01`, `Phase02`)
+   - Branch from the previous phase branch (e.g., `Phase02` branches from `Phase01`)
+   - If no previous phase branch exists, branch from `main`
+   ```bash
+   git checkout Phase01  # or main if starting Phase 1
+   git checkout -b Phase02
+   ```
+2. Update "Current Status" section above with phase and task
+3. Change phase status to 🔄 In Progress
+4. Ask Claude: "Let's implement Phase X, task X.X from IMPLEMENTATION.md"
 
 **During implementation:**
 - Check off completed tasks using `- [x]` syntax
 - Add validation commands to verify each step
 - Update "Recent Notes" with important decisions
 
-**After completing each task (standard workflow):**
+**After completing each step (standard workflow):**
 
 1. **Write tests** for new functionality (unit tests, integration tests as appropriate)
 2. **Run all checks:**
@@ -64,10 +71,10 @@ None currently.
    pnpm lint        # Ensure code style consistency
    ```
 3. **Update IMPLEMENTATION.md** - Check off completed tasks, add notes
-4. **Commit and push:**
+4. **Commit and push** — keep commits small and logically cohesive (not one big commit per phase):
    ```bash
-   git add -A
-   git commit -m "Task X.X: Description"
+   git add <specific files>
+   git commit -m "Brief description of the change"
    git push
    ```
 
