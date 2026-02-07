@@ -68,3 +68,21 @@ export interface PaginatedResponse<T> {
   limit: number;
   hasMore: boolean;
 }
+
+// Auth response types
+export interface AuthTokens {
+  access_token: string;
+  refresh_token: string;
+  expires_in: number;
+}
+
+export interface AuthResponse {
+  user: User;
+  profile: UserProfile;
+  tokens: AuthTokens;
+}
+
+export interface ProfileResponse {
+  user: User;
+  profile: UserProfile;
+}

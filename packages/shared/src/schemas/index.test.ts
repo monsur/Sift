@@ -4,6 +4,12 @@ import {
   passwordSchema,
   signupSchema,
   loginSchema,
+  verifyEmailSchema,
+  resendVerificationSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
+  changePasswordSchema,
+  updateProfileSchema,
   scoreSchema,
   createEntrySchema,
 } from './index.js';
@@ -81,6 +87,129 @@ describe('Auth Schemas', () => {
       const result = loginSchema.safeParse({
         email: 'test@example.com',
         password: '',
+      });
+      expect(result.success).toBe(false);
+    });
+  });
+});
+
+describe('Verification & Password Reset Schemas', () => {
+  describe('verifyEmailSchema', () => {
+    it('accepts valid token', () => {
+      expect(verifyEmailSchema.safeParse({ token: 'abc123' }).success).toBe(
+        true
+      );
+    });
+
+    it('rejects empty token', () => {
+      expect(verifyEmailSchema.safeParse({ token: '' }).success).toBe(false);
+    });
+  });
+
+  describe('resendVerificationSchema', () => {
+    it('accepts valid email', () => {
+      expect(
+        resendVerificationSchema.safeParse({ email: 'test@example.com' })
+          .success
+      ).toBe(true);
+    });
+
+    it('rejects invalid email', () => {
+      expect(
+        resendVerificationSchema.safeParse({ email: 'not-email' }).success
+      ).toBe(false);
+    });
+  });
+
+  describe('forgotPasswordSchema', () => {
+    it('accepts valid email', () => {
+      expect(
+        forgotPasswordSchema.safeParse({ email: 'test@example.com' }).success
+      ).toBe(true);
+    });
+
+    it('rejects invalid email', () => {
+      expect(
+        forgotPasswordSchema.safeParse({ email: '' }).success
+      ).toBe(false);
+    });
+  });
+
+  describe('resetPasswordSchema', () => {
+    it('accepts valid token and strong password', () => {
+      const result = resetPasswordSchema.safeParse({
+        token: 'reset-token-123',
+        password: 'SecurePass123!',
+      });
+      expect(result.success).toBe(true);
+    });
+
+    it('rejects empty token', () => {
+      const result = resetPasswordSchema.safeParse({
+        token: '',
+        password: 'SecurePass123!',
+      });
+      expect(result.success).toBe(false);
+    });
+
+    it('rejects weak password', () => {
+      const result = resetPasswordSchema.safeParse({
+        token: 'reset-token-123',
+        password: 'weak',
+      });
+      expect(result.success).toBe(false);
+    });
+  });
+
+  describe('changePasswordSchema', () => {
+    it('accepts valid current and new password', () => {
+      const result = changePasswordSchema.safeParse({
+        current_password: 'oldPassword',
+        new_password: 'NewSecure123!Pass',
+      });
+      expect(result.success).toBe(true);
+    });
+
+    it('rejects empty current password', () => {
+      const result = changePasswordSchema.safeParse({
+        current_password: '',
+        new_password: 'NewSecure123!Pass',
+      });
+      expect(result.success).toBe(false);
+    });
+
+    it('rejects weak new password', () => {
+      const result = changePasswordSchema.safeParse({
+        current_password: 'oldPassword',
+        new_password: 'weak',
+      });
+      expect(result.success).toBe(false);
+    });
+  });
+
+  describe('updateProfileSchema', () => {
+    it('accepts valid settings', () => {
+      const result = updateProfileSchema.safeParse({
+        settings: { theme: 'dark', default_refine_enabled: true },
+      });
+      expect(result.success).toBe(true);
+    });
+
+    it('accepts partial settings', () => {
+      const result = updateProfileSchema.safeParse({
+        settings: { theme: 'light' },
+      });
+      expect(result.success).toBe(true);
+    });
+
+    it('accepts empty object', () => {
+      const result = updateProfileSchema.safeParse({});
+      expect(result.success).toBe(true);
+    });
+
+    it('rejects invalid theme', () => {
+      const result = updateProfileSchema.safeParse({
+        settings: { theme: 'rainbow' },
       });
       expect(result.success).toBe(false);
     });
