@@ -8,7 +8,7 @@ import EmailSentPage from '@pages/EmailSentPage';
 import VerifyEmailPage from '@pages/VerifyEmailPage';
 import ForgotPasswordPage from '@pages/ForgotPasswordPage';
 import ResetPasswordPage from '@pages/ResetPasswordPage';
-import DashboardPlaceholder from '@pages/DashboardPlaceholder';
+import DashboardPage from '@pages/DashboardPage';
 import NewEntryPage from '@pages/NewEntryPage';
 import EntrySavedPage from '@pages/EntrySavedPage';
 import HistoryPage from '@pages/HistoryPage';
@@ -33,7 +33,7 @@ function App() {
           {/* Protected routes */}
           <Route element={<ProtectedRoute />}>
             <Route element={<Layout />}>
-              <Route path="/dashboard" element={<DashboardPlaceholder />} />
+              <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/new-entry" element={<NewEntryPage />} />
               <Route path="/entry-saved/:id" element={<EntrySavedPage />} />
               <Route path="/history" element={<HistoryPage />} />
