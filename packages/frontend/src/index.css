@@ -17,18 +17,16 @@
   --color-destructive-foreground: #ffffff;
 }
 
-@media (prefers-color-scheme: dark) {
-  @theme {
-    --color-background: #0a0a0a;
-    --color-foreground: #fafafa;
-    --color-muted: #262626;
-    --color-muted-foreground: #a3a3a3;
-    --color-border: #262626;
-    --color-primary: #3b82f6;
-    --color-primary-foreground: #ffffff;
-    --color-destructive: #ef4444;
-    --color-destructive-foreground: #ffffff;
-  }
+.dark {
+  --color-background: #0a0a0a;
+  --color-foreground: #fafafa;
+  --color-muted: #262626;
+  --color-muted-foreground: #a3a3a3;
+  --color-border: #262626;
+  --color-primary: #3b82f6;
+  --color-primary-foreground: #ffffff;
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: #ffffff;
 }
 
 body {

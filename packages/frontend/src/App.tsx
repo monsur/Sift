@@ -14,6 +14,7 @@ import EntrySavedPage from '@pages/EntrySavedPage';
 import HistoryPage from '@pages/HistoryPage';
 import EntryDetailPage from '@pages/EntryDetailPage';
 import RefinePage from '@pages/RefinePage';
+import SettingsPage from '@pages/SettingsPage';
 
 const queryClient = new QueryClient();
 
@@ -39,6 +40,7 @@ function App() {
               <Route path="/history" element={<HistoryPage />} />
               <Route path="/refine/:id" element={<RefinePage />} />
               <Route path="/entries/:id" element={<EntryDetailPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
             </Route>
           </Route>
 

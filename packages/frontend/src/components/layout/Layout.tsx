@@ -1,5 +1,6 @@
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@hooks/useAuth';
+import { useTheme } from '@hooks/useTheme';
 import { Button } from '@components/ui/button';
 import { cn } from '@lib/utils';
 
@@ -24,6 +25,7 @@ function NavLink({ to, children }: { to: string; children: React.ReactNode }) {
 
 function Layout() {
   const { user, logout } = useAuth();
+  useTheme();
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -36,6 +38,7 @@ function Layout() {
             <NavLink to="/dashboard">Dashboard</NavLink>
             <NavLink to="/new-entry">New Entry</NavLink>
             <NavLink to="/history">History</NavLink>
+            <NavLink to="/settings">Settings</NavLink>
           </nav>
         </div>
         <div className="flex items-center gap-4">
