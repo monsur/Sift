@@ -44,6 +44,9 @@ vi.mock('../services/conversation.service.js', () => ({
 vi.mock('../services/summary.service.js', () => ({
   generateSummary: vi.fn(), estimateTotalCost: vi.fn(),
 }));
+vi.mock('../services/dashboard.service.js', () => ({
+  dashboardService: { getStats: vi.fn(), getTimeline: vi.fn(), updateCachedStats: vi.fn() },
+}));
 
 // Also mock auth service since auth routes are registered too
 vi.mock('../services/auth.service.js', () => ({

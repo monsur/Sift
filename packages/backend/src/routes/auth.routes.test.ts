@@ -49,6 +49,9 @@ vi.mock('../services/conversation.service.js', () => ({
 vi.mock('../services/summary.service.js', () => ({
   generateSummary: vi.fn(), estimateTotalCost: vi.fn(),
 }));
+vi.mock('../services/dashboard.service.js', () => ({
+  dashboardService: { getStats: vi.fn(), getTimeline: vi.fn(), updateCachedStats: vi.fn() },
+}));
 vi.mock('../config/supabase.js', () => ({
   createAnonClient: vi.fn().mockReturnValue({ from: vi.fn() }),
   getServiceClient: vi.fn().mockReturnValue({ from: vi.fn() }),

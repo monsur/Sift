@@ -8,6 +8,7 @@ import { profileRoutes } from './routes/profile.routes.js';
 import { entryRoutes } from './routes/entry.routes.js';
 import { conversationRoutes } from './routes/conversation.routes.js';
 import { summaryRoutes } from './routes/summary.routes.js';
+import { dashboardRoutes } from './routes/dashboard.routes.js';
 
 export async function buildApp(): Promise<FastifyInstance> {
   const isDev = env.NODE_ENV === 'development';
@@ -101,6 +102,9 @@ export async function buildApp(): Promise<FastifyInstance> {
 
   // Summary routes
   await app.register(summaryRoutes, { prefix: '/api/summary' });
+
+  // Dashboard routes
+  await app.register(dashboardRoutes, { prefix: '/api/dashboard' });
 
   return app;
 }

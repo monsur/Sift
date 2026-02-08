@@ -54,6 +54,11 @@ vi.mock('../services/summary.service.js', () => ({
   estimateTotalCost: vi.fn(),
 }));
 
+// Mock dashboard service (needed by dashboard routes)
+vi.mock('../services/dashboard.service.js', () => ({
+  dashboardService: { getStats: vi.fn(), getTimeline: vi.fn(), updateCachedStats: vi.fn() },
+}));
+
 // Mock auth service (needed by auth routes)
 vi.mock('../services/auth.service.js', () => ({
   authService: {
