@@ -52,6 +52,14 @@ export const SUMMARY_TEMPERATURE = 1.0;
 export const CONVERSATION_MAX_TOKENS = 1024;
 export const SUMMARY_MAX_TOKENS = 2048;
 
+// Dashboard constants
+export const TREND_ANALYSIS_MIN_ENTRIES = 5;
+export const TREND_LOOKBACK_DAYS = 14;
+export const RECENT_ENTRIES_LIMIT = 5;
+
+export const TIMELINE_PERIODS = ['week', 'month', 'quarter', 'year', 'all'] as const;
+export type TimelinePeriod = (typeof TIMELINE_PERIODS)[number];
+
 // Crisis detection keywords (simple keyword matching for MVP)
 export const CRISIS_KEYWORDS = [
   'kill myself',

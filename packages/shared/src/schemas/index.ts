@@ -77,6 +77,9 @@ export const entryListParamsSchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).default(20),
   sort_by: z.enum(['entry_date', 'created_at', 'score']).default('entry_date'),
   sort_order: z.enum(['asc', 'desc']).default('desc'),
+  date_from: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  date_to: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  search: z.string().max(200).optional(),
 });
 
 // Conversation schemas
@@ -100,6 +103,11 @@ export const summaryFinalizeSchema = z.object({
   score_justification: z.string().max(500).optional(),
 });
 
+// Dashboard schemas
+export const dashboardTimelineQuerySchema = z.object({
+  period: z.enum(['week', 'month', 'quarter', 'year', 'all']).default('month'),
+});
+
 // Type exports from schemas
 export type SignupInput = z.infer<typeof signupSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
@@ -116,3 +124,4 @@ export type ConversationStartInput = z.infer<typeof conversationStartSchema>;
 export type ConversationMessageInput = z.infer<typeof conversationMessageSchema>;
 export type SummaryGenerateInput = z.infer<typeof summaryGenerateSchema>;
 export type SummaryFinalizeInput = z.infer<typeof summaryFinalizeSchema>;
+export type DashboardTimelineQuery = z.infer<typeof dashboardTimelineQuerySchema>;

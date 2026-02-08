@@ -117,3 +117,41 @@ export interface AISummaryGenerationResult {
   summary: AISummaryResult;
   token_usage: AITokenUsage;
 }
+
+// Dashboard types
+export interface UserProfileWithStats extends UserProfile {
+  total_entries: number;
+  current_streak: number;
+  longest_streak: number;
+  avg_score_7_day: number | null;
+  avg_score_30_day: number | null;
+  avg_score_all_time: number | null;
+}
+
+export interface ScoreDistributionPoint {
+  score: number;
+  count: number;
+}
+
+export interface DashboardStats {
+  total_entries: number;
+  current_streak: number;
+  longest_streak: number;
+  avg_score_7_day: number | null;
+  avg_score_30_day: number | null;
+  avg_score_all_time: number | null;
+  score_distribution: ScoreDistributionPoint[];
+  score_trend: 'up' | 'down' | 'stable' | 'insufficient_data';
+  last_entry_date: string | null;
+}
+
+export interface TimelineDataPoint {
+  entry_date: string;
+  score: number;
+  entry_id: string;
+}
+
+export interface DashboardTimeline {
+  data_points: TimelineDataPoint[];
+  period: string;
+}
