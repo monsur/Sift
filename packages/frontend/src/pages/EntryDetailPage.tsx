@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { useEntry, useUpdateEntry, useDeleteEntry } from '@hooks/useEntries';
+import { useEntry, useUpdateEntry, useDeleteEntry, useEntryList } from '@hooks/useEntries';
+import { useDashboardStats } from '@hooks/useDashboard';
 import { Button } from '@components/ui/button';
 import { ScoreSlider } from '@components/ui/slider';
 import { Dialog, DialogTitle, DialogDescription, DialogFooter } from '@components/ui/dialog';
@@ -21,11 +22,46 @@ function formatWeekday(dateStr: string): string {
   return d.toLocaleDateString('en-US', { weekday: 'long' });
 }
 
+function getPreviousDay(dateStr: string): string {
+  const d = new Date(dateStr + 'T00:00:00');
+  d.setDate(d.getDate() - 1);
+  return d.toISOString().slice(0, 10);
+}
+
+function getNextDay(dateStr: string): string {
+  const d = new Date(dateStr + 'T00:00:00');
+  d.setDate(d.getDate() + 1);
+  return d.toISOString().slice(0, 10);
+}
+
 function EntryDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { data: entry, isLoading } = useEntry(id);
   const updateEntry = useUpdateEntry();
   const deleteEntry = useDeleteEntry();
+
+  const { data: stats } = useDashboardStats();
+
+  // Previous/next entry navigation
+  const { data: prevEntryData } = useEntryList(
+    entry ? {
+      date_to: getPreviousDay(entry.entry_date),
+      limit: 1,
+      sort_by: 'entry_date',
+      sort_order: 'desc',
+    } : undefined
+  );
+  const { data: nextEntryData } = useEntryList(
+    entry ? {
+      date_from: getNextDay(entry.entry_date),
+      limit: 1,
+      sort_by: 'entry_date',
+      sort_order: 'asc',
+    } : undefined
+  );
+
+  const prevEntry = prevEntryData?.items[0];
+  const nextEntry = nextEntryData?.items[0];
 
   const [isEditingScore, setIsEditingScore] = useState(false);
   const [editScore, setEditScore] = useState(5);
@@ -93,6 +129,16 @@ function EntryDetailPage() {
             <div className="text-xs text-[var(--color-muted-foreground)] uppercase tracking-wider mt-1">
               Wellbeing
             </div>
+            {stats?.avg_score_30_day != null && (
+              <div className="text-xs text-[var(--color-muted-foreground)] mt-1">
+                {entry.score > stats.avg_score_30_day
+                  ? `${(entry.score - stats.avg_score_30_day).toFixed(1)} above`
+                  : entry.score < stats.avg_score_30_day
+                    ? `${(stats.avg_score_30_day - entry.score).toFixed(1)} below`
+                    : 'At'}{' '}
+                your 30-day avg
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -185,6 +231,45 @@ function EntryDetailPage() {
         <Link to="/dashboard">
           <Button>Back to Dashboard</Button>
         </Link>
+      </div>
+
+      {/* Entry metadata */}
+      {(entry.token_count != null || entry.estimated_cost != null) && (
+        <div className="flex flex-wrap gap-4 text-xs text-[var(--color-muted-foreground)]">
+          {entry.input_method && (
+            <span>Input: {entry.input_method}</span>
+          )}
+          {entry.token_count != null && (
+            <span>Tokens: {entry.token_count.toLocaleString()}</span>
+          )}
+          {entry.estimated_cost != null && (
+            <span>Est. cost: ${entry.estimated_cost.toFixed(4)}</span>
+          )}
+        </div>
+      )}
+
+      {/* Previous/Next navigation */}
+      <div className="flex justify-between items-center">
+        {prevEntry ? (
+          <Link
+            to={`/entries/${prevEntry.id}`}
+            className="text-sm text-[var(--color-primary)] hover:underline"
+          >
+            &larr; {formatDate(prevEntry.entry_date)}
+          </Link>
+        ) : (
+          <span />
+        )}
+        {nextEntry ? (
+          <Link
+            to={`/entries/${nextEntry.id}`}
+            className="text-sm text-[var(--color-primary)] hover:underline"
+          >
+            {formatDate(nextEntry.entry_date)} &rarr;
+          </Link>
+        ) : (
+          <span />
+        )}
       </div>
 
       {/* Delete dialog */}
