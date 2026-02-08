@@ -34,6 +34,7 @@ export function useCreateEntry() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['entries', 'list'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
     },
   });
 }
@@ -49,6 +50,7 @@ export function useUpdateEntry() {
     onSuccess: (entry) => {
       queryClient.invalidateQueries({ queryKey: ['entries', 'list'] });
       queryClient.invalidateQueries({ queryKey: ['entries', 'detail', entry.id] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
     },
   });
 }
@@ -63,6 +65,7 @@ export function useDeleteEntry() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['entries', 'list'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
       navigate('/history');
     },
   });
