@@ -78,8 +78,8 @@ export function ScoreChart() {
                 borderRadius: '8px',
                 fontSize: '12px',
               }}
-              labelFormatter={(label: string) => {
-                const [year, month, day] = label.split('-').map(Number);
+              labelFormatter={(label) => {
+                const [year, month, day] = String(label).split('-').map(Number);
                 return new Date(year!, month! - 1, day).toLocaleDateString('en-US', {
                   month: 'short',
                   day: 'numeric',
