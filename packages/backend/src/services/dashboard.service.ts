@@ -43,6 +43,19 @@ export class DashboardService {
 
     const distribution = this.calculateDistribution(entries ?? []);
 
+    // Use actual entry count to guard against stale cached stats
+    const { count: actualCount } = await supabase
+      .from('entries')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId);
+
+    const totalEntries = actualCount ?? (profile.total_entries as number) ?? 0;
+
+    // If cache is stale, refresh it in the background
+    if (totalEntries !== ((profile.total_entries as number) ?? 0)) {
+      this.updateCachedStats(userId).catch(console.error);
+    }
+
     // Calculate trend
     const trend = await this.calculateTrend(userId);
 
@@ -56,7 +69,7 @@ export class DashboardService {
       .single();
 
     return {
-      total_entries: (profile.total_entries as number) ?? 0,
+      total_entries: totalEntries,
       current_streak: (profile.current_streak as number) ?? 0,
       longest_streak: (profile.longest_streak as number) ?? 0,
       avg_score_7_day: (profile.avg_score_7_day as number) ?? null,

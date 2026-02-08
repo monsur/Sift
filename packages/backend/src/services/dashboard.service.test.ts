@@ -56,6 +56,16 @@ describe('DashboardService', () => {
           };
         }
         if (callCount === 3) {
+          // actual entry count query
+          return {
+            select: vi.fn().mockReturnValue({
+              eq: vi.fn().mockResolvedValue({
+                count: 10,
+              }),
+            }),
+          };
+        }
+        if (callCount === 4) {
           // trend query
           return {
             select: vi.fn().mockReturnValue({
@@ -134,6 +144,17 @@ describe('DashboardService', () => {
           };
         }
         if (callCount === 3) {
+          // actual entry count query
+          return {
+            select: vi.fn().mockReturnValue({
+              eq: vi.fn().mockResolvedValue({
+                count: 0,
+              }),
+            }),
+          };
+        }
+        if (callCount === 4) {
+          // trend query
           return {
             select: vi.fn().mockReturnValue({
               eq: vi.fn().mockReturnValue({
