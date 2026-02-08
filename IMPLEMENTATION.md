@@ -8,10 +8,10 @@
 
 ## Current Status
 
-**Last Updated:** 2026-02-07
-**Current Phase:** Phase 4 - Dashboard & Historical Insights
-**Current Task:** Ready to start Phase 4
-**Overall Progress:** 4/6 phases complete (67%)
+**Last Updated:** 2026-02-08
+**Current Phase:** Phase 5 - Polish & Launch Preparation
+**Current Task:** Ready to start Phase 5
+**Overall Progress:** 5/6 phases complete (83%)
 
 ### Phase Completion Tracking
 
@@ -21,7 +21,7 @@
 | **1** | ✅ Complete | 2026-02-07 | 2026-02-07 | Auth system with email verification, password reset, rate limiting |
 | **2** | ✅ Complete | 2026-02-07 | 2026-02-07 | Entry CRUD with service, routes, UI pages, tests |
 | **3** | ✅ Complete | 2026-02-07 | 2026-02-08 | AI provider abstraction, conversation/summary services, chat UI, crisis detection, 228 tests |
-| **4** | ⏳ Not Started | - | - | Dashboard & historical insights |
+| **4** | ✅ Complete | 2026-02-08 | 2026-02-08 | Dashboard stats, score chart, history filtering, settings page, 260 tests |
 | **5** | ⏳ Not Started | - | - | Blocked by Phase 4 |
 
 **Status Legend:**
@@ -36,6 +36,7 @@ None currently.
 
 ### Recent Notes
 
+- 2026-02-08: **Phase 4 Complete** - Dashboard with stats cards, score timeline chart (Recharts), history filtering (date range, search, sort), entry detail enhancements (score context, cost display, prev/next nav), settings page with theme toggle, 260 tests passing
 - 2026-02-08: **Phase 3 Complete** - AI provider abstraction, conversation/summary routes, chat UI (ChatInterface, RefinePage), crisis detection with resource banner, 228 tests passing
 - 2026-02-07: **Phase 3 Started** - AI provider abstraction layer: `AIProvider` interface + `AnthropicProvider` + factory, conversation/summary services, prompt builders
 - 2026-02-07: **Phase 2 Complete** - Entry CRUD: backend service + routes, frontend API/hooks/pages (NewEntry, EntrySaved, History, EntryDetail), UI components (Textarea, ScoreSlider, Dialog), navigation, 158 tests passing
@@ -982,12 +983,12 @@ pnpm --filter backend test crisis-detection
 **Tasks:**
 
 **4.1 Backend: Dashboard Endpoints**
-- [ ] Implement `GET /api/dashboard/stats` endpoint
-- [ ] Calculate aggregates (averages, min/max, distribution)
-- [ ] Calculate streaks (current, longest)
-- [ ] Implement score trend analysis (improving/declining/stable)
-- [ ] Implement `GET /api/dashboard/timeline` endpoint
-- [ ] Generate timeline data for graphing
+- [x] Implement `GET /api/dashboard/stats` endpoint
+- [x] Calculate aggregates (averages, min/max, distribution)
+- [x] Calculate streaks (current, longest)
+- [x] Implement score trend analysis (improving/declining/stable)
+- [x] Implement `GET /api/dashboard/timeline` endpoint
+- [x] Generate timeline data for graphing
 
 **Validation:**
 ```bash
@@ -997,10 +998,10 @@ pnpm --filter backend test dashboard
 ```
 
 **4.2 Backend: Stats Caching**
-- [ ] Update user_profiles cached stats on entry creation
-- [ ] Recalculate averages (7-day, 30-day, all-time)
-- [ ] Update streak counts
-- [ ] Optimize queries for large datasets
+- [x] Update user_profiles cached stats on entry creation
+- [x] Recalculate averages (7-day, 30-day, all-time)
+- [x] Update streak counts
+- [x] Optimize queries for large datasets
 
 **Validation:**
 ```bash
@@ -1009,11 +1010,11 @@ pnpm --filter backend test stats-caching
 ```
 
 **4.3 Frontend: Dashboard Page**
-- [ ] Create `DashboardPage.tsx`
-- [ ] Create `StatsCard.tsx` component (total entries, streak, averages)
-- [ ] Create `ScoreChart.tsx` component (line chart of scores over time)
-- [ ] Create `RecentEntries.tsx` component (last 5-10 entries)
-- [ ] Add "Write Today's Entry" CTA button
+- [x] Create `DashboardPage.tsx`
+- [x] Create `StatsCard.tsx` component (total entries, streak, averages)
+- [x] Create `ScoreChart.tsx` component (line chart of scores over time)
+- [x] Create `RecentEntries.tsx` component (last 5-10 entries)
+- [x] Add "Write Today's Entry" CTA button
 
 **Validation:**
 ```bash
@@ -1023,10 +1024,10 @@ pnpm --filter frontend test dashboard
 ```
 
 **4.4 Frontend: Chart Library**
-- [ ] Choose and install chart library (Chart.js, Recharts, or similar)
-- [ ] Create reusable chart wrapper component
-- [ ] Style charts to match app design
-- [ ] Add responsive behavior for mobile
+- [x] Choose and install chart library (Chart.js, Recharts, or similar)
+- [x] Create reusable chart wrapper component
+- [x] Style charts to match app design
+- [x] Add responsive behavior for mobile
 
 **Validation:**
 ```bash
@@ -1035,10 +1036,10 @@ pnpm --filter frontend test dashboard
 ```
 
 **4.5 Frontend: History Filtering**
-- [ ] Add date range filter to `HistoryPage.tsx`
-- [ ] Add sorting options (date, score)
-- [ ] Add search by content (optional for MVP)
-- [ ] Update API calls to use filters
+- [x] Add date range filter to `HistoryPage.tsx`
+- [x] Add sorting options (date, score)
+- [x] Add search by content (optional for MVP)
+- [x] Update API calls to use filters
 
 **Validation:**
 ```bash
@@ -1047,10 +1048,10 @@ pnpm --filter frontend test history-filtering
 ```
 
 **4.6 Frontend: Entry Detail Enhancements**
-- [ ] Show relative score context ("above your 30-day average")
-- [ ] Display cost data (for debugging)
-- [ ] Show AI model used
-- [ ] Link to previous/next entry
+- [x] Show relative score context ("above your 30-day average")
+- [x] Display cost data (for debugging)
+- [x] Show AI model used
+- [x] Link to previous/next entry
 
 **Validation:**
 ```bash
@@ -1058,10 +1059,10 @@ pnpm --filter frontend test history-filtering
 ```
 
 **4.7 User Profile Settings**
-- [ ] Create `SettingsPage.tsx`
-- [ ] Add theme toggle (light/dark/system)
-- [ ] Add default_refine_enabled toggle
-- [ ] Save settings via `PATCH /api/profile`
+- [x] Create `SettingsPage.tsx`
+- [x] Add theme toggle (light/dark/system)
+- [x] Add default_refine_enabled toggle
+- [x] Save settings via `PATCH /api/profile`
 
 **Validation:**
 ```bash
