@@ -2,6 +2,7 @@ import type { Entry, ConversationMessage, PaginatedResponse } from 'shared/types
 import type { CreateEntryInput, UpdateEntryInput, EntryListParams } from 'shared/schemas';
 import { getServiceClient } from '../config/supabase.js';
 import { AppError, NotFoundError, ForbiddenError } from '../utils/errors.js';
+import { dashboardService } from './dashboard.service.js';
 
 export class EntryService {
   async create(userId: string, input: CreateEntryInput): Promise<Entry> {
@@ -40,6 +41,7 @@ export class EntryService {
       throw new AppError('Failed to create entry', 500, 'ENTRY_CREATE_FAILED');
     }
 
+    dashboardService.updateCachedStats(userId).catch(console.error);
     return this.mapEntry(data);
   }
 
@@ -68,14 +70,20 @@ export class EntryService {
     params: EntryListParams
   ): Promise<PaginatedResponse<Entry>> {
     const supabase = getServiceClient();
-    const { page, limit, sort_by, sort_order } = params;
+    const { page, limit, sort_by, sort_order, date_from, date_to, search } = params;
     const offset = (page - 1) * limit;
 
     // Count query
-    const { count, error: countError } = await supabase
+    let countQuery = supabase
       .from('entries')
       .select('*', { count: 'exact', head: true })
       .eq('user_id', userId);
+
+    if (date_from) countQuery = countQuery.gte('entry_date', date_from);
+    if (date_to) countQuery = countQuery.lte('entry_date', date_to);
+    if (search) countQuery = countQuery.or(`raw_entry.ilike.%${search}%,tldr.ilike.%${search}%`);
+
+    const { count, error: countError } = await countQuery;
 
     if (countError) {
       throw new AppError('Failed to fetch entries', 500, 'ENTRY_LIST_FAILED');
@@ -84,10 +92,16 @@ export class EntryService {
     const total = count ?? 0;
 
     // Data query
-    const { data, error } = await supabase
+    let dataQuery = supabase
       .from('entries')
       .select('*')
-      .eq('user_id', userId)
+      .eq('user_id', userId);
+
+    if (date_from) dataQuery = dataQuery.gte('entry_date', date_from);
+    if (date_to) dataQuery = dataQuery.lte('entry_date', date_to);
+    if (search) dataQuery = dataQuery.or(`raw_entry.ilike.%${search}%,tldr.ilike.%${search}%`);
+
+    const { data, error } = await dataQuery
       .order(sort_by, { ascending: sort_order === 'asc' })
       .range(offset, offset + limit - 1);
 
@@ -206,6 +220,7 @@ export class EntryService {
       );
     }
 
+    dashboardService.updateCachedStats(userId).catch(console.error);
     return this.mapEntry(data);
   }
 
@@ -223,6 +238,8 @@ export class EntryService {
     if (error) {
       throw new AppError('Failed to delete entry', 500, 'ENTRY_DELETE_FAILED');
     }
+
+    dashboardService.updateCachedStats(userId).catch(console.error);
   }
 
   private mapEntry(data: Record<string, unknown>): Entry {
